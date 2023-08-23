@@ -1,14 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" />
-
-        <q-toolbar-title> Quasar Repo Template </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
+    <n-header />
 
     <!-- add q-drawer here if needed in the layout -->
 
@@ -18,4 +10,6 @@
   </q-layout>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import NHeader from 'src/components/NHeader.vue';
+</script>
