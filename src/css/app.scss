@@ -1,1 +1,12 @@
 // app global css in SCSS form
+body {
+  color: $text-color;
+
+  a {
+    color: $secondary;
+  }
+
+  a:visited {
+    color: $accent;
+  }
+}
