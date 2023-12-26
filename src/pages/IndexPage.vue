@@ -1,25 +1,77 @@
 <template>
   <q-page class="n-page">
-    <q-card flat class="q-pa-lg n-banner">
-      <q-card-section class="col content">
-        <q-card-section class="text-h2 text-center q-pt-xl">
-          NOVABYTE.BLOG
-        </q-card-section>
-        <pre>
-          {{ foo }}
-        </pre>
-        <q-card-section class="preamble">
-          Welcome, mortal, to my domain. I, the galactic entity Novabyte, will
+    <n-banner title="NOVABYTE.BLOG">
+      <div class="q-mb-md">
+        <!-- Welcome, mortal, to my domain. I, the galactic entity Novabyte, will
           chronicle my various endeavors into the depths of various domains. In
-          general, you could say you've stumbled onto the void I created for
-          myself to yell into. I'd be delighted if you stayed, and unbothered if
-          you didn't. Everything here will be by me, for me, and not you.
-          Though, if my ramblings just so happen to enrich you then all the
-          merrier.
-        </q-card-section>
-      </q-card-section>
-    </q-card>
-    <div class="row q-pa-xl q-gutter-lg">
+          general, you could say you've stumbled onto the void I created for myself
+          to yell into. I'd be delighted if you stayed, and unbothered if you
+          didn't. Everything here will be by me, for me, and not you. Though, if my
+          ramblings just so happen to enrich you then all the merrier. -->
+        The first thing I ever remember wanting to be as a child was a mad
+        scientist. Specifically the vision was of me pouring one flask into
+        another, and maybe a small *poof* due to a reaction. Probably some
+        singed eyebrows, too. I still may end up losing my eyebrows at some
+        point (hopefully not), and there probably will be <i>some</i> explosions
+        at some point (probably safe ones)...
+        <br />
+        <br />
+        I'm a Computer Scientist. For the most part that means programming.
+        However, I do other things here including but not limited to:
+      </div>
+      <q-list bordered class="full-width">
+        <q-expansion-item
+          expand-separator
+          class="full-width"
+          :caption="'some sort of a caption'"
+        >
+          <template v-slot:header>
+            <div class="text-h6 text-center full-width">- technomancy -</div>
+          </template>
+          <ul>
+            <li>technomancy</li>
+            <ul>
+              <li>programming</li>
+              <ul>
+                <li>game dev</li>
+                <li>game engine dev (lite)</li>
+              </ul>
+              <ul>
+                <li>robots</li>
+                <li>3D printing</li>
+              </ul>
+            </ul>
+          </ul>
+        </q-expansion-item>
+        <q-expansion-item
+          class="full-width"
+          :caption="'some sort of a caption'"
+        >
+          <template v-slot:header>
+            <div class="text-h6 text-center full-width">- art -</div>
+          </template>
+          <ul>
+            <li>3D modeling</li>
+            <li>graphic design</li>
+          </ul>
+        </q-expansion-item>
+      </q-list>
+      <p class="text-center full-width q-my-md">
+        Simply click on the black hole to let yourself get sucked in...
+      </p>
+      <div class="row full-width justify-evenly">
+        <q-icon
+          class="n-random q-ma-none q-pa-none"
+          ref="black_hole"
+          color="black"
+          name="circle"
+          size="md"
+        />
+      </div>
+    </n-banner>
+    <q-separator class="n-separator" />
+    <div class="text-h3">RECENT POSTS</div>
+    <div class="row q-px-lg q-gutter-lg">
       <q-card class="col n-card">
         <q-card-section class="text-h6"> Post Title </q-card-section>
         <q-card-section>
@@ -44,48 +96,30 @@
 
 <script setup lang="ts">
 // minimal amount of code for an api call
-import { api } from 'src/boot/axios';
-import { onMounted, ref } from 'vue';
-
+import { QIcon } from 'quasar';
+import NBanner from 'src/components/NBanner.vue';
 // an example of using marked to make a markdown editor and renderer
 // https://vuejs.org/examples/#markdown
 
-const foo = ref();
-
-onMounted(async () => {
-  foo.value = (
-    await api.get('/posts/67e55044-10b1-426f-9247-bb680e5fe0c8')
-  ).data;
-});
+// was playing around with a black-hole effect, but i can't move the mouse, understandably
+// still interested in something fun at some point, though
+// (await api.post('/posts')).data;
 </script>
 
-<style scoped lang="scss">
-.n-page {
-  width: 80%;
-  margin: auto;
-  background-color: $background;
+<style lang="scss">
+// MARK: leaving un-scoped for now since i'm doing a lot of testing here
+.n-separator {
+  height: 5px;
+  background-color: $secondary;
 }
 
-.n-banner {
-  color: $text-color;
-  border-radius: 0;
-  background-color: $dark;
-  background-image: url('https://image.pbs.org/video-assets/TlpGxv4-asset-mezzanine-16x9-s7Vs0QD.jpg');
-  background-position: center;
-
-  .content {
-    max-width: 50%;
-    border-radius: 10px;
-    margin: auto;
-    background-color: rgba($color: $dark, $alpha: 0.95);
-    // border: 3px solid $accent;
-  }
-}
-
-.n-card {
-  // color: white;
-  background-color: $dark;
+.n-random {
+  cursor: pointer;
+  border-radius: 100%;
+  transition: 0.5s;
+  border: 3px solid $dark;
   &:hover {
+    transition: 0.5s;
     border: 3px solid $accent;
   }
 }

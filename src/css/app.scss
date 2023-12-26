@@ -2,11 +2,50 @@
 body {
   color: $text-color;
 
+  .n-page {
+    width: 80%;
+    margin: auto;
+    background-color: $background;
+  }
+
+  .n-card {
+    // color: white;
+    background-color: $dark;
+    border: 3px solid $dark;
+    transition: 0.5s;
+    &:hover {
+      transition: 0.5s;
+      border: 3px solid $accent;
+    }
+  }
+
+  .n-btn {
+    background-color: $primary;
+  }
+
+  .q-card__section--vert {
+    padding: 8px;
+  }
+
+  .q-field__control {
+    height: auto;
+  }
+
+  .n-input {
+    color: $secondary;
+  }
+
   a {
     color: $secondary;
   }
 
   a:visited {
     color: $accent;
+  }
+
+  .text-h3 {
+    color: $secondary;
+    text-align: center;
+    margin: 16px 0px 32px 0px;
   }
 }

@@ -15,7 +15,7 @@
         <a href="#">I Definitely didn't Need to do this Right Now</a>
       </n-marquee>
       <q-tabs inline-label class="nav">
-        <q-route-tab to="/theme" icon="fas fa-code" :content-class="'tab'"
+        <q-route-tab to="/programming" icon="fas fa-code" :content-class="'tab'"
           >Programming</q-route-tab
         >
         <q-route-tab
