@@ -2135,6 +2135,11 @@ kolorist@^1.5.1:
   resolved "https://registry.npmjs.org/kolorist/-/kolorist-1.8.0.tgz"
   integrity sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==
 
+layerr@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/layerr/-/layerr-2.0.1.tgz#0c98e6f599de4f76b75c7a6522c54b8c6c591ff0"
+  integrity sha512-z0730CwG/JO24evdORnyDkwG1Q7b7mF2Tp1qRQ0YvrMMARbt1DFG694SOv439Gm7hYKolyZyaB49YIrYIfZBdg==
+
 lazystream@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/lazystream/-/lazystream-1.0.1.tgz"
@@ -3052,6 +3057,13 @@ uglify-js@^3.5.1:
   version "3.17.4"
   resolved "https://registry.npmjs.org/uglify-js/-/uglify-js-3.17.4.tgz"
   integrity sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==
+
+ulidx@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/ulidx/-/ulidx-2.2.1.tgz#9dd6e48630f7a4ba612461523bc86d9101038996"
+  integrity sha512-DU9F5t1tihdafuNyW3fIrXUFHHiHxmwuQSGVGIbSpqkc93IH4P0dU8nPhk0gOW7ARxaFu4+P/9cxVwn6PdnIaQ==
+  dependencies:
+    layerr "^2.0.1"
 
 universalify@^2.0.0:
   version "2.0.0"

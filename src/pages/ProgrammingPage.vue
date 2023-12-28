@@ -23,56 +23,42 @@
     <q-separator class="n-separator" />
     <div class="text-h3">CRUD tester</div>
     <div class="row q-pa-sm justify-evenly items-center">
-      <q-card class="n-card">
-        <q-card-section>
-          <p class="text-h4">Create Post</p>
-        </q-card-section>
-        <q-card-section>
-          <q-input
-            autogrow
-            v-model="postData"
-            type="textarea"
-            class="q-pt-none"
-            input-class="n-input"
-          />
-        </q-card-section>
-        <q-card-actions align="center">
-          <q-btn class="n-btn" @click="sendCreatePostCall">create post</q-btn>
-        </q-card-actions>
-      </q-card>
-      <q-card>
-        <q-btn class="n-btn" @click="sendGetPostCall">get post</q-btn>
-      </q-card>
-      <q-card>
-        <q-btn class="n-btn" @click="sendGetPostsCall">get posts</q-btn>
-      </q-card>
-      <q-card>
-        <q-btn class="n-btn" @click="sendDeletePostCall">delete post</q-btn>
+      <q-card class="n-card full-width">
+        <q-tabs v-model="current_tab">
+          <q-tab name="person" label="Person"></q-tab>
+          <q-tab name="post" label="Post"></q-tab>
+        </q-tabs>
+        <q-tab-panels v-model="current_tab">
+          <q-tab-panel name="person">
+            <dev-person-card />
+          </q-tab-panel>
+          <q-tab-panel name="post">
+            <dev-post-card />
+          </q-tab-panel>
+        </q-tab-panels>
       </q-card>
     </div>
   </q-page>
 </template>
 <script setup lang="ts">
+import DevPostCard from 'src/models/post/components/DevPostCard.vue';
+import DevPersonCard from 'src/models/person/components/DevPersonCard.vue';
 import { api } from 'src/boot/axios';
 import NBanner from 'src/components/NBanner.vue';
 import { ref } from 'vue';
 
 // const foo = ref();
 // foo.value = await api.get('/posts/01HJ4T9031ZWV6N8XM17Z9XV9C');
+type CrudTabs = 'person' | 'post';
+const current_tab = ref<CrudTabs>('person');
 
-const createPostReturn = ref();
-const postData = ref('');
 const getPostReturn = ref();
 const getPostsReturn = ref();
 const deletePostReturn = ref();
 
-const sendCreatePostCall = async () => {
-  console.log('sending create post call');
-  createPostReturn.value = await api.post('/posts');
-};
 const sendGetPostCall = async () => {
   console.log('sending get post call');
-  createPostReturn.value = await api.get('/posts/01HJ4T9031ZWV6N8XM17Z9XV9C');
+  // createPostReturn.value = await api.get('/posts/01HJ4T9031ZWV6N8XM17Z9XV9C');
 };
 const sendGetPostsCall = async () => {
   console.log('sending get posts call');
