@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <q-card class="col-7 q-px-xl q-py-lg q-mt-xl">
         <p class="text-h2">Sign Up</p>
-        <q-form>
+        <q-form @submit="onSubmit" @reset="onReset">
           <q-input v-model="userName" label="Username" type="text" />
           <q-input v-model="email" label="Email" type="text" />
           <q-input v-model="password" label="Password" type="text" />
@@ -13,8 +13,14 @@
             type="text"
           />
           <q-card-actions align="around" class="q-px-lg q-pt-lg">
-            <q-btn label="Launch" color="secondary" />
-            <q-btn label="Abort" outline text-color="accent" class="abort" />
+            <q-btn type="submit" label="Launch" color="secondary" />
+            <q-btn
+              type="reset"
+              label="Abort"
+              outline
+              text-color="accent"
+              class="abort"
+            />
           </q-card-actions>
         </q-form>
       </q-card>
@@ -23,12 +29,21 @@
 </template>
 
 <script setup lang="ts">
+import { usePersonClient } from 'src/models/person';
 import { ref } from 'vue';
 
 const userName = ref('');
 const email = ref('');
 const password = ref('');
 const passwordConfirmation = ref('');
+
+const onSubmit = () => {
+  usePersonClient().signUp();
+};
+
+const onReset = () => {
+  console.error('not implemented');
+};
 </script>
 
 <style scoped lang="scss">

@@ -1,4 +1,4 @@
-import { Meta } from '../base';
+import { Meta } from '../meta';
 
 export type PostPerson = {
   username: string;

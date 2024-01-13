@@ -1,4 +1,4 @@
-import { Meta } from '../base';
+import { Meta } from '../meta';
 import { Person } from '../person/person';
 
 export type Post = {
