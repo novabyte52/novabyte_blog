@@ -28,7 +28,7 @@
           <q-tab name="person" label="Person"></q-tab>
           <q-tab name="post" label="Post"></q-tab>
         </q-tabs>
-        <q-tab-panels v-model="current_tab">
+        <q-tab-panels animated v-model="current_tab">
           <q-tab-panel name="person">
             <dev-person-card />
           </q-tab-panel>
@@ -52,9 +52,9 @@ import { ref } from 'vue';
 type CrudTabs = 'person' | 'post';
 const current_tab = ref<CrudTabs>('person');
 
-const getPostReturn = ref();
-const getPostsReturn = ref();
-const deletePostReturn = ref();
+const getPersonReturn = ref();
+const getPersonsReturn = ref();
+const deletePersonsReturn = ref();
 
 const sendGetPostCall = async () => {
   console.log('sending get post call');
@@ -62,7 +62,7 @@ const sendGetPostCall = async () => {
 };
 const sendGetPostsCall = async () => {
   console.log('sending get posts call');
-  getPostsReturn.value = await api.get('/posts');
+  getPersonsReturn.value = await api.get('/posts');
 };
 const sendDeletePostCall = () => {
   console.log('sending delete post call');

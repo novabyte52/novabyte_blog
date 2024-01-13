@@ -27,6 +27,19 @@
         <q-route-tab to="/theme" icon="fas fa-palette" :content-class="'tab'"
           >Theming</q-route-tab
         >
+        <q-route-tab
+          icon="fas fa-user-astronaut"
+          class="user-tab"
+          :content-class="'tab'"
+        >
+          <q-menu>
+            <q-card>
+              <q-card-section>
+                <router-link to="/signup"> Sign Up </router-link>
+              </q-card-section>
+            </q-card>
+          </q-menu>
+        </q-route-tab>
       </q-tabs>
     </q-toolbar>
   </q-header>
@@ -45,6 +58,14 @@ import NMarquee from './NMarquee.vue';
   .title {
     text-decoration: none;
     color: $secondary !important;
+  }
+
+  .user-tab {
+    .tab {
+      .q-icon {
+        padding: 8px 0px !important;
+      }
+    }
   }
 
   .tab {

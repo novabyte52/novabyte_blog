@@ -43,8 +43,18 @@ body {
     color: $accent;
   }
 
-  .text-h3 {
+  .text-dark {
+    color: $dark;
+  }
+
+  .text-h2 {
     color: $secondary;
+    text-align: center;
+    margin: 16px 0px 32px 0px;
+  }
+
+  .text-h3 {
+    color: $accent;
     text-align: center;
     margin: 16px 0px 32px 0px;
   }
