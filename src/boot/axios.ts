@@ -28,4 +28,12 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
+type ApiPath = '/perons' | '/posts';
+
+export const createAxiosInstance = (basePath: ApiPath) => {
+  return axios.create({
+    baseURL: `http://127.0.0.1:52001${basePath}`,
+  });
+};
+
 export { api };

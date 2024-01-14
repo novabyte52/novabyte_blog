@@ -37,8 +37,12 @@ const email = ref('');
 const password = ref('');
 const passwordConfirmation = ref('');
 
-const onSubmit = () => {
-  usePersonClient().signUp();
+const pc = usePersonClient();
+
+const onSubmit = async () => {
+  const foo = await pc.signUp(userName.value, email.value, password.value);
+
+  console.log('onSubmit data:', foo);
 };
 
 const onReset = () => {

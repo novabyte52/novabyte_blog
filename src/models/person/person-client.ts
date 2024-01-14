@@ -1,13 +1,18 @@
-import axios from 'axios';
-import { api } from 'src/boot/axios';
+import { createAxiosInstance } from 'src/boot/axios';
+import { Person } from './person';
 
 export const usePersonClient = () => {
-  const pc = axios.create({
-    baseURL: `${api.defaults.url}/persons`,
-  });
+  const c = createAxiosInstance('/perons');
 
-  const signUp = () => {
-    pc.post('/signup');
+  const signUp = async (username: string, email: string, password: string) => {
+    const response = await c.post<Person>('/signup', {
+      username,
+      email,
+      password,
+    });
+
+    console.log('signup response:', response);
+    return response.data;
   };
 
   return {
