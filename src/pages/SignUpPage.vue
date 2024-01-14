@@ -40,6 +40,7 @@ const passwordConfirmation = ref('');
 const pc = usePersonClient();
 
 const onSubmit = async () => {
+  // https://stackoverflow.com/questions/3391242/should-i-hash-the-password-before-sending-it-to-the-server-side
   const foo = await pc.signUp(userName.value, email.value, password.value);
 
   console.log('onSubmit data:', foo);

@@ -28,7 +28,7 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-type ApiPath = '/perons' | '/posts';
+type ApiPath = '/persons' | '/posts';
 
 export const createAxiosInstance = (basePath: ApiPath) => {
   return axios.create({
