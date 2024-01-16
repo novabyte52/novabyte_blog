@@ -11,7 +11,6 @@ export const usePersonClient = () => {
       password,
     });
 
-    console.log('signup response:', response);
     return response.data;
   };
 

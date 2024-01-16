@@ -26,10 +26,9 @@
             :rules="[() => password.length > 0 || 'Password is required!']"
           />
           <q-input
-            :model-value="passwordConfirmation"
+            v-model="passwordConfirmation"
             label="Confirm Password"
             type="password"
-            @update:model-value="confirmPasswordMatch"
             :rules="[
               () =>
                 passwordConfirmation === password || 'Passwords do not match!',
@@ -40,9 +39,7 @@
               type="submit"
               label="Launch"
               color="secondary"
-              :disable="
-                passwordConfirmation !== password || password.length === 0
-              "
+              :disable="!enableLaunch"
             />
             <q-btn
               type="reset"
@@ -60,30 +57,47 @@
 
 <script setup lang="ts">
 import { usePersonClient } from 'src/models/person';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { isEmail } from 'validator';
+import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
 
 const userName = ref('');
 const email = ref('');
 const password = ref('');
 const passwordConfirmation = ref('');
+const hasLaunched = ref(false);
 
+const r = useRouter();
+const q = useQuasar();
 const pc = usePersonClient();
 
-const confirmPasswordMatch = (val: string | number | null) => {
-  if (val === null) return;
-  passwordConfirmation.value = val.toString();
-};
+const enableLaunch = computed(() => {
+  const passwordConfirmed =
+    passwordConfirmation.value === password.value && password.value.length > 0;
+  return passwordConfirmed && !hasLaunched.value;
+});
 
 const onSubmit = async () => {
-  console.log('is email:', isEmail(email.value));
-  // const foo = await pc.signUp(userName.value, email.value, password.value);
-
-  // console.log('onSubmit data:', foo);
+  hasLaunched.value = true;
+  try {
+    await pc.signUp(userName.value, email.value, password.value);
+  } catch (e) {
+    q.notify({
+      message: 'There was an error signing you up!',
+      color: 'negative',
+    });
+    hasLaunched.value = false;
+    throw new Error('Error signing up user!');
+  }
+  q.notify({
+    message: 'You have successfully signed up!',
+    color: 'positive',
+  });
 };
 
 const onReset = () => {
-  console.error('not implemented');
+  r.push('/');
 };
 </script>
 
