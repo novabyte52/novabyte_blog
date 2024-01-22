@@ -37,6 +37,9 @@
               <q-card-section>
                 <router-link to="/signup"> Sign Up </router-link>
               </q-card-section>
+              <q-card-section>
+                <router-link to="/login"> Log In </router-link>
+              </q-card-section>
             </q-card>
           </q-menu>
         </q-route-tab>

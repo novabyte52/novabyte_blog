@@ -14,7 +14,17 @@ export const usePersonClient = () => {
     return response.data;
   };
 
+  const logIn = async (email: string, password: string) => {
+    const response = await c.post<Person>('/login', {
+      email,
+      password,
+    });
+
+    return response.data;
+  };
+
   return {
     signUp,
+    logIn,
   };
 };
