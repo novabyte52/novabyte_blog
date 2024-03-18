@@ -19,8 +19,10 @@ const pc = usePersonClient();
 const email = ref('');
 const password = ref('');
 
-const onSubmit = () => {
-  const foo = pc.logIn(email.value, password.value);
-  console.log('logged in!:', foo);
+const onSubmit = async () => {
+  const token = await pc.logIn(email.value, password.value);
+  console.log('token:', token);
+
+  localStorage.setItem('nbToken', token);
 };
 </script>

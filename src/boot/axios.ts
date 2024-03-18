@@ -14,7 +14,46 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'http://127.0.0.1:52001' });
+axios.defaults.baseURL = 'http://127.0.0.1:52001';
+export const api = axios.create();
+
+api.interceptors.request.use((config) => {
+  console.log('config:', config);
+  const token = localStorage.getItem('nbToken');
+  if (token) config.headers['Authorization'] = `${token}`;
+  return config;
+});
+
+api.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    const { response, config } = err;
+
+    if (response.status === 401) {
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (refreshToken) {
+        try {
+          const res = await api.post('/persons/refresh', {
+            refresh: refreshToken,
+          });
+
+          const token = res.data.nbToken;
+          if (token) {
+            localStorage.setItem('nbToken', token);
+            config.headers['Authorization'] = `${token}`;
+            return api(config);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+
+    // logout();
+    return err;
+  }
+);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -28,12 +67,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-type ApiPath = '/persons' | '/posts';
-
-export const createAxiosInstance = (basePath: ApiPath) => {
-  return axios.create({
-    baseURL: `http://127.0.0.1:52001${basePath}`,
-  });
-};
-
-export { api };
+export type ApiPath = '/persons' | '/posts';

@@ -28,6 +28,10 @@
           <div class="text-h4 q-mb-md">Get :ID</div>
           <get-person-form />
         </q-tab-panel>
+        <q-tab-panel name="getPersons">
+          <div class="text-h4 q-mb-md">Get All</div>
+          <get-persons-form />
+        </q-tab-panel>
       </q-tab-panels>
     </template>
   </q-splitter>
@@ -44,6 +48,7 @@
 import { ref } from 'vue';
 import CreatePersonForm from './forms/CreatePersonForm.vue';
 import GetPersonForm from './forms/GetPersonForm.vue';
+import GetPersonsForm from './forms/GetPersonsForm.vue';
 
 const splitterModel = ref(20);
 const innerTab = ref('createPerson');

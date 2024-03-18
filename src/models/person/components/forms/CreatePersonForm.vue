@@ -3,11 +3,12 @@
     <q-input v-model="email" label="e-mail" type="text" color="accent" />
     <q-input v-model="username" label="username" type="text" color="accent" />
     <q-card-actions align="center">
-      <q-btn @click="onSubmit" class="n-btn">submit</q-btn>
-      <q-btn class="n-btn">clear</q-btn>
+      <q-btn label="Submit" type="submit" class="n-btn" />
+      <q-btn label="Clear" type="reset" class="n-btn" />
     </q-card-actions>
   </q-form>
 </template>
+
 <script setup lang="ts">
 import { api } from 'src/boot/axios';
 import { ref, watch } from 'vue';

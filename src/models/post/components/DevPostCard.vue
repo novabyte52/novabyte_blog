@@ -22,7 +22,7 @@
 import { api } from 'src/boot/axios';
 import { ref } from 'vue';
 import { Post } from '../post';
-import { Table } from '../../base';
+import { Table } from '../../meta';
 import { Person } from '../../person/person';
 
 const postData = ref('');
