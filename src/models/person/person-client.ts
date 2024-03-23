@@ -5,7 +5,7 @@ export const usePersonClient = () => {
   const c = api;
 
   const signUp = async (username: string, email: string, password: string) => {
-    const response = await c.post<Person>('/signup', {
+    const response = await c.post<Person>('/persons/signup', {
       username,
       email,
       password,
@@ -15,12 +15,18 @@ export const usePersonClient = () => {
   };
 
   const logIn = async (email: string, password: string) => {
-    const response = await c.post<any>('/persons/login', {
-      email,
-      password,
-    });
-
-    console.log('res:', response);
+    const response = await c.post<{ token: string }>(
+      '/persons/login',
+      {
+        email,
+        password,
+      },
+      {
+        headers: {
+          Authorization: '',
+        },
+      }
+    );
 
     return response.data;
   };

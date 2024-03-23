@@ -21,8 +21,6 @@ const password = ref('');
 
 const onSubmit = async () => {
   const token = await pc.logIn(email.value, password.value);
-  console.log('token:', token);
-
-  localStorage.setItem('nbToken', token);
+  localStorage.setItem('nbToken', token.token);
 };
 </script>

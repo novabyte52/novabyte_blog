@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
+// import cookie from 'cookie';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -15,30 +16,35 @@ declare module '@vue/runtime-core' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 axios.defaults.baseURL = 'http://127.0.0.1:52001';
+axios.defaults.withCredentials = true;
 export const api = axios.create();
 
 api.interceptors.request.use((config) => {
-  console.log('config:', config);
   const token = localStorage.getItem('nbToken');
-  if (token) config.headers['Authorization'] = `${token}`;
+  if (token) config.headers['Authorization'] = token;
+
   return config;
 });
 
 api.interceptors.response.use(
   (res) => res,
-  async (err) => {
+  async (err: AxiosError) => {
     const { response, config } = err;
 
-    if (response.status === 401) {
-      const refreshToken = localStorage.getItem('refreshToken');
+    if (response?.status === 401) {
+      if (response.data === 'Missing refresh token.') {
+        console.log('logging out');
+        return;
+      }
 
-      if (refreshToken) {
+      if (response && config)
         try {
-          const res = await api.post('/persons/refresh', {
-            refresh: refreshToken,
+          const res = await api.get('/persons/refresh', {
+            withCredentials: true,
           });
 
-          const token = res.data.nbToken;
+          const token = res.data.token;
+
           if (token) {
             localStorage.setItem('nbToken', token);
             config.headers['Authorization'] = `${token}`;
@@ -47,7 +53,6 @@ api.interceptors.response.use(
         } catch (e) {
           console.log(e);
         }
-      }
     }
 
     // logout();
