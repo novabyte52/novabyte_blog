@@ -19,41 +19,48 @@
         I'm a Computer Scientist. For the most part that means programming.
         However, I do other things here including but not limited to:
       </div>
-      <q-list bordered class="full-width">
+      <q-list bordered separator class="full-width">
         <q-expansion-item
           expand-separator
           class="full-width"
           :caption="'some sort of a caption'"
         >
           <template v-slot:header>
-            <div class="text-h6 text-center full-width">- technomancy -</div>
+            <div class="text-h6 text-center full-width">/technomancy</div>
           </template>
-          <ul>
-            <li>technomancy</li>
+          <q-separator />
+          <div class="q-pl-xl q-py-sm" style="background-color: #2e2139">
             <ul>
               <li>programming</li>
               <ul>
-                <li>game dev</li>
-                <li>game engine dev (lite)</li>
+                <li>web-dev</li>
+                <li>game-dev</li>
+                <ul>
+                  <li>game-engine-dev</li>
+                  <li>graphics-dev</li>
+                </ul>
               </ul>
               <ul>
-                <li>robots</li>
-                <li>3D printing</li>
+                <li>robotics</li>
+                <li>home-automation</li>
               </ul>
             </ul>
-          </ul>
+          </div>
         </q-expansion-item>
         <q-expansion-item
           class="full-width"
           :caption="'some sort of a caption'"
         >
           <template v-slot:header>
-            <div class="text-h6 text-center full-width">- art -</div>
+            <div class="text-h6 text-center full-width">/art</div>
           </template>
-          <ul>
-            <li>3D modeling</li>
-            <li>graphic design</li>
-          </ul>
+          <q-separator />
+          <div class="q-ml-xl q-py-sm">
+            <ul>
+              <li>3D modeling</li>
+              <li>graphic design</li>
+            </ul>
+          </div>
         </q-expansion-item>
       </q-list>
       <p class="text-center full-width q-my-md">

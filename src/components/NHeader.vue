@@ -6,14 +6,13 @@
           <q-toolbar-title> novabyte.blog </q-toolbar-title>
         </q-route-tab>
       </q-tabs>
-      <n-marquee>
-        <!-- will add dynamic content at some point, maybe even break this into its own component -->
-        <a href="google.com">I Definitely didn't Need to do this Right Now</a>
-        <a href="#">I Definitely didn't Need to do this Right Now</a>
-        <a href="#">I Definitely didn't Need to do this Right Now</a>
-        <a href="#">I Definitely didn't Need to do this Right Now</a>
-        <a href="#">I Definitely didn't Need to do this Right Now</a>
-      </n-marquee>
+      <n-marquee
+        :items="[
+          { id: '1', text: 'Article 01' },
+          { id: '2', text: 'Article 02' },
+          { id: '3', text: 'Article 03' },
+        ]"
+      />
       <q-tabs inline-label class="nav">
         <q-route-tab to="/programming" icon="fas fa-code" :content-class="'tab'"
           >Programming</q-route-tab

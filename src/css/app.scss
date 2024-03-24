@@ -2,6 +2,12 @@
 body {
   color: $text-color;
 
+  ul {
+    margin: 0;
+    list-style-type: '/';
+    padding-left: 20px;
+  }
+
   .n-page {
     width: 80%;
     margin: auto;

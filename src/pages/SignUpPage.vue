@@ -12,7 +12,7 @@
           />
           <q-input
             v-model="email"
-            label="Email"
+            label="E-Mail"
             type="text"
             :rules="[
               () => email.length > 0 || 'Email is required!',

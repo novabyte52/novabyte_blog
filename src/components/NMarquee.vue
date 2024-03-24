@@ -1,38 +1,85 @@
 <template>
-  <marquee-slider
-    id="marquee-slider"
-    class="n-marquee"
-    :width="300"
-    :paused="props.paused"
-    :speed="props.speed"
-    :space="props.space"
-  >
-    <slot></slot>
-  </marquee-slider>
+  <div ref="marqueeContainer" id="marquee-container">
+    <span
+      v-for="(item, i) in items"
+      :key="item.id"
+      :id="`marquee-item-${i}`"
+      class="marquee-item"
+    >
+      <router-link :to="{ path: 'article', params: { articleId: item.id } }">
+        {{ item.text }}
+      </router-link>
+    </span>
+  </div>
 </template>
 
 <script setup lang="ts">
-import '../../node_modules/vue3-marquee-slider/dist/style.css';
-type NMarqueeProps = {
-  paused?: boolean;
-  speed?: number;
-  space?: number;
-};
-
-const props = withDefaults(defineProps<NMarqueeProps>(), {
-  paused: false,
-  speed: 60_000, // 60 seconds
-  space: 100, // px
+import { ref, watch } from 'vue';
+const props = defineProps({
+  items: {
+    type: Array<{
+      id: string;
+      text: string;
+    }>,
+    // eslint-disable-next-line vue/valid-define-props
+    default: () => [
+      { id: '1', text: 'test 01' },
+      { id: '2', text: 'test 02' },
+      { id: '3', text: 'test 03' },
+    ],
+  },
+  speed: {
+    type: Number,
+    default: 25,
+  },
+  margin: {
+    type: Number,
+    default: 100,
+  },
 });
+
+const marqueeContainer = ref<HTMLDivElement | undefined>();
+
+watch(marqueeContainer, (val) => {
+  if (val) {
+    const para1 = document.getElementById('marquee-item-0');
+    if (!para1) throw new Error('cant get marquee items');
+    animate(para1);
+  }
+});
+
+function animate(element: HTMLSpanElement) {
+  let elementWidth = element.offsetWidth;
+  if (!element.parentElement) throw new Error('No parent element!');
+  let parentWidth = element.parentElement.offsetWidth;
+
+  let flag = 0;
+  setInterval(() => {
+    element.style.marginLeft = --flag + 'px';
+
+    const pos_string = element.style.marginLeft.substring(
+      0,
+      element.style.marginLeft.indexOf('px')
+    );
+
+    const end = props.items.length * (elementWidth + props.margin);
+    if (parseInt(pos_string) < -end) {
+      flag = parentWidth;
+    }
+  }, props.speed);
+}
 </script>
 
-<style lang="scss">
-.n-marquee {
-  * {
-    margin-bottom: 0 !important;
-  }
+<style scoped lang="scss">
+#marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
 
-  border-left: 2px solid $secondary;
-  border-right: 2px solid $secondary;
+.marquee-item {
+  margin-right: v-bind('`${$props.margin}px`');
+  color: black;
+  font-weight: bold;
+  white-space: nowrap;
 }
 </style>
