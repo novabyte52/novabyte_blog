@@ -1,4 +1,4 @@
-import { Meta } from '../meta';
+import { Meta, Thing } from '../meta';
 
 export type PostPerson = {
   username: string;
@@ -6,7 +6,8 @@ export type PostPerson = {
 };
 
 export type Person = {
-  meta: Meta;
+  id: Thing;
   username: string;
   email: string;
+  meta: Meta;
 };

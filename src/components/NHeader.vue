@@ -31,16 +31,7 @@
           class="user-tab"
           :content-class="'tab'"
         >
-          <q-menu>
-            <q-card>
-              <q-card-section>
-                <router-link to="/signup"> Sign Up </router-link>
-              </q-card-section>
-              <q-card-section>
-                <router-link to="/login"> Log In </router-link>
-              </q-card-section>
-            </q-card>
-          </q-menu>
+          <n-person-menu />
         </q-route-tab>
       </q-tabs>
     </q-toolbar>
@@ -49,6 +40,7 @@
 
 <script setup lang="ts">
 import NMarquee from './NMarquee.vue';
+import NPersonMenu from './NPersonMenu.vue';
 </script>
 
 <style lang="scss">

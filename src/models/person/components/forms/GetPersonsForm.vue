@@ -9,17 +9,20 @@
 </template>
 
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
 import { ref } from 'vue';
+import { usePersonStore } from 'src/models/person/person.store';
+
+const ps = usePersonStore();
 
 const defaultAmount = 0; // 0 for all
 
 const amount = ref(defaultAmount);
 
 const onSubmit = async () => {
-  const persons = await api.get('/persons');
+  const persons = await ps.fetchPersons();
   console.log('persons:', persons);
 };
 
 const onReset = () => (amount.value = defaultAmount);
 </script>
+../../person.store

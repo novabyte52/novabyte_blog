@@ -5,10 +5,20 @@ export enum Table {
   POST = 'post',
 }
 
-export type Thing = {
-  tb: string;
-  id?: ULID;
-};
+export class Thing {
+  tb!: string;
+  id!: ULID;
+
+  constructor(thingString: string) {
+    const [tb, id] = thingString.split(':');
+    this.tb = tb;
+    this.id = id;
+  }
+
+  toString = () => {
+    return `${this.tb}:${this.id}`;
+  };
+}
 
 export type Meta<T = undefined> = {
   id: Thing;

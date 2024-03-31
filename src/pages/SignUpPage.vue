@@ -56,10 +56,10 @@
 </template>
 
 <script setup lang="ts">
-import { usePersonClient } from 'src/models/person';
-import { computed, ref } from 'vue';
-import { isEmail } from 'validator';
 import { useQuasar } from 'quasar';
+import { usePersonStore } from 'src/models/person';
+import { isEmail } from 'validator';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const userName = ref('');
@@ -70,7 +70,7 @@ const hasLaunched = ref(false);
 
 const r = useRouter();
 const q = useQuasar();
-const pc = usePersonClient();
+const ps = usePersonStore();
 
 const enableLaunch = computed(() => {
   const passwordConfirmed =
@@ -81,7 +81,7 @@ const enableLaunch = computed(() => {
 const onSubmit = async () => {
   hasLaunched.value = true;
   try {
-    await pc.signUp(userName.value, email.value, password.value);
+    await ps.signUp(userName.value, email.value, password.value);
   } catch (e) {
     q.notify({
       message: 'There was an error signing you up!',

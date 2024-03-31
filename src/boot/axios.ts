@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import { usePersonStore } from 'src/models/person';
 // import cookie from 'cookie';
 
 declare module '@vue/runtime-core' {
@@ -19,8 +20,10 @@ axios.defaults.baseURL = 'http://127.0.0.1:52001';
 axios.defaults.withCredentials = true;
 export const api = axios.create();
 
+const personStore = usePersonStore();
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('nbToken');
+  const token = personStore.getToken();
   if (token) config.headers['Authorization'] = token;
 
   return config;
@@ -33,29 +36,25 @@ api.interceptors.response.use(
 
     if (response?.status === 401) {
       if (response.data === 'Missing refresh token.') {
-        console.log('logging out');
+        personStore.logOut();
         return;
       }
 
-      if (response && config)
+      if (response && config) {
         try {
-          const res = await api.get('/persons/refresh', {
-            withCredentials: true,
-          });
-
-          const token = res.data.token;
+          const token = await personStore.refresh();
 
           if (token) {
-            localStorage.setItem('nbToken', token);
+            personStore.setToken(token);
             config.headers['Authorization'] = `${token}`;
             return api(config);
           }
         } catch (e) {
           console.log(e);
         }
+      }
     }
 
-    // logout();
     return err;
   }
 );
