@@ -76,7 +76,7 @@
         />
       </div>
     </n-banner>
-    <q-separator class="n-separator" />
+    <!-- <q-separator class="n-separator" /> -->
     <div class="text-h3">RECENT POSTS</div>
     <div class="row q-px-lg q-gutter-lg">
       <q-card class="col n-card">
@@ -102,12 +102,8 @@
 </template>
 
 <script setup lang="ts">
-// minimal amount of code for an api call
 import { QIcon } from 'quasar';
 import NBanner from 'src/components/NBanner.vue';
-// an example of using marked to make a markdown editor and renderer
-// https://vuejs.org/examples/#markdown
-
 // was playing around with a black-hole effect, but i can't move the mouse, understandably
 // still interested in something fun at some point, though
 // (await api.post('/posts')).data;
@@ -117,7 +113,7 @@ import NBanner from 'src/components/NBanner.vue';
 // MARK: leaving un-scoped for now since i'm doing a lot of testing here
 .n-separator {
   height: 5px;
-  background-color: $secondary;
+  background-color: $accent;
 }
 
 .n-random {

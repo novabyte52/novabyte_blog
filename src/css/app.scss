@@ -12,12 +12,14 @@ body {
     width: 80%;
     margin: auto;
     background-color: $background;
+    border-left: 3px solid $accent;
+    border-right: 3px solid $accent;
   }
 
   .n-card {
     // color: white;
-    background-color: $dark;
-    border: 3px solid $dark;
+    background-color: $primary;
+    border: 3px solid $primary;
     transition: 0.5s;
     &:hover {
       transition: 0.5s;
@@ -27,6 +29,13 @@ body {
 
   .n-btn {
     background-color: $primary;
+  }
+
+  .tab {
+    color: $secondary !important;
+    .q-icon {
+      padding: 8px 8px 8px 0px;
+    }
   }
 
   .q-card__section--vert {
@@ -60,8 +69,9 @@ body {
   }
 
   .text-h3 {
-    color: $accent;
+    color: $primary;
     text-align: center;
     margin: 16px 0px 32px 0px;
+    text-decoration: underline;
   }
 }

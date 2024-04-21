@@ -35,12 +35,27 @@
         </q-route-tab>
       </q-tabs>
     </q-toolbar>
+    <q-btn
+      v-if="currentPerson?.is_admin"
+      round
+      class="admin-btn"
+      icon="fas fa-gear"
+      @click="emit('toggleAdmin')"
+    />
   </q-header>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import NMarquee from './NMarquee.vue';
 import NPersonMenu from './NPersonMenu.vue';
+import { usePersonStore } from 'src/models/person';
+
+const emit = defineEmits<{
+  (event: 'toggleAdmin'): void;
+}>();
+
+const { currentPerson } = storeToRefs(usePersonStore());
 </script>
 
 <style lang="scss">
@@ -62,11 +77,10 @@ import NPersonMenu from './NPersonMenu.vue';
     }
   }
 
-  .tab {
-    color: $secondary !important;
-    .q-icon {
-      padding: 8px 8px 8px 0px;
-    }
+  .admin-btn {
+    position: absolute;
+    margin-left: 4px;
+    margin-top: 4px;
   }
 }
 </style>

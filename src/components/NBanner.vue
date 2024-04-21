@@ -24,19 +24,15 @@ defineProps<{
   color: $text-color;
   border-radius: 0;
   background-color: $dark;
-  background-image: url('https://image.pbs.org/video-assets/TlpGxv4-asset-mezzanine-16x9-s7Vs0QD.jpg');
+  background-image: url('https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg');
   background-position: center;
+  background-size: cover;
 
   .content {
     max-width: 50%;
-    border-radius: 50px;
-    // border-radius: 100%;
+    border-radius: 15px;
     margin: auto;
     background-color: rgba($color: $dark, $alpha: 0.95);
-    border: 3px solid $secondary;
-  }
-
-  .preamble {
   }
 }
 </style>

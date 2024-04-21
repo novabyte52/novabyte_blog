@@ -10,19 +10,13 @@
         <p class="text-dark q-mb-none q-mt-md">Don't have an account?</p>
         <router-link to="/signup"> Sign Up </router-link>
       </div>
-      <!-- <div v-else class="column">
-        <pre class="text-dark">e: {{ currentPerson?.email }}</pre>
-      </div>
-
-      <q-separator v-if="isAuthenticated" vertical inset class="q-mx-lg" /> -->
-
-      <div v-if="isAuthenticated" class="column items-center">
+      <div v-else class="column items-center">
         <q-avatar size="72px">
           <q-icon
             size="48px"
             class="person-avatar"
             name="fas fa-user-astronaut"
-          ></q-icon>
+          />
           <!-- <img src="https://cdn.quasar.dev/img/avatar4.jpg" /> -->
         </q-avatar>
 
@@ -32,6 +26,8 @@
 
         <q-btn
           push
+          dense
+          class="col"
           color="primary"
           label="Logout"
           size="sm"
