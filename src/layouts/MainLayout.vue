@@ -2,7 +2,7 @@
   <q-layout view="lHh lpR lFf" class="n-background">
     <n-header @toggle-admin="toggleLeftDrawer" />
 
-    <q-drawer v-model="leftDrawerOpen" side="left" elevated>
+    <q-drawer class="n-drawer" v-model="leftDrawerOpen" side="left" elevated>
       <q-tabs vertical inline-label>
         <q-route-tab
           no-caps
@@ -16,7 +16,21 @@
           to="/edit-post"
           icon="fas fa-post"
           :content-class="'tab'"
-          >Create Post</q-route-tab
+          >Drafts</q-route-tab
+        >
+        <q-route-tab
+          no-caps
+          to="/edit-post"
+          icon="fas fa-post"
+          :content-class="'tab'"
+          >Published</q-route-tab
+        >
+        <q-route-tab
+          no-caps
+          to="/edit-post"
+          icon="fas fa-post"
+          :content-class="'tab'"
+          >Persons</q-route-tab
         >
       </q-tabs>
     </q-drawer>
@@ -28,19 +42,36 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import NHeader from 'src/components/NHeader.vue';
+import { usePersonStore } from 'src/models/person';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const { isAuthenticated } = usePersonStore();
+const { currentPerson } = storeToRefs(usePersonStore());
 
 const leftDrawerOpen = ref(false);
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
+
+router.beforeEach(async (to, from) => {
+  if (!isAuthenticated) {
+    router.push('/');
+  }
+});
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .n-background {
   background-color: $dark-page;
+}
+
+.n-drawer {
+  background-color: $primary;
 }
 
 .q-layout__section--marginal {

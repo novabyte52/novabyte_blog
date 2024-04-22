@@ -4,11 +4,11 @@ import { Thing } from '../meta';
 
 export const usePersonClient = () => {
   const c = api;
-  c.defaults.baseURL = c.defaults.baseURL + '/persons';
+  // c.defaults.baseURL = c.defaults.baseURL + '/persons';
 
   const getPerson = async (id: Thing) => {
     try {
-      const response = await api.get<Person>(`/${id}`);
+      const response = await api.get<Person>(`/persons/${id}`);
 
       return response.data;
     } catch (e) {
@@ -18,7 +18,7 @@ export const usePersonClient = () => {
 
   const getPersons = async () => {
     try {
-      const response = await api.get<Person[]>('');
+      const response = await api.get<Person[]>('/persons');
       return response.data;
     } catch (e) {
       throw e;
@@ -30,7 +30,7 @@ export const usePersonClient = () => {
     email: string,
     password: string
   ) => {
-    const response = await c.post<Person>('/signup', {
+    const response = await c.post<Person>('/persons/signup', {
       username,
       email,
       password,
@@ -41,7 +41,7 @@ export const usePersonClient = () => {
 
   const postLogin = async (email: string, password: string) => {
     const response = await c.post<{ person: Person; token: string }>(
-      '/login',
+      '/persons/login',
       {
         email,
         password,
@@ -60,7 +60,7 @@ export const usePersonClient = () => {
 
   const getRefresh = async () => {
     try {
-      const response = await api.get<{ token: string }>('/refresh', {
+      const response = await api.get<{ token: string }>('/persons/refresh', {
         withCredentials: true,
       });
       return response.data.token;

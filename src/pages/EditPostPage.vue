@@ -1,9 +1,17 @@
 <template>
-  <q-page class="n-page">
-    <q-card class="editor full-height">
+  <q-page class="n-page edit-post-page">
+    <!-- <q-card class="q-pa-sm"> -->
+    <!-- <q-toolbar> test </q-toolbar> -->
+    <q-card-section class="editor full-height">
       <textarea class="input" :value="input" @input="update"></textarea>
-      <div class="output" v-html="output"></div>
-    </q-card>
+      <div class="output n-markdown" v-html="output"></div>
+    </q-card-section>
+    <q-card-actions>
+      <q-btn class="n-btn" label="Publish" />
+      <q-btn class="n-btn" label="Draft" />
+      <q-btn class="n-btn" label="Delete" />
+    </q-card-actions>
+    <!-- </q-card> -->
   </q-page>
 </template>
 
@@ -28,8 +36,12 @@ body {
   margin: 0;
 }
 
-.editor {
+.edit-post-page {
   min-height: inherit;
+}
+
+.editor {
+  min-height: 500px;
   display: flex;
 }
 
@@ -44,11 +56,11 @@ body {
 }
 
 .input {
-  border: none;
-  border-right: 1px solid #ccc;
+  border: 1px solid black;
+  background-color: white;
+  border-right: none !important;
   resize: none;
   outline: none;
-  background-color: #f6f6f6;
   font-size: 14px;
   font-family: 'Monaco', courier, monospace;
   padding: 20px;

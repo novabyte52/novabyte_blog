@@ -78,9 +78,10 @@ const { currentPerson } = storeToRefs(usePersonStore());
   }
 
   .admin-btn {
+    background-color: $secondary;
     position: absolute;
-    margin-left: 4px;
-    margin-top: 4px;
+    margin-left: 8px;
+    margin-top: 8px;
   }
 }
 </style>

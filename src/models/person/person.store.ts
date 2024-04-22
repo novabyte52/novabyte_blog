@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 // import { Thing } from 'src/models/meta';
+import { jwtDecode } from 'jwt-decode';
+import { NError } from 'src/constants';
 import { Person } from 'src/models/person/person';
 import { Ref, computed, ref, watch } from 'vue';
-import { usePersonClient } from './person.client';
-import { jwtDecode } from 'jwt-decode';
 import { Thing } from '../meta';
-import { NError } from 'src/constants';
+import { usePersonClient } from './person.client';
 
 export const NB_TOKEN_KEY = 'nbToken';
 
@@ -32,8 +32,11 @@ export const usePersonStore = defineStore('person', () => {
   });
 
   const setCurrentPerson = (person: Person) => {
+    console.log('set current person');
     currentPerson.value = person;
+    console.log('currentPerson:', currentPerson.value);
     persons.value.set(person.id.toString(), person);
+    console.log('cached person:', persons.value.get(person.id.toString()));
   };
 
   const getToken = () => {
@@ -42,9 +45,11 @@ export const usePersonStore = defineStore('person', () => {
   };
 
   const setToken = (token: string) => {
+    console.log('setting token');
     try {
       localStorage.setItem(NB_TOKEN_KEY, token);
       currentToken.value = token;
+      console.log('token set:', currentToken.value);
     } catch (e) {
       console.error(e);
     }
@@ -59,7 +64,6 @@ export const usePersonStore = defineStore('person', () => {
     if (currentPerson.value) return true;
 
     if (hasToken()) {
-      console.log('[isAuthenticated]', 'has token');
       noPersonButToken.value = true;
       return true;
     }
@@ -78,13 +82,12 @@ export const usePersonStore = defineStore('person', () => {
    * @param email the email of the user to log in.
    * @param password the password of the user to log in.
    * @returns true if login was successful and token is set, false otherwise.
-   *
-   * TODO: return the logged in person from this endpoint as well as the token so i can add said
-   * user to the map.
    */
   const logIn = async (email: string, password: string) => {
+    console.log('logging in');
     try {
       const result = await pc.postLogin(email, password);
+      console.log('result:', result);
       setToken(result.token);
       setCurrentPerson(result.person);
       return true;
