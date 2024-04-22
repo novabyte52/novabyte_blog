@@ -1,17 +1,17 @@
 <template>
   <q-page class="n-page edit-post-page">
-    <!-- <q-card class="q-pa-sm"> -->
-    <!-- <q-toolbar> test </q-toolbar> -->
+    <q-card-section>
+      <q-input v-model="title" type="text" label="Title" />
+    </q-card-section>
     <q-card-section class="editor full-height">
       <textarea class="input" :value="input" @input="update"></textarea>
       <div class="output n-markdown" v-html="output"></div>
     </q-card-section>
     <q-card-actions>
-      <q-btn class="n-btn" label="Publish" />
+      <q-btn class="n-btn" label="Publish" @click="publish" />
       <q-btn class="n-btn" label="Draft" />
       <q-btn class="n-btn" label="Delete" />
     </q-card-actions>
-    <!-- </q-card> -->
   </q-page>
 </template>
 
@@ -20,15 +20,22 @@
 // https://vuejs.org/examples/#markdown
 import { marked } from 'marked';
 import { debounce } from 'quasar';
+import { usePostClient } from 'src/models/post';
 import { ref, computed } from 'vue';
 
-const input = ref('# hello');
+const { postPost } = usePostClient();
 
+const title = ref('');
+const input = ref('# hello');
 const output = computed(() => marked(input.value));
 
 const update = debounce((e) => {
   input.value = e.target.value;
 }, 100);
+
+const publish = async () => {
+  await postPost(title.value, input.value);
+};
 </script>
 
 <style scoped lang="scss">
