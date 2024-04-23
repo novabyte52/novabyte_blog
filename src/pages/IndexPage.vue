@@ -79,22 +79,14 @@
     <!-- <q-separator class="n-separator" /> -->
     <div class="text-h3">RECENT POSTS</div>
     <div class="row q-px-lg q-gutter-lg">
-      <q-card class="col n-card">
-        <q-card-section class="text-h6"> Post Title </q-card-section>
+      <q-card
+        v-for="post in posts"
+        :key="post.id.toString()"
+        class="col n-card"
+      >
+        <q-card-section class="text-h6"> {{ post.title }} </q-card-section>
         <q-card-section>
-          <p>Here is a preview of the post. I will just continue to</p>
-        </q-card-section>
-      </q-card>
-      <q-card class="col n-card">
-        <q-card-section class="text-h6"> Post Title </q-card-section>
-        <q-card-section>
-          <p>Here is a preview of the post. I will just continue to</p>
-        </q-card-section>
-      </q-card>
-      <q-card class="col n-card">
-        <q-card-section class="text-h6"> Post Title </q-card-section>
-        <q-card-section>
-          <p>Here is a preview of the post. I will just continue to</p>
+          <p>{{ post.id }}</p>
         </q-card-section>
       </q-card>
     </div>
@@ -104,9 +96,24 @@
 <script setup lang="ts">
 import { QIcon } from 'quasar';
 import NBanner from 'src/components/NBanner.vue';
+import { Post, usePostStore } from 'src/models/post';
+import { Ref, onMounted, ref } from 'vue';
 // was playing around with a black-hole effect, but i can't move the mouse, understandably
 // still interested in something fun at some point, though
 // (await api.post('/posts')).data;
+
+const { fetchPosts } = usePostStore();
+
+const posts: Ref<Post[] | undefined> = ref();
+
+onMounted(async () => {
+  console.log('getting posts...', typeof fetchPosts);
+  try {
+    posts.value = await fetchPosts();
+  } catch (e) {
+    throw e;
+  }
+});
 </script>
 
 <style lang="scss">

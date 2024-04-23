@@ -1,8 +1,9 @@
-import { Meta } from '../meta';
-import { Person } from '../person/person';
+import { Thing } from '../meta';
 
 export type Post = {
-  meta: Meta;
+  id: Thing;
+  title: string;
   markdown: string;
-  author: Person;
+  author: Thing;
+  meta: Thing;
 };
