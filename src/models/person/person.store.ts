@@ -32,11 +32,8 @@ export const usePersonStore = defineStore('person', () => {
   });
 
   const setCurrentPerson = (person: Person) => {
-    console.log('set current person');
     currentPerson.value = person;
-    console.log('currentPerson:', currentPerson.value);
     persons.value.set(person.id.toString(), person);
-    console.log('cached person:', persons.value.get(person.id.toString()));
   };
 
   const getToken = () => {
@@ -45,11 +42,9 @@ export const usePersonStore = defineStore('person', () => {
   };
 
   const setToken = (token: string) => {
-    console.log('setting token');
     try {
       localStorage.setItem(NB_TOKEN_KEY, token);
       currentToken.value = token;
-      console.log('token set:', currentToken.value);
     } catch (e) {
       console.error(e);
     }
@@ -141,6 +136,7 @@ export const usePersonStore = defineStore('person', () => {
     logIn,
     logOut,
     refresh,
+    fetchPerson,
     fetchPersons,
   };
 });

@@ -81,12 +81,17 @@
     <div class="row q-px-lg q-gutter-lg">
       <q-card
         v-for="post in posts"
-        :key="post.id.toString()"
+        :key="post.id?.toString()"
         class="col n-card"
       >
         <q-card-section class="text-h6"> {{ post.title }} </q-card-section>
         <q-card-section>
-          <p>{{ post.id }}</p>
+          <!--
+            I want to remove all the headers from the markdown before i generate a preview
+            because headings take up a lot of realestate and it messes with the truncate number.
+            the second issue will still exist, but headers exacerabte it i think.
+           -->
+          <div v-html="marked(truncate(post.markdown, { length: 200 }))"></div>
         </q-card-section>
       </q-card>
     </div>
@@ -98,9 +103,10 @@ import { QIcon } from 'quasar';
 import NBanner from 'src/components/NBanner.vue';
 import { Post, usePostStore } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
-// was playing around with a black-hole effect, but i can't move the mouse, understandably
-// still interested in something fun at some point, though
-// (await api.post('/posts')).data;
+import { truncate } from 'lodash-es';
+// TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over marked
+// the editor just seems better overall.
+import { Marked, marked } from 'marked';
 
 const { fetchPosts } = usePostStore();
 
@@ -108,6 +114,7 @@ const posts: Ref<Post[] | undefined> = ref();
 
 onMounted(async () => {
   console.log('getting posts...', typeof fetchPosts);
+  Marked;
   try {
     posts.value = await fetchPosts();
   } catch (e) {

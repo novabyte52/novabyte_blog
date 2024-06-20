@@ -1,9 +1,18 @@
-import { Thing } from '../meta';
+import { Meta, Thing } from '../meta';
+import { Person } from '../person/person';
 
-export type Post = {
-  id: Thing;
+type PostProps = {
+  id?: Thing;
   title: string;
   markdown: string;
-  author: Thing;
-  meta: Thing;
 };
+
+export type Post = {
+  author?: Thing;
+  meta?: Thing;
+} & PostProps;
+
+export type HydratedPost = {
+  author: Person;
+  meta: Meta;
+} & PostProps;

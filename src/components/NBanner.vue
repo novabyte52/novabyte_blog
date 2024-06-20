@@ -25,6 +25,7 @@ defineProps<{
   border-radius: 0;
   background-color: $dark;
   background-image: url('https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg');
+  // background-image: url('https://nextcloud.techrekt.com/core/preview?fileId=7811733&x=3440&y=1440&a=true&etag=d5069507d509e2191188624bc092bc7a');
   background-position: center;
   background-size: cover;
 

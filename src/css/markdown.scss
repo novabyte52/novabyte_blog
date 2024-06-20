@@ -1,5 +1,14 @@
 .n-markdown {
+  white-space: break-spaces;
+  word-wrap: break-word;
+  padding: 16px;
+
   h1 {
-    margin: 0;
+    width: 50%;
+    margin: auto;
+  }
+
+  ul {
+    list-style-type: unset;
   }
 }

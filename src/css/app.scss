@@ -14,16 +14,17 @@ body {
     background-color: $background;
     border-left: 3px solid $accent;
     border-right: 3px solid $accent;
+    padding: 10px;
   }
 
   .n-card {
     // color: white;
     background-color: $primary;
-    border: 3px solid $primary;
-    transition: 0.5s;
+    // border: 3px solid $primary;
+    // transition: 0.5s;
     &:hover {
-      transition: 0.5s;
-      border: 3px solid $accent;
+      // transition: 0.5s;
+      // border: 3px solid $accent;
     }
   }
 
@@ -76,4 +77,5 @@ body {
   }
 }
 
+@import 'display.scss';
 @import 'markdown.scss';

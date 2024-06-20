@@ -16,14 +16,34 @@
 
 /// quasar vars ///
 $primary: #22405a;
+.color-primary {
+  color: $primary !important;
+}
+.bg-color-primary {
+  background-color: $primary !important;
+}
+
 $secondary: #fa752f;
+.color-secondary {
+  color: $secondary !important;
+}
+.bg-color-secondary {
+  background-color: $secondary !important;
+}
+
 $accent: #bc7de0;
+.color-accent {
+  color: $accent !important;
+}
+.bg-color-accent {
+  background-color: $accent !important;
+}
 
 $dark: #2e2139;
 $dark-page: #180a24; // #1f191e;
 
-$positive: #21ba45;
-$negative: #c10015;
+$positive: #2dc25e;
+$negative: #c25858;
 $info: #32a7ba;
 $warning: #f5cc5c;
 /// quasar vars ///
