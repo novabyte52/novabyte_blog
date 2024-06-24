@@ -1,5 +1,6 @@
 <template>
   <q-page class="n-page">
+    <div class="text-h1 text-center n-h1">Create Posts</div>
     <edit-post :model-value="newPost" @update:model-value="updatePost">
       <template v-slot:actions>
         <q-btn
@@ -28,17 +29,24 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { EditPost, HydratedPost, Post, usePostStore } from 'src/models/post';
+import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { Ref, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
+import { storeToRefs } from 'pinia';
+import { Thing } from 'src/models/meta';
+import { usePersonStore } from 'src/models/person';
 
 const q = useQuasar();
-const { publishPost, draftPost } = usePostStore();
+const { currentPerson } = storeToRefs(usePersonStore());
+const { draftPost } = usePostStore();
 
-const newPost: Ref<Post | undefined> = ref();
+const newPost: Ref<PostVersion> = ref({
+  author: currentPerson.value?.id as Thing,
+  published: false,
+} as PostVersion);
 
-const updatePost = (newVal: Post | HydratedPost) => {
-  newPost.value = newVal as Post;
+const updatePost = (newVal: PostVersion) => {
+  newPost.value = newVal as PostVersion;
 };
 
 const onDraftPost = () => {
@@ -62,7 +70,8 @@ const onPublishPost = () => {
     },
   }).onOk(async () => {
     if (!newPost.value) throw new Error('No post to create!');
-    await publishPost(newPost.value);
+    newPost.value.published = true;
+    await draftPost(newPost.value);
   });
 };
 

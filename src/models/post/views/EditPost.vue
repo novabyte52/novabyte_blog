@@ -35,14 +35,14 @@
       />
       <render-markdown
         class="col output"
-        :markdown="(marked(modelValue ? modelValue.markdown : '') as string)"
+        :markdown="(marked(modelValue?.markdown ? modelValue.markdown : '') as string)"
       />
     </q-card-section>
     <q-card-section>
       <div class="text-h6">Author</div>
       <person-profile-inline
         :person="currentPerson"
-        :person-id="((modelValue as Post)?.author)"
+        :person-id="((modelValue as PostVersion)?.author)"
       />
     </q-card-section>
     <q-card-actions>
@@ -55,17 +55,16 @@
 import { marked } from 'marked';
 import { storeToRefs } from 'pinia';
 import { QInput, debounce } from 'quasar';
-import { Thing } from 'src/models/meta';
 import { usePersonStore } from 'src/models/person';
 import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
-import { HydratedPost, Post, RenderMarkdown } from 'src/models/post';
-import { Ref, onMounted, ref, watch } from 'vue';
+import { PostVersion, RenderMarkdown } from 'src/models/post';
+import { Ref, ref, watch } from 'vue';
 
 const emit = defineEmits<{
-  (e: 'update:model-value', post: Post | HydratedPost): string;
+  (e: 'update:model-value', post: PostVersion): string;
 }>();
 
-const props = defineProps<{ modelValue?: Post | HydratedPost }>();
+const props = defineProps<{ modelValue?: PostVersion }>();
 
 /**
  * TODO:
@@ -77,27 +76,16 @@ const { currentPerson } = storeToRefs(usePersonStore());
 
 const titleInput = ref<QInput | undefined>();
 
-const proxyPost: Ref<Post | HydratedPost | undefined> = ref();
-onMounted(() => {
-  proxyPost.value =
-    props.modelValue ??
-    ({
-      author: currentPerson.value?.id as Thing,
-    } as Post); // Post- as we know a new post is being created
+const proxyPost: Ref<PostVersion | undefined> = ref();
 
-  // MARK: below is a pattern i may want to abstract in the future
-  // it simply watches a ref until it gets a value then cancels itself
-  console.log('author:', proxyPost.value.author);
-  if (!proxyPost.value.author) {
-    const cancel = watch(currentPerson, (val) => {
-      if (!proxyPost.value) return;
-      if (val) {
-        proxyPost.value.author = val.id;
-        cancel();
-      }
-    });
-  }
-});
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (!newVal) return;
+    proxyPost.value = props.modelValue;
+  },
+  { immediate: true }
+);
 
 const update = debounce((value: string | number | null) => {
   if (!proxyPost.value) return;

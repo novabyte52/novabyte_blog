@@ -63,6 +63,25 @@ body {
     color: $dark;
   }
 
+  .n-h1 {
+    margin: 24px 0 24px 0;
+    padding: 8px;
+
+    color: $primary;
+    // background: rgb(230, 221, 190);
+    // background: linear-gradient(
+    //   45deg,
+    //   rgba(230, 221, 190, 1) 0%,
+    //   $secondary 25%,
+    //   $secondary 75%,
+    //   rgba(230, 221, 190, 1) 100%
+    // );
+
+    // border: 8px double $primary;
+    // border-top: 3px dashed $primary;
+    border-bottom: 8px groove $accent;
+  }
+
   .text-h2 {
     color: $secondary;
     text-align: center;

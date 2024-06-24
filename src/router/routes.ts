@@ -5,6 +5,8 @@ export enum RouteNames {
   CREATE_POST = 'create-post',
   READ_POST = 'read-post',
   EDIT_POST = 'edit-post',
+  EDIT_DRAFTS = 'edit-drafts',
+  EDIT_PUBLISHED = 'edit-published',
 }
 
 const routes: RouteRecordRaw[] = [
@@ -31,14 +33,19 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/models/post/pages/CreatePostPage.vue'),
       },
       {
+        name: RouteNames.EDIT_DRAFTS,
+        path: 'posts/drafts',
+        component: () => import('src/models/post/pages/EditDraftsPage.vue'),
+      },
+      {
+        name: RouteNames.EDIT_PUBLISHED,
+        path: 'posts/published',
+        component: () => import('src/models/post/pages/EditPublishedPage.vue'),
+      },
+      {
         name: RouteNames.READ_POST,
         path: 'posts/:postId',
         component: () => import('src/models/post/pages/ReadPostPage.vue'),
-      },
-      {
-        name: RouteNames.EDIT_POST,
-        path: 'posts/:postId/edit',
-        component: () => import('src/models/post/pages/EditPostPage.vue'),
       },
       {
         path: 'programming',

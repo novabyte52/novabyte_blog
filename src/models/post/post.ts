@@ -12,7 +12,17 @@ export type Post = {
   meta?: Thing;
 } & PostProps;
 
-export type HydratedPost = {
-  author: Person;
-  meta: Meta;
-} & PostProps;
+export type PostVersion = {
+  id: Thing;
+  draftId: Thing;
+  title: string;
+  markdown: string;
+  author: Thing;
+  published: boolean;
+  at: Date;
+};
+
+// export type HydratedPost = {
+//   author: Person;
+//   meta: Meta;
+// } & PostProps;

@@ -1,8 +1,9 @@
 import { storeToRefs } from 'pinia';
 import { api } from 'src/boot/axios';
 import { usePersonStore } from '../person';
-import { Post } from './post';
+import { Post, PostVersion } from './post';
 import { AxiosResponse } from 'axios';
+import { Thing } from '../meta';
 
 export const usePostClient = () => {
   const c = api;
@@ -30,11 +31,14 @@ export const usePostClient = () => {
     }
   };
 
-  const draftPost = async (post: Post) => {
+  const draftPost = async (post: PostVersion) => {
     try {
-      const response = await c.post<Post>('/posts/draft', {
+      console.log('client: draft post -- ', post);
+      const response = await c.post<Post>('/posts/drafts', {
         title: post.title,
         markdown: post.markdown,
+        id: post.id,
+        published: post.published,
       });
 
       if ((response as AxiosResponse).status === 204) {
@@ -47,18 +51,33 @@ export const usePostClient = () => {
     }
   };
 
-  const publishPost = async (post: Post) => {
+  const publishDraft = async (draftId: Thing) => {
     try {
-      const response = await c.post<Post>('/posts/publish', {
-        title: post.title,
-        markdown: post.markdown,
-      });
+      const response = await c.post<Post>(`/posts/drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
       }
 
       return false;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const fetchDrafts = async () => {
+    try {
+      const response = await c.get<PostVersion[]>('/posts/drafts');
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const fetchPublished = async () => {
+    try {
+      const response = await c.get<PostVersion[]>('/posts/published');
+      return response.data;
     } catch (e) {
       throw e;
     }
@@ -68,6 +87,8 @@ export const usePostClient = () => {
     postPost,
     getPosts,
     draftPost,
-    publishPost,
+    publishDraft,
+    fetchDrafts,
+    fetchPublished,
   };
 };

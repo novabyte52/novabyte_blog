@@ -108,15 +108,14 @@ import { truncate } from 'lodash-es';
 // the editor just seems better overall.
 import { Marked, marked } from 'marked';
 
-const { fetchPosts } = usePostStore();
+const { getPublished } = usePostStore();
 
 const posts: Ref<Post[] | undefined> = ref();
 
 onMounted(async () => {
-  console.log('getting posts...', typeof fetchPosts);
   Marked;
   try {
-    posts.value = await fetchPosts();
+    posts.value = await getPublished();
   } catch (e) {
     throw e;
   }
