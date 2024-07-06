@@ -7,6 +7,7 @@ export enum RouteNames {
   EDIT_POST = 'edit-post',
   EDIT_DRAFTS = 'edit-drafts',
   EDIT_PUBLISHED = 'edit-published',
+  POST_HISTORY = 'post-history',
 }
 
 const routes: RouteRecordRaw[] = [
@@ -31,16 +32,25 @@ const routes: RouteRecordRaw[] = [
         name: RouteNames.CREATE_POST,
         path: 'posts',
         component: () => import('src/models/post/pages/CreatePostPage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_DRAFTS,
         path: 'posts/drafts',
         component: () => import('src/models/post/pages/EditDraftsPage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_PUBLISHED,
         path: 'posts/published',
         component: () => import('src/models/post/pages/EditPublishedPage.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.POST_HISTORY,
+        path: 'posts/history',
+        component: () => import('src/models/post/pages/PostHistoryPage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         name: RouteNames.READ_POST,

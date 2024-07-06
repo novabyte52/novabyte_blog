@@ -1,17 +1,21 @@
 <template>
-  <q-card class="n-card n-inline bg-color-secondary">
-    <q-card-section v-if="verifiedPerson">
-      {{ verifiedPerson.username }}
-    </q-card-section>
-  </q-card>
+  <q-badge
+    v-if="verifiedPerson"
+    class="n-card n-inline bg-color-secondary color-primary"
+  >
+    <q-icon name="fas fa-user-astronaut" class="q-pr-xs" />
+    {{ verifiedPerson.username }}
+  </q-badge>
+  <q-skeleton v-else type="QBadge" />
 </template>
 
 <script setup lang="ts">
-import { Thing } from 'src/models/meta';
+import { thingToString } from 'src/models/meta';
 import { Person, usePersonStore } from 'src/models/person';
+import { RecordId } from 'surrealdb.js';
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ person?: Person; personId?: Thing }>();
+const props = defineProps<{ person?: Person; personId?: RecordId }>();
 
 const personStore = usePersonStore();
 
@@ -26,7 +30,8 @@ watch(
     }
 
     if (newId) {
-      verifiedPerson.value = await personStore.fetchPerson(newId as Thing);
+      console.log('person profile inline watch:', newId);
+      verifiedPerson.value = await personStore.fetchPerson(newId as RecordId);
     }
   },
   {

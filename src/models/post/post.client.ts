@@ -3,7 +3,7 @@ import { api } from 'src/boot/axios';
 import { usePersonStore } from '../person';
 import { Post, PostVersion } from './post';
 import { AxiosResponse } from 'axios';
-import { Thing } from '../meta';
+import { RecordId } from 'surrealdb.js';
 
 export const usePostClient = () => {
   const c = api;
@@ -51,7 +51,7 @@ export const usePostClient = () => {
     }
   };
 
-  const publishDraft = async (draftId: Thing) => {
+  const publishDraft = async (draftId: RecordId) => {
     try {
       const response = await c.post<Post>(`/posts/drafts/${draftId}/publish`);
 
@@ -74,6 +74,16 @@ export const usePostClient = () => {
     }
   };
 
+  const fetchPostDrafts = async (postId: string) => {
+    try {
+      console.log('=== fetch post drafts', postId);
+      const response = await c.get<PostVersion[]>(`/posts/${postId}/drafts`);
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const fetchPublished = async () => {
     try {
       const response = await c.get<PostVersion[]>('/posts/published');
@@ -89,6 +99,7 @@ export const usePostClient = () => {
     draftPost,
     publishDraft,
     fetchDrafts,
+    fetchPostDrafts,
     fetchPublished,
   };
 };

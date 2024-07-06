@@ -1,28 +1,18 @@
-import { Meta, Thing } from '../meta';
-import { Person } from '../person/person';
-
-type PostProps = {
-  id?: Thing;
-  title: string;
-  markdown: string;
-};
+import { RecordId } from 'surrealdb.js';
+import { Meta } from '../meta';
 
 export type Post = {
-  author?: Thing;
-  meta?: Thing;
-} & PostProps;
+  id: RecordId;
+  meta?: RecordId | Meta;
+  working_title: string;
+};
 
 export type PostVersion = {
-  id: Thing;
-  draftId: Thing;
+  id: RecordId;
+  draftId: RecordId;
   title: string;
   markdown: string;
-  author: Thing;
+  author: RecordId;
   published: boolean;
   at: Date;
 };
-
-// export type HydratedPost = {
-//   author: Person;
-//   meta: Meta;
-// } & PostProps;

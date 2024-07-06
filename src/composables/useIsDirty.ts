@@ -1,24 +1,28 @@
 import { clone, isEqual } from 'lodash-es';
-import { Ref, computed, ref, watch } from 'vue';
+import { Ref, computed, watch } from 'vue';
 
-export default function useIsDirty(obj: Ref<any>) {
+export default function useIsDirty(obj: Ref<unknown>) {
   console.log('Using isDirty');
-  const base = clone(obj);
-  console.log('obj', obj);
-  console.log('base', base);
+  // TODO: need to hold a reference to the objbeing watched in here so i can update it if needed
+  let ref: Ref<unknown>;
+  let base: unknown;
 
-  const isDirty = computed(() => {
-    console.log('checking if dirty');
-    return isEqual(obj.value, base.value);
-  });
-
-  const foo = ref(false);
-  watch(obj, (newVal) => {
-    console.log('obj change picked up in isDirty');
-    if (newVal) {
-      foo.value = isEqual(obj, base);
+  let once = true;
+  const cancel = watch(obj, (init) => {
+    if (once) {
+      base = clone(init);
+      ref = obj;
+      once = false;
+      cancel();
     }
   });
 
-  return { isDirty, foo };
+  const changeObj = (obj: Ref<unknown>) => {
+    ref = obj;
+    base = clone(obj.value);
+  };
+
+  const isDirty = computed(() => !isEqual(ref.value, base));
+
+  return { changeObj, isDirty };
 }

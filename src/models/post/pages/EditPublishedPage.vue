@@ -17,19 +17,8 @@
               clickable
               :key="draft.id?.toString()"
               @click="editDraft(draft)"
-              ><q-item-section>
-                <div class="row">
-                  {{ draft.title }}
-                  <q-space />
-                  <q-btn
-                    dense
-                    round
-                    color="negative"
-                    size="sm"
-                    icon="fas fa-trash"
-                    @click.stop
-                  ></q-btn></div></q-item-section
-            ></q-item>
+              ><q-item-section> {{ draft.title }}</q-item-section></q-item
+            >
           </q-list>
         </q-card>
       </template>
@@ -44,10 +33,10 @@
             ></q-btn>
             <q-space />
             <q-btn
-              label="draft"
-              color="warning"
-              :disable="!draftedPost?.title"
-              @click="onDraftPost"
+              label="un-publish"
+              color="negative"
+              :disable="!draftedPost?.title || !draftedPost.markdown"
+              @click="onUnpublishPost"
             ></q-btn>
           </template>
         </edit-post>
@@ -64,7 +53,7 @@ import { Ref, onMounted, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
 
 const q = useQuasar();
-const { draftPost, getPublished } = usePostStore();
+const { getPublished } = usePostStore();
 
 const ratio = ref(250);
 const draftedPost: Ref<PostVersion | undefined> = ref();
@@ -82,24 +71,15 @@ const updatePost = (newVal: PostVersion) => {
   draftedPost.value = newVal as PostVersion;
 };
 
-const onDraftPost = async () => {
-  q.dialog({
-    component: ConfirmationDialog,
-    componentProps: {
-      message: 'Save post as draft?',
-    },
-  }).onOk(async () => {
-    if (!draftedPost.value) throw new Error('No post to create draft for!');
-    await draftPost(draftedPost.value);
-  });
-};
-
+/**
+ * if changes have been made create a new draft and publish it
+ */
 const onPublishPost = () => {
   console.log('publishing post');
   q.dialog({
     component: ConfirmationDialog,
     componentProps: {
-      message: 'Do you wish to publish the post? You just started it.',
+      message: 'Do you wish to publish this new draft?',
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
@@ -107,16 +87,19 @@ const onPublishPost = () => {
   });
 };
 
-const onDiscardPost = () => {
+/**
+ * un-publish this draft
+ */
+const onUnpublishPost = () => {
+  console.log('publishing post');
   q.dialog({
     component: ConfirmationDialog,
     componentProps: {
-      message: 'Do you wish to discard what youve written?',
+      message: 'Do you wish to un-publish this draft?',
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
-    draftedPost.value.title = '';
-    draftedPost.value.markdown = '';
+    // await publishPost(draftedPost.value);
   });
 };
 </script>

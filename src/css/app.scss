@@ -94,6 +94,10 @@ body {
     margin: 16px 0px 32px 0px;
     text-decoration: underline;
   }
+
+  .q-skeleton {
+    background-color: $accent;
+  }
 }
 
 @import 'display.scss';

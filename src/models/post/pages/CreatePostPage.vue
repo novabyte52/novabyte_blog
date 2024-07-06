@@ -7,20 +7,27 @@
           label="draft"
           color="positive"
           :disable="!newPost?.title"
-          @click="onDraftPost"
+          @click="onDraftPost('Would you like to make this a draft?', draftOk)"
         ></q-btn>
-        <q-space />
         <q-btn
           label="publish"
           color="warning"
           :disable="!newPost?.title || !newPost.markdown"
-          @click="onPublishPost"
+          @click="
+            onPublishPost(
+              'Would you like to publish this draft? You just began it.',
+              publishOk
+            )
+          "
         ></q-btn>
+        <q-space />
         <q-btn
           label="discard"
           color="negative"
           :disable="!newPost?.title"
-          @click="onDiscardPost"
+          @click="
+            onDiscardPost('Would you liek to discard this draft?', discardOk)
+          "
         ></q-btn>
       </template>
     </edit-post>
@@ -28,20 +35,19 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
 import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { Ref, ref } from 'vue';
-import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
 import { storeToRefs } from 'pinia';
-import { Thing } from 'src/models/meta';
+import { RecordId } from 'src/models/meta';
 import { usePersonStore } from 'src/models/person';
+import { usePosts } from 'src/models/post/';
 
-const q = useQuasar();
 const { currentPerson } = storeToRefs(usePersonStore());
 const { draftPost } = usePostStore();
+const { onDraftPost, onPublishPost, onDiscardPost } = usePosts();
 
 const newPost: Ref<PostVersion> = ref({
-  author: currentPerson.value?.id as Thing,
+  author: currentPerson.value?.id as RecordId,
   published: false,
 } as PostVersion);
 
@@ -49,43 +55,21 @@ const updatePost = (newVal: PostVersion) => {
   newPost.value = newVal as PostVersion;
 };
 
-const onDraftPost = () => {
-  q.dialog({
-    component: ConfirmationDialog,
-    componentProps: {
-      message: 'Save post as draft?',
-    },
-  }).onOk(async () => {
-    if (!newPost.value) throw new Error('No post to create draft for!');
-    await draftPost(newPost.value);
-  });
+const draftOk = async () => {
+  if (!newPost.value) throw new Error('No post to create draft for!');
+  await draftPost(newPost.value);
 };
 
-const onPublishPost = () => {
-  console.log('publishing post');
-  q.dialog({
-    component: ConfirmationDialog,
-    componentProps: {
-      message: 'Do you wish to publish the post? You just started it.',
-    },
-  }).onOk(async () => {
-    if (!newPost.value) throw new Error('No post to create!');
-    newPost.value.published = true;
-    await draftPost(newPost.value);
-  });
+const publishOk = async () => {
+  if (!newPost.value) throw new Error('No post to create!');
+  newPost.value.published = true;
+  await draftPost(newPost.value);
 };
 
-const onDiscardPost = () => {
-  q.dialog({
-    component: ConfirmationDialog,
-    componentProps: {
-      message: 'Do you wish to discard what youve written?',
-    },
-  }).onOk(async () => {
-    if (!newPost.value) throw new Error('No post to create!');
-    newPost.value.title = '';
-    newPost.value.markdown = '';
-  });
+const discardOk = () => {
+  if (!newPost.value) throw new Error('No post to create!');
+  newPost.value.title = '';
+  newPost.value.markdown = '';
 };
 </script>
 

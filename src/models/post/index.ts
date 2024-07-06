@@ -4,3 +4,4 @@ export * from './post.client';
 export * from './post.store';
 export * from './views';
 export * from './components';
+export * from './composables';

@@ -24,8 +24,13 @@ const personStore = usePersonStore();
 
 api.interceptors.request.use((config) => {
   const token = personStore.getToken();
-  if (token) config.headers['Authorization'] = token;
+  if (!token) {
+    console.log('no token but a request was made!');
+    personStore.logOut();
+    return config;
+  }
 
+  config.headers['Authorization'] = token;
   return config;
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog class="confirmation-dialog" ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin">
       <q-card-section>
         {{ props.message }}
@@ -44,4 +44,8 @@ function onOKClick() {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.confirmation-dialog {
+  color: $dark-page;
+}
+</style>

@@ -3,12 +3,12 @@
     <n-header @toggle-admin="toggleLeftDrawer" />
 
     <q-drawer class="n-drawer" v-model="leftDrawerOpen" side="left" elevated>
-      <q-tabs vertical inline-label>
+      <q-tabs vertical inline-label indicator-color="accent">
         <q-route-tab
           no-caps
           :to="{ name: RouteNames.CREATE_POST }"
           icon="fas fa-pen-nib"
-          :content-class="'tab'"
+          :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"
           >Create Post</q-route-tab
         >
@@ -16,7 +16,7 @@
           no-caps
           :to="{ name: RouteNames.EDIT_DRAFTS }"
           icon="fas fa-book-bookmark"
-          :content-class="'tab'"
+          :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"
           >Drafts</q-route-tab
         >
@@ -24,15 +24,15 @@
           no-caps
           :to="{ name: RouteNames.EDIT_PUBLISHED }"
           icon="fas fa-newspaper"
-          :content-class="'tab'"
+          :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"
           >Published</q-route-tab
         >
         <q-route-tab
           no-caps
-          to="/edit-post"
+          :to="{ name: RouteNames.POST_HISTORY }"
           icon="fas fa-scroll"
-          :content-class="'tab'"
+          :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"
           >Post History</q-route-tab
         >
@@ -40,7 +40,7 @@
           no-caps
           to="/edit-post"
           icon="fas fa-user-astronaut"
-          :content-class="'tab'"
+          :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"
           >Persons</q-route-tab
         >
@@ -69,12 +69,8 @@ const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 
-// TODO: need to investigate/rework this route guard to account for
-// routes that don't need to be authenticated, like most (if not all)
-// of my articles. i may eventually work to paid articles and will need
-// to deal with that here, too.
-router.beforeEach(async (to, from) => {
-  if (!isAuthenticated) {
+router.beforeEach(async (to) => {
+  if (to.meta.requiresAuth && !isAuthenticated) {
     router.push({ name: RouteNames.HOME });
   }
 });
@@ -87,6 +83,14 @@ router.beforeEach(async (to, from) => {
 
 .n-drawer {
   background-color: $primary;
+
+  .admin-tab {
+    color: $secondary;
+    .q-icon {
+      padding: 0px 8px !important;
+    }
+    min-height: 50px;
+  }
 }
 
 .q-layout__section--marginal {

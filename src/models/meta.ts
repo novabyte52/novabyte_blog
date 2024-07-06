@@ -1,32 +1,18 @@
-import { ULID } from 'ulidx';
-
+import { RecordId } from 'surrealdb.js';
 export enum Table {
   PERSON = 'person',
   POST = 'post',
 }
 
-export class Thing {
-  tb!: string;
-  id!: ULID;
-
-  constructor(thingString: string) {
-    const [tb, id] = thingString.split(':');
-    this.tb = tb;
-    this.id = id;
-  }
-
-  toString = () => {
-    return `${this.tb}:${this.id}`;
-  };
-}
-
 export type Meta<T = undefined> = {
-  id: Thing;
-  createdBy?: ULID;
-  createdOn?: Date;
-  modifiedBy?: ULID;
+  id: RecordId;
+  createdBy?: string;
+  created_on?: Date;
+  modifiedBy?: string;
   modifiedOn?: Date;
-  deletedBy?: ULID;
+  deletedBy?: string;
   deletedOn?: Date;
   data?: T;
 };
+
+export const thingToString = (id: RecordId) => `${id.tb}:${id.id.String}`;

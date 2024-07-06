@@ -40,7 +40,16 @@ $accent: #bc7de0;
 }
 
 $dark: #2e2139;
+.color-dark {
+  color: $dark !important;
+}
+.bg-color-dark {
+  background-color: $dark !important;
+}
 $dark-page: #180a24; // #1f191e;
+.color-dark-page {
+  color: $dark !important;
+}
 
 $positive: #2dc25e;
 $negative: #c25858;
@@ -51,4 +60,10 @@ $warning: #f5cc5c;
 /// custom vars ///
 // $text-color: white;
 $text-color: #e6ddbe;
+.color-text {
+  color: $text-color !important;
+}
+.bg-color-text {
+  background-color: $text-color !important;
+}
 $background: #e6ddbe;

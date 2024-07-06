@@ -16,19 +16,8 @@
               clickable
               :key="draft.id?.toString()"
               @click="editDraft(draft)"
-              ><q-item-section>
-                <div class="row">
-                  {{ draft.title }}
-                  <q-space />
-                  <q-btn
-                    dense
-                    round
-                    color="negative"
-                    size="sm"
-                    icon="fas fa-trash"
-                    @click.stop
-                  ></q-btn></div></q-item-section
-            ></q-item>
+              ><q-item-section>{{ draft.title }}</q-item-section></q-item
+            >
           </q-list>
         </q-card>
       </template>
@@ -41,13 +30,13 @@
               :disable="!draftedPost?.title || !draftedPost.markdown"
               @click="onPublishPost"
             ></q-btn>
-            <q-space />
             <q-btn
               label="draft"
               color="warning"
               :disable="!draftedPost?.title"
               @click="onDraftPost"
             ></q-btn>
+            <q-space />
           </template>
         </edit-post>
       </template>
@@ -59,33 +48,46 @@
 import { useQuasar } from 'quasar';
 import { PostVersion, usePostStore } from 'src/models/post';
 import { EditPost } from 'src/models/post';
-import { Ref, computed, onMounted, ref } from 'vue';
+import { Ref, onMounted, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
-import { clone, isEqual } from 'lodash-es';
+import { useIsDirty } from 'src/composables';
 
 const q = useQuasar();
 const ratio = ref(250);
-let original: PostVersion;
 const draftedPost: Ref<PostVersion | undefined> = ref();
 const drafts: Ref<PostVersion[] | undefined> = ref();
 
 const { draftPost, getDrafts } = usePostStore();
 
-const isDirty = computed(() => !isEqual(original, draftedPost.value));
+const { changeObj, isDirty } = useIsDirty(draftedPost);
 
+/**
+ * load the current draft of all posts
+ */
 onMounted(async () => {
   drafts.value = await getDrafts();
 });
 
+/**
+ * change which draft is being edited
+ * @param draft the post version to load
+ */
 const editDraft = (draft: PostVersion) => {
-  original = clone(draft);
   draftedPost.value = draft;
+  changeObj(draftedPost);
 };
 
+/**
+ * update our model with the updated value
+ * @param newVal the updated post version
+ */
 const updatePost = (newVal: PostVersion) => {
   draftedPost.value = newVal as PostVersion;
 };
 
+/**
+ * saves the current content of `draftedPost` as a new draft
+ */
 const onDraftPost = async () => {
   q.dialog({
     component: ConfirmationDialog,
@@ -98,32 +100,28 @@ const onDraftPost = async () => {
   });
 };
 
+/**
+ * publishes the current draft if not changes have been made,
+ * otherwise creates a new draft and publishes that.
+ */
 const onPublishPost = () => {
-  console.log('publishing post');
   q.dialog({
     component: ConfirmationDialog,
     componentProps: {
-      message: 'Do you wish to publish the post? You just started it.',
+      message: 'Do you wish to publish this draft?',
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
+    if (isDirty.value) {
+      draftedPost.value.published = true;
+      await draftPost(draftedPost.value);
+      return;
+    }
 
-    // await draftPost(draftedPost.value, isDirty.value);
+    // TODO: publish the current draft
+    // await publish_draft(draft_id);
   });
 };
-
-// const onDiscardPost = () => {
-//   q.dialog({
-//     component: ConfirmationDialog,
-//     componentProps: {
-//       message: 'Do you wish to discard what youve written?',
-//     },
-//   }).onOk(async () => {
-//     if (!draftedPost.value) throw new Error('No post to create!');
-//     draftedPost.value.title = '';
-//     draftedPost.value.markdown = '';
-//   });
-// };
 </script>
 
 <style lang="scss">
