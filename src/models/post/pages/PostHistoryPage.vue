@@ -100,6 +100,7 @@
                   color="negative"
                   class="q-mr-xs"
                   style="position: relative; top: -2px"
+                  @click="togglePublished(draft.draftId, draft.published)"
                 />
                 <q-btn
                   v-else
@@ -109,6 +110,7 @@
                   color="positive"
                   class="q-mr-xs"
                   style="position: relative; top: -2px"
+                  @click="togglePublished(draft.draftId, draft.published)"
                 />
                 <span>
                   {{ draft.published }}
@@ -189,8 +191,8 @@ import PersonProfileInline from 'src/models/person/components/PersonProfileInlin
 import { RecordId } from 'surrealdb.js';
 import { QSelect } from 'quasar';
 
-const { getPosts, getPostDrafts } = usePostStore();
-QSelect;
+const { getPosts, getPostDrafts, publishDraft, unpublishDraft } =
+  usePostStore();
 const recordSelectAmount = ref(5);
 const posts: Ref<Post[]> = ref([]);
 const drafts: Record<string, PostVersion[]> = reactive({});
@@ -222,6 +224,11 @@ const collapseAll = () => {
   Object.keys(viewState.value.expansion).forEach(
     (k) => (viewState.value.expansion[k] = false)
   );
+};
+
+const togglePublished = async (draftId: RecordId, isPublished: boolean) => {
+  console.log('toggling published for draft:');
+  isPublished ? await unpublishDraft(draftId) : await publishDraft(draftId);
 };
 </script>
 

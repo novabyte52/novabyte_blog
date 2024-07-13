@@ -16,7 +16,9 @@
               clickable
               :key="draft.id?.toString()"
               @click="editDraft(draft)"
-              ><q-item-section>{{ draft.title }}</q-item-section></q-item
+              ><q-item-section
+                >{{ draft.title }}|{{ draft.id }}</q-item-section
+              ></q-item
             >
           </q-list>
         </q-card>

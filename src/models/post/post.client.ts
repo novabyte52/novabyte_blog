@@ -65,6 +65,20 @@ export const usePostClient = () => {
     }
   };
 
+  const unpublishDraft = async (draftId: RecordId) => {
+    try {
+      const response = await c.delete<Post>(`/posts/drafts/${draftId}/publish`);
+
+      if ((response as AxiosResponse).status === 204) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const fetchDrafts = async () => {
     try {
       const response = await c.get<PostVersion[]>('/posts/drafts');
@@ -98,6 +112,7 @@ export const usePostClient = () => {
     getPosts,
     draftPost,
     publishDraft,
+    unpublishDraft,
     fetchDrafts,
     fetchPostDrafts,
     fetchPublished,

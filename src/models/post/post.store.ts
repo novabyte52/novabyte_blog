@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
-// import { Ref, ref } from 'vue';
 import { Post, PostVersion } from './post';
 import { usePostClient } from './post.client';
 import { RecordId } from 'surrealdb.js';
-
-// TODO: need to work on the caching of this store...
-// const posts: Ref<Map<string, Post>> = ref(new Map());
+import { Ref, ref } from 'vue';
 
 export const usePostStore = defineStore('post', () => {
   const pc = usePostClient();
+
+  // TODO: need to work on the caching of this store...
+  // const posts: Ref<Map<string, Post>> = ref(new Map());
 
   // const createPost = async (post: Post) => {
   //   await pc.postPost(post.title, post.markdown);
@@ -42,6 +42,18 @@ export const usePostStore = defineStore('post', () => {
     return await pc.fetchPublished();
   };
 
+  // POST /posts/drafts/:draft_id/publish
+  const publishDraft = async (draftId: RecordId) => {
+    console.log('publish draft');
+    return await pc.publishDraft(draftId);
+  };
+
+  // DELETE /posts/drafts/:draft_id/publish
+  const unpublishDraft = async (draftId: RecordId) => {
+    console.log('publish draft');
+    return await pc.unpublishDraft(draftId);
+  };
+
   return {
     // createPost,
     getPosts,
@@ -49,5 +61,7 @@ export const usePostStore = defineStore('post', () => {
     getDrafts,
     getPostDrafts,
     getPublished,
+    publishDraft,
+    unpublishDraft,
   };
 });
