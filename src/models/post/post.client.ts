@@ -3,7 +3,7 @@ import { api } from 'src/boot/axios';
 import { usePersonStore } from '../person';
 import { Post, PostVersion } from './post';
 import { AxiosResponse } from 'axios';
-import { RecordId } from 'surrealdb.js';
+import { Thing } from '../meta';
 
 export const usePostClient = () => {
   const c = api;
@@ -51,7 +51,7 @@ export const usePostClient = () => {
     }
   };
 
-  const publishDraft = async (draftId: RecordId) => {
+  const publishDraft = async (draftId: Thing) => {
     try {
       const response = await c.post<Post>(`/posts/drafts/${draftId}/publish`);
 
@@ -65,7 +65,7 @@ export const usePostClient = () => {
     }
   };
 
-  const unpublishDraft = async (draftId: RecordId) => {
+  const unpublishDraft = async (draftId: Thing) => {
     try {
       const response = await c.delete<Post>(`/posts/drafts/${draftId}/publish`);
 

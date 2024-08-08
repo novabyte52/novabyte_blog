@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
-// import { RecordId } from 'src/models/meta';
+// import { Thing } from 'src/models/meta';
 import { jwtDecode } from 'jwt-decode';
 import { NError } from 'src/constants';
 import { Person } from 'src/models/person/person';
 import { Ref, computed, ref, watch } from 'vue';
 import { usePersonClient } from './person.client';
-import { RecordId } from 'surrealdb.js';
 
 export const NB_TOKEN_KEY = 'nbToken';
 
@@ -27,8 +26,7 @@ export const usePersonStore = defineStore('person', () => {
     const claims = jwtDecode(token);
     if (!claims.sub) throw new Error('Expected jwt subject.');
 
-    const [tb, id] = claims.sub.split(':');
-    currentPerson.value = await fetchPerson(new RecordId(tb, id));
+    currentPerson.value = await fetchPerson(claims.sub);
     noPersonButToken.value = false;
   });
 
@@ -107,7 +105,7 @@ export const usePersonStore = defineStore('person', () => {
     }
   };
 
-  const fetchPerson = async (id: RecordId) => {
+  const fetchPerson = async (id: string) => {
     const cachedPerson = persons.value.get(id.toString());
     if (cachedPerson) return cachedPerson;
 

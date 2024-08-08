@@ -1,4 +1,4 @@
-import { Meta, RecordId } from '../meta';
+import { Meta, Thing } from '../meta';
 
 export type PostPerson = {
   username: string;
@@ -6,7 +6,7 @@ export type PostPerson = {
 };
 
 export type Person = {
-  id: RecordId;
+  id: Thing;
   username: string;
   email: string;
   is_admin: string;

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { Post, PostVersion } from './post';
 import { usePostClient } from './post.client';
-import { RecordId } from 'surrealdb.js';
 import { Ref, ref } from 'vue';
 
 export const usePostStore = defineStore('post', () => {
@@ -27,15 +26,8 @@ export const usePostStore = defineStore('post', () => {
     return await pc.fetchDrafts();
   };
 
-  const getPostDrafts = async (postId: RecordId) => {
-    // HACK: im having to do some really weird stuff to get this id to stringify properly
-    // not sure if it's because its in a ref or what?
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const coercedId = new RecordId(postId.tb, postId.id.String).toString();
-    console.log('=== get post drafts', coercedId);
-
-    return await pc.fetchPostDrafts(coercedId);
+  const getPostDrafts = async (postId: string) => {
+    return await pc.fetchPostDrafts(postId);
   };
 
   const getPublished = async () => {
@@ -43,13 +35,13 @@ export const usePostStore = defineStore('post', () => {
   };
 
   // POST /posts/drafts/:draft_id/publish
-  const publishDraft = async (draftId: RecordId) => {
+  const publishDraft = async (draftId: string) => {
     console.log('publish draft');
     return await pc.publishDraft(draftId);
   };
 
   // DELETE /posts/drafts/:draft_id/publish
-  const unpublishDraft = async (draftId: RecordId) => {
+  const unpublishDraft = async (draftId: string) => {
     console.log('publish draft');
     return await pc.unpublishDraft(draftId);
   };

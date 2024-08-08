@@ -188,7 +188,6 @@ import { Meta } from 'src/models/meta';
 import { Post, PostVersion, usePostStore } from 'src/models/post';
 import { Ref, onMounted, reactive, ref, watch } from 'vue';
 import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
-import { RecordId } from 'surrealdb.js';
 import { QSelect } from 'quasar';
 
 const { getPosts, getPostDrafts, publishDraft, unpublishDraft } =
@@ -215,7 +214,7 @@ const toggleSort = () => {
   viewState.value.desc = !viewState.value.desc;
 };
 
-const loadDrafts = async (postId: RecordId) => {
+const loadDrafts = async (postId: string) => {
   if (drafts[JSON.stringify(postId)]) return;
   drafts[JSON.stringify(postId)] = await getPostDrafts(postId);
 };
@@ -226,7 +225,7 @@ const collapseAll = () => {
   );
 };
 
-const togglePublished = async (draftId: RecordId, isPublished: boolean) => {
+const togglePublished = async (draftId: string, isPublished: boolean) => {
   console.log('toggling published for draft:');
   isPublished ? await unpublishDraft(draftId) : await publishDraft(draftId);
 };

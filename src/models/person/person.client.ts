@@ -1,12 +1,12 @@
 import { api } from 'src/boot/axios';
 import { Person } from './person';
-import { RecordId } from '../meta';
+import { Thing } from '../meta';
 
 export const usePersonClient = () => {
   const c = api;
   // c.defaults.baseURL = c.defaults.baseURL + '/persons';
 
-  const getPerson = async (id: RecordId) => {
+  const getPerson = async (id: Thing) => {
     try {
       const response = await api.get<Person>(`/persons/${id}`);
 

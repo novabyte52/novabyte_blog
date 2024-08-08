@@ -1,18 +1,18 @@
-import { RecordId } from 'surrealdb.js';
+import { Thing } from '../meta';
 import { Meta } from '../meta';
 
 export type Post = {
-  id: RecordId;
-  meta?: RecordId | Meta;
+  id: Thing;
+  meta?: Thing | Meta;
   working_title: string;
 };
 
 export type PostVersion = {
-  id: RecordId;
-  draftId: RecordId;
+  id: Thing;
+  draftId: Thing;
   title: string;
   markdown: string;
-  author: RecordId;
+  author: Thing;
   published: boolean;
   at: Date;
 };

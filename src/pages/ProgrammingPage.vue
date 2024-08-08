@@ -31,12 +31,12 @@
         <div class="text">Display</div>
         <q-card-section v-if="postIds">
           <div v-for="id in postIds" :key="JSON.stringify(id)">
-            {{ id.toString() }}
+            {{ id }}
           </div>
         </q-card-section>
         <q-card-section v-if="draftIds">
           <div v-for="id in draftIds" :key="JSON.stringify(id)">
-            {{ id.toString() }}
+            {{ id }}
           </div>
         </q-card-section>
         <q-card-actions>
@@ -69,12 +69,12 @@ import DevPersonCard from 'src/models/person/components/DevPersonCard.vue';
 import { api } from 'src/boot/axios';
 import NBanner from 'src/components/NBanner.vue';
 import { Ref, ref } from 'vue';
-import { RecordId } from 'surrealdb.js';
 import { usePostStore } from 'src/models/post';
+import { Thing } from 'src/models/meta';
 
 const { getPosts, getDrafts } = usePostStore();
-const postIds: Ref<RecordId[]> = ref([]);
-const draftIds: Ref<RecordId[]> = ref([]);
+const postIds: Ref<Thing[]> = ref([]);
+const draftIds: Ref<Thing[]> = ref([]);
 
 const fetchIds = async () => {
   const posts = await getPosts();

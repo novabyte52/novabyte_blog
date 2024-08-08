@@ -38,7 +38,7 @@
 import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { Ref, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { RecordId } from 'src/models/meta';
+import { Thing } from 'src/models/meta';
 import { usePersonStore } from 'src/models/person';
 import { usePosts } from 'src/models/post/';
 
@@ -47,7 +47,7 @@ const { draftPost } = usePostStore();
 const { onDraftPost, onPublishPost, onDiscardPost } = usePosts();
 
 const newPost: Ref<PostVersion> = ref({
-  author: currentPerson.value?.id as RecordId,
+  author: currentPerson.value?.id as Thing,
   published: false,
 } as PostVersion);
 

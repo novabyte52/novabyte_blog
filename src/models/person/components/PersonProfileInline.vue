@@ -12,10 +12,10 @@
 <script setup lang="ts">
 import { thingToString } from 'src/models/meta';
 import { Person, usePersonStore } from 'src/models/person';
-import { RecordId } from 'surrealdb.js';
+import { Thing } from '../meta';
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ person?: Person; personId?: RecordId }>();
+const props = defineProps<{ person?: Person; personId?: Thing }>();
 
 const personStore = usePersonStore();
 
@@ -31,7 +31,7 @@ watch(
 
     if (newId) {
       console.log('person profile inline watch:', newId);
-      verifiedPerson.value = await personStore.fetchPerson(newId as RecordId);
+      verifiedPerson.value = await personStore.fetchPerson(newId as Thing);
     }
   },
   {
