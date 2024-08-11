@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia';
-import { Post, PostVersion } from './post';
+import { PostVersion } from './post';
 import { usePostClient } from './post.client';
-import { Ref, ref } from 'vue';
 
 export const usePostStore = defineStore('post', () => {
   const pc = usePostClient();
 
-  // TODO: need to work on the caching of this store...
   // const posts: Ref<Map<string, Post>> = ref(new Map());
 
   // const createPost = async (post: Post) => {
@@ -31,6 +29,7 @@ export const usePostStore = defineStore('post', () => {
   };
 
   const getPublished = async () => {
+    console.log('getting published posts');
     return await pc.fetchPublished();
   };
 

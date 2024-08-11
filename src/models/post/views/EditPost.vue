@@ -55,9 +55,9 @@
 import { marked } from 'marked';
 import { storeToRefs } from 'pinia';
 import { QInput, debounce } from 'quasar';
-import { usePersonStore } from 'src/models/person';
 import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
 import { PostVersion, RenderMarkdown } from 'src/models/post';
+import { useNovaStore } from 'src/stores/nova.store';
 import { Ref, ref, watch } from 'vue';
 
 const emit = defineEmits<{
@@ -72,7 +72,7 @@ const props = defineProps<{ modelValue?: PostVersion }>();
  * information for the author. need to maybe fix it or make sure the
  * store is loaded before i try getting the currentPerson
  */
-const { currentPerson } = storeToRefs(usePersonStore());
+const { currentPerson } = storeToRefs(useNovaStore());
 
 const titleInput = ref<QInput | undefined>();
 

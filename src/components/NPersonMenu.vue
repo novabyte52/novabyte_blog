@@ -41,13 +41,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { QBtn } from 'quasar';
-import { usePersonStore } from 'src/models/person';
 import LogInForm from 'src/models/person/components/forms/LogInForm.vue';
 import { ref } from 'vue';
 import NMenu from './NMenu.vue';
+import { useNovaStore } from 'src/stores/nova.store';
 
-const { logOut } = usePersonStore();
-const { currentPerson, isAuthenticated } = storeToRefs(usePersonStore());
+const { logOut } = useNovaStore();
+const { currentPerson, isAuthenticated } = storeToRefs(useNovaStore());
 
 const isShown = ref(false);
 

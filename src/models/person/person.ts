@@ -1,4 +1,4 @@
-import { Meta, Thing } from '../meta';
+import { Meta } from '../meta';
 
 export type PostPerson = {
   username: string;
@@ -6,7 +6,7 @@ export type PostPerson = {
 };
 
 export type Person = {
-  id: Thing;
+  id: string;
   username: string;
   email: string;
   is_admin: string;

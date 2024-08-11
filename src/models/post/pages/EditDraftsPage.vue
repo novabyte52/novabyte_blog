@@ -16,14 +16,13 @@
               clickable
               :key="draft.id?.toString()"
               @click="editDraft(draft)"
-              ><q-item-section
-                >{{ draft.title }}|{{ draft.id }}</q-item-section
-              ></q-item
+              ><q-item-section>{{ draft.title }}</q-item-section></q-item
             >
           </q-list>
         </q-card>
       </template>
       <template v-slot:after>
+        <div v-if="!draftedPost">No published drafts currently exist</div>
         <edit-post :model-value="draftedPost" @update:model-value="updatePost">
           <template v-slot:actions>
             <q-btn
@@ -68,6 +67,7 @@ const { changeObj, isDirty } = useIsDirty(draftedPost);
  */
 onMounted(async () => {
   drafts.value = await getDrafts();
+  if (drafts.value.length > 0) draftedPost.value = drafts.value[0];
 });
 
 /**

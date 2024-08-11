@@ -101,21 +101,22 @@
 <script setup lang="ts">
 import { QIcon } from 'quasar';
 import NBanner from 'src/components/NBanner.vue';
-import { Post, usePostStore } from 'src/models/post';
+import { PostVersion, usePostStore } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
 import { truncate } from 'lodash-es';
 // TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over marked
 // the editor just seems better overall.
-import { Marked, marked } from 'marked';
+import { marked } from 'marked';
 
 const { getPublished } = usePostStore();
 
-const posts: Ref<Post[] | undefined> = ref();
+const posts: Ref<PostVersion[] | undefined> = ref();
 
 onMounted(async () => {
-  Marked;
   try {
+    console.log('mounted, fetching posts...');
     posts.value = await getPublished();
+    console.log('posts:', posts.value);
   } catch (e) {
     throw e;
   }

@@ -35,19 +35,18 @@
 </template>
 
 <script setup lang="ts">
-import { EditPost, PostVersion, usePostStore } from 'src/models/post';
-import { Ref, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Thing } from 'src/models/meta';
-import { usePersonStore } from 'src/models/person';
+import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { usePosts } from 'src/models/post/';
+import { useNovaStore } from 'src/stores/nova.store';
+import { Ref, ref } from 'vue';
 
-const { currentPerson } = storeToRefs(usePersonStore());
+const { currentPerson } = storeToRefs(useNovaStore());
 const { draftPost } = usePostStore();
 const { onDraftPost, onPublishPost, onDiscardPost } = usePosts();
 
 const newPost: Ref<PostVersion> = ref({
-  author: currentPerson.value?.id as Thing,
+  author: currentPerson.value?.id as string,
   published: false,
 } as PostVersion);
 

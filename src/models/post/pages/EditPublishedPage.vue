@@ -23,6 +23,7 @@
         </q-card>
       </template>
       <template v-slot:after>
+        <div v-if="!draftedPost">No drafts currently exist</div>
         <edit-post :model-value="draftedPost" @update:model-value="updatePost">
           <template v-slot:actions>
             <q-btn
@@ -61,6 +62,7 @@ const drafts: Ref<PostVersion[] | undefined> = ref();
 
 onMounted(async () => {
   drafts.value = await getPublished();
+  if (drafts.value.length > 0) draftedPost.value = drafts.value[0];
 });
 
 const editDraft = (draft: PostVersion) => {

@@ -1,18 +1,17 @@
-import { Thing } from '../meta';
 import { Meta } from '../meta';
 
 export type Post = {
-  id: Thing;
-  meta?: Thing | Meta;
+  id: string;
+  meta?: string | Meta;
   working_title: string;
 };
 
 export type PostVersion = {
-  id: Thing;
-  draftId: Thing;
+  id: string;
+  draftId: string;
   title: string;
   markdown: string;
-  author: Thing;
+  author: string;
   published: boolean;
   at: Date;
 };

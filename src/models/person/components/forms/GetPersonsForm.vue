@@ -10,19 +10,18 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { usePersonStore } from 'src/models/person/person.store';
+import { usePersonClient } from '../../person.client';
 
-const ps = usePersonStore();
+const pc = usePersonClient();
 
 const defaultAmount = 0; // 0 for all
 
 const amount = ref(defaultAmount);
 
 const onSubmit = async () => {
-  const persons = await ps.fetchPersons();
+  const persons = await pc.getPersons();
   console.log('persons:', persons);
 };
 
 const onReset = () => (amount.value = defaultAmount);
 </script>
-../../person.store

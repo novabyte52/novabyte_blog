@@ -33,10 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import { usePersonStore } from 'src/models/person';
 import { ref } from 'vue';
 import { isEmail } from 'validator';
 import { useQuasar } from 'quasar';
+import { useNovaStore } from 'src/stores/nova.store';
 
 const q = useQuasar();
 
@@ -51,7 +51,7 @@ const props = defineProps({
   },
 });
 
-const personStore = usePersonStore();
+const { logIn } = useNovaStore();
 
 const email = ref('');
 const password = ref('');
@@ -59,7 +59,7 @@ const password = ref('');
 const onSubmit = async () => {
   emit('loggingIn');
   try {
-    const succeeded = await personStore.logIn(email.value, password.value);
+    const succeeded = await logIn(email.value, password.value);
     if (succeeded) {
       q.notify({
         message: "You've been logged in!",

@@ -49,13 +49,13 @@
 import { storeToRefs } from 'pinia';
 import NMarquee from './NMarquee.vue';
 import NPersonMenu from './NPersonMenu.vue';
-import { usePersonStore } from 'src/models/person';
+import { useNovaStore } from 'src/stores/nova.store';
 
 const emit = defineEmits<{
   (event: 'toggleAdmin'): void;
 }>();
 
-const { currentPerson } = storeToRefs(usePersonStore());
+const { currentPerson } = storeToRefs(useNovaStore());
 </script>
 
 <style lang="scss">

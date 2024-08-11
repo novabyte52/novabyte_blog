@@ -1,14 +1,13 @@
-import { storeToRefs } from 'pinia';
 import { api } from 'src/boot/axios';
-import { usePersonStore } from '../person';
 import { Post, PostVersion } from './post';
 import { AxiosResponse } from 'axios';
-import { Thing } from '../meta';
+import { storeToRefs } from 'pinia';
+import { useNovaStore } from 'src/stores/nova.store';
 
 export const usePostClient = () => {
   const c = api;
 
-  const { currentPerson } = storeToRefs(usePersonStore());
+  const { currentPerson } = storeToRefs(useNovaStore());
 
   const postPost = async (title: string, markdown: string) => {
     try {
@@ -51,7 +50,7 @@ export const usePostClient = () => {
     }
   };
 
-  const publishDraft = async (draftId: Thing) => {
+  const publishDraft = async (draftId: string) => {
     try {
       const response = await c.post<Post>(`/posts/drafts/${draftId}/publish`);
 
@@ -65,7 +64,7 @@ export const usePostClient = () => {
     }
   };
 
-  const unpublishDraft = async (draftId: Thing) => {
+  const unpublishDraft = async (draftId: string) => {
     try {
       const response = await c.delete<Post>(`/posts/drafts/${draftId}/publish`);
 
@@ -99,8 +98,10 @@ export const usePostClient = () => {
   };
 
   const fetchPublished = async () => {
+    console.log('fetching published posts');
     try {
       const response = await c.get<PostVersion[]>('/posts/published');
+      console.log('response:', response);
       return response.data;
     } catch (e) {
       throw e;

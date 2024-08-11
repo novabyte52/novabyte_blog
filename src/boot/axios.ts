@@ -1,6 +1,10 @@
-import { boot } from 'quasar/wrappers';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { storeToRefs } from 'pinia';
+import { boot } from 'quasar/wrappers';
 import { usePersonStore } from 'src/models/person';
+import { useNovaStore } from 'src/stores/nova.store';
+import { watch } from 'vue';
 // import cookie from 'cookie';
 
 declare module '@vue/runtime-core' {
@@ -20,13 +24,31 @@ axios.defaults.baseURL = 'http://127.0.0.1:52001';
 axios.defaults.withCredentials = true;
 export const api = axios.create();
 
-const personStore = usePersonStore();
+const ps = usePersonStore();
+const nova = useNovaStore();
+const { noPersonButToken, currentPerson } = storeToRefs(useNovaStore());
+
+watch(noPersonButToken, async (val: boolean) => {
+  if (!val) return;
+
+  const token = nova.getToken();
+  if (!token) throw new Error('Expected token.');
+
+  const claims = jwtDecode(token);
+  if (!claims.sub) throw new Error('Expected jwt subject.');
+
+  currentPerson.value = await ps.getPerson(claims.sub);
+  ps.addPerson(currentPerson.value);
+  noPersonButToken.value = false;
+});
+
+nova.checkForToken();
 
 api.interceptors.request.use((config) => {
-  const token = personStore.getToken();
+  const token = nova.getToken();
   if (!token) {
     console.log('no token but a request was made!');
-    personStore.logOut();
+    nova.logOut();
     return config;
   }
 
@@ -41,16 +63,16 @@ api.interceptors.response.use(
 
     if (response?.status === 401) {
       if (response.data === 'Missing refresh token.') {
-        personStore.logOut();
+        nova.logOut();
         return;
       }
 
       if (response && config) {
         try {
-          const token = await personStore.refresh();
+          const token = await nova.refresh();
 
           if (token) {
-            personStore.setToken(token);
+            nova.setToken(token);
             config.headers['Authorization'] = `${token}`;
             return api(config);
           }

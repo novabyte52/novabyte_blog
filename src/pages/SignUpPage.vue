@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { usePersonStore } from 'src/models/person';
+import { useNovaStore } from 'src/stores/nova.store';
 import { isEmail } from 'validator';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -70,7 +70,7 @@ const hasLaunched = ref(false);
 
 const r = useRouter();
 const q = useQuasar();
-const ps = usePersonStore();
+const { signUp } = useNovaStore();
 
 const enableLaunch = computed(() => {
   const passwordConfirmed =
@@ -81,7 +81,7 @@ const enableLaunch = computed(() => {
 const onSubmit = async () => {
   hasLaunched.value = true;
   try {
-    await ps.signUp(userName.value, email.value, password.value);
+    await signUp(userName.value, email.value, password.value);
   } catch (e) {
     q.notify({
       message: 'There was an error signing you up!',
