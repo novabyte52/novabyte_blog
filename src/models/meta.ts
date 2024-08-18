@@ -7,11 +7,11 @@ export enum Table {
 
 export type Meta<T = undefined> = {
   id: string;
-  createdBy?: ULID;
+  created_by?: ULID;
   created_on?: Date;
-  modifiedBy?: ULID;
-  modifiedOn?: Date;
-  deletedBy?: ULID;
-  deletedOn?: Date;
+  modified_by?: ULID;
+  modified_on?: Date;
+  deleted_by?: ULID;
+  deleted_on?: Date;
   data?: T;
 };

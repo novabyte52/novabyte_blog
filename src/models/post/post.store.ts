@@ -1,55 +1,116 @@
 import { defineStore } from 'pinia';
 import { PostVersion } from './post';
 import { usePostClient } from './post.client';
+import { Ref, ref } from 'vue';
 
 export const usePostStore = defineStore('post', () => {
   const pc = usePostClient();
 
-  // const posts: Ref<Map<string, Post>> = ref(new Map());
+  const drafts = ref({}) as Ref<Record<string, PostVersion>>;
 
-  // const createPost = async (post: Post) => {
-  //   await pc.postPost(post.title, post.markdown);
-  // };
+  const addDraft = async (post: PostVersion) => {
+    if (drafts.value[post.draft_id]) return;
 
-  const getPosts = async () => {
-    return await pc.getPosts();
+    drafts.value[post.draft_id] = post;
   };
 
-  const draftPost = async (post: PostVersion) => {
-    // TODO: should probably make this return the post so i can add it to the store
-    return await pc.draftPost(post);
+  const getDraft = async (draft_id: string) => {
+    const draft = drafts.value[draft_id];
+    if (draft) return draft;
+
+    const fetchedDraft = await pc.fetchDraft(draft_id);
+    drafts.value[draft_id] = fetchedDraft;
+    return fetchedDraft;
   };
 
-  const getDrafts = async () => {
-    return await pc.fetchDrafts();
+  const getPublishedDraft = async (draft_id: string) => {
+    const draft = await getDraft(draft_id);
+    console.log('draft found:', draft);
+
+    if (draft.published) {
+      return draft;
+    }
+
+    throw Error(`Unable to find published draft for post: ${draft_id}`);
   };
 
+  // TODO: rename to getDraftsForPost
+  // TODO: make this a computed
   const getPostDrafts = async (postId: string) => {
-    return await pc.fetchPostDrafts(postId);
+    const fetchedDrafts = await pc.fetchPostDrafts(postId);
+
+    fetchedDrafts.forEach((d) => (drafts.value[d.draft_id] = d));
+
+    return Object.values(drafts.value).filter((d) => d.id === postId);
   };
 
+  // TODO: rename to getAllDrafts
+  const getDrafts = async () => {
+    const fetchedDrafts = await pc.fetchDrafts();
+
+    fetchedDrafts.forEach((d) => (drafts.value[d.draft_id] = d));
+
+    return fetchedDrafts;
+  };
+
+  // TODO: rename to createDraft
+  const draftPost = async (post: PostVersion) => {
+    const newDraft = await pc.draftPost(post);
+
+    drafts.value[newDraft.draft_id] = newDraft;
+
+    return newDraft;
+  };
+
+  // TODO: rename to getPublishedDrafts
   const getPublished = async () => {
-    console.log('getting published posts');
-    return await pc.fetchPublished();
+    const publishedDrafts = await pc.fetchPublished();
+    console.log('fetched drafts:', publishedDrafts);
+
+    publishedDrafts.forEach((d) => {
+      console.log('adding draft:', d.draft_id);
+      drafts.value[d.draft_id] = d;
+      console.log(drafts.value[d.draft_id]);
+    });
+
+    console.log(
+      'filtered drafts:',
+      Object.values(drafts.value).filter((d) => d.published)
+    );
+    return Object.values(drafts.value).filter((d) => d.published);
   };
 
-  // POST /posts/drafts/:draft_id/publish
-  const publishDraft = async (draftId: string) => {
-    console.log('publish draft');
-    return await pc.publishDraft(draftId);
+  // TODO: rename to publishDraft
+  const publishDraft = async (draft_id: string) => {
+    const published = await pc.publishDraft(draft_id);
+
+    if (!published) throw Error(`Issue publishing draft: ${draft_id}`);
+
+    const draft = await getDraft(draft_id);
+
+    draft.published = published;
+
+    return draft;
   };
 
-  // DELETE /posts/drafts/:draft_id/publish
-  const unpublishDraft = async (draftId: string) => {
-    console.log('publish draft');
-    return await pc.unpublishDraft(draftId);
+  // TODO: unpublishDraft
+  const unpublishDraft = async (draft_id: string) => {
+    const unpublished = await pc.unpublishDraft(draft_id);
+
+    if (!unpublished) throw Error(`Issue unpublishing draft: ${draft_id}`);
+
+    const draft = await getDraft(draft_id);
+
+    draft.published = unpublished;
+
+    return draft;
   };
 
   return {
-    // createPost,
-    getPosts,
+    addDraft,
     draftPost,
     getDrafts,
+    getPublishedDraft,
     getPostDrafts,
     getPublished,
     publishDraft,

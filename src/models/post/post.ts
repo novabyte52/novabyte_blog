@@ -8,7 +8,7 @@ export type Post = {
 
 export type PostVersion = {
   id: string;
-  draftId: string;
+  draft_id: string;
   title: string;
   markdown: string;
   author: string;

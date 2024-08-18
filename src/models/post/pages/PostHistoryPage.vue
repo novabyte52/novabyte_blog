@@ -100,7 +100,7 @@
                   color="negative"
                   class="q-mr-xs"
                   style="position: relative; top: -2px"
-                  @click="togglePublished(draft.draftId, draft.published)"
+                  @click="togglePublished(draft)"
                 />
                 <q-btn
                   v-else
@@ -110,7 +110,7 @@
                   color="positive"
                   class="q-mr-xs"
                   style="position: relative; top: -2px"
-                  @click="togglePublished(draft.draftId, draft.published)"
+                  @click="togglePublished(draft)"
                 />
                 <span>
                   {{ draft.published }}
@@ -185,13 +185,18 @@
 import dayjs from 'dayjs';
 import { TableSkeleton } from 'src/components/skeletons';
 import { Meta } from 'src/models/meta';
-import { Post, PostVersion, usePostStore } from 'src/models/post';
+import {
+  Post,
+  PostVersion,
+  usePostClient,
+  usePostStore,
+} from 'src/models/post';
 import { Ref, onMounted, reactive, ref, watch } from 'vue';
 import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
 import { QSelect } from 'quasar';
 
-const { getPosts, getPostDrafts, publishDraft, unpublishDraft } =
-  usePostStore();
+const { getPosts } = usePostClient();
+const { getPostDrafts, publishDraft, unpublishDraft } = usePostStore();
 const recordSelectAmount = ref(5);
 const posts: Ref<Post[]> = ref([]);
 const drafts: Record<string, PostVersion[]> = reactive({});
@@ -225,9 +230,10 @@ const collapseAll = () => {
   );
 };
 
-const togglePublished = async (draftId: string, isPublished: boolean) => {
-  console.log('toggling published for draft:');
-  isPublished ? await unpublishDraft(draftId) : await publishDraft(draftId);
+const togglePublished = async (draft: PostVersion) => {
+  draft.published
+    ? await unpublishDraft(draft.draftId)
+    : await publishDraft(draft.draftId);
 };
 </script>
 

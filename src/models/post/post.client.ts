@@ -1,26 +1,18 @@
+import { AxiosResponse } from 'axios';
 import { api } from 'src/boot/axios';
 import { Post, PostVersion } from './post';
-import { AxiosResponse } from 'axios';
-import { storeToRefs } from 'pinia';
-import { useNovaStore } from 'src/stores/nova.store';
 
 export const usePostClient = () => {
   const c = api;
 
-  const { currentPerson } = storeToRefs(useNovaStore());
-
-  const postPost = async (title: string, markdown: string) => {
-    try {
-      await c.post('/posts', {
-        title,
-        markdown,
-        author: currentPerson.value?.id,
-      });
-    } catch (e) {
-      throw e;
-    }
-  };
-
+  /**
+   * Get the minimum amount of info for all posts.
+   *
+   * TODO: Will maybe make a store for posts themselves and
+   * make the current post store into a drafts store.
+   *
+   * @returns minimal information for all posts
+   */
   const getPosts = async () => {
     try {
       const response = await c.get<Post[]>('/posts');
@@ -30,21 +22,18 @@ export const usePostClient = () => {
     }
   };
 
+  // TODO: may want to return the PostVersion eventually so i can add it to the store,
+  // but for now this should be fine
   const draftPost = async (post: PostVersion) => {
     try {
-      console.log('client: draft post -- ', post);
-      const response = await c.post<Post>('/posts/drafts', {
+      const response = await c.post<PostVersion>('/posts/drafts', {
         title: post.title,
         markdown: post.markdown,
         id: post.id,
         published: post.published,
       });
 
-      if ((response as AxiosResponse).status === 204) {
-        return true;
-      }
-
-      return false;
+      return response.data;
     } catch (e) {
       throw e;
     }
@@ -52,7 +41,7 @@ export const usePostClient = () => {
 
   const publishDraft = async (draftId: string) => {
     try {
-      const response = await c.post<Post>(`/posts/drafts/${draftId}/publish`);
+      const response = await c.post(`/posts/drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
@@ -66,13 +55,22 @@ export const usePostClient = () => {
 
   const unpublishDraft = async (draftId: string) => {
     try {
-      const response = await c.delete<Post>(`/posts/drafts/${draftId}/publish`);
+      const response = await c.delete(`/posts/drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
       }
 
       return false;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const fetchDraft = async (draftId: string) => {
+    try {
+      const response = await c.get<PostVersion>(`/posts/drafts/${draftId}`);
+      return response.data;
     } catch (e) {
       throw e;
     }
@@ -89,7 +87,6 @@ export const usePostClient = () => {
 
   const fetchPostDrafts = async (postId: string) => {
     try {
-      console.log('=== fetch post drafts', postId);
       const response = await c.get<PostVersion[]>(`/posts/${postId}/drafts`);
       return response.data;
     } catch (e) {
@@ -101,7 +98,6 @@ export const usePostClient = () => {
     console.log('fetching published posts');
     try {
       const response = await c.get<PostVersion[]>('/posts/published');
-      console.log('response:', response);
       return response.data;
     } catch (e) {
       throw e;
@@ -109,11 +105,11 @@ export const usePostClient = () => {
   };
 
   return {
-    postPost,
     getPosts,
     draftPost,
     publishDraft,
     unpublishDraft,
+    fetchDraft,
     fetchDrafts,
     fetchPostDrafts,
     fetchPublished,

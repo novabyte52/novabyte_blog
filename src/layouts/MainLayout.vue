@@ -55,30 +55,14 @@
 
 <script setup lang="ts">
 import NHeader from 'src/components/NHeader.vue';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { RouteNames } from 'src/router/routes';
-import { useNovaStore } from 'src/stores/nova.store';
-import { storeToRefs } from 'pinia';
-
-const router = useRouter();
-const { isAuthenticated } = storeToRefs(useNovaStore());
+import { ref } from 'vue';
 
 const leftDrawerOpen = ref(false);
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
-
-router.beforeEach(async (to) => {
-  const requires = to.meta.requiresAuth;
-  const authed = isAuthenticated.value;
-  console.debug(`requires authentication: ${requires}`);
-  console.debug(`is authenticated: ${authed}`);
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    router.push({ name: RouteNames.HOME });
-  }
-});
 </script>
 
 <style lang="scss">

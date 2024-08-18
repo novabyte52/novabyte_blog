@@ -79,21 +79,30 @@
     <!-- <q-separator class="n-separator" /> -->
     <div class="text-h3">RECENT POSTS</div>
     <div class="row q-px-lg q-gutter-lg">
-      <q-card
+      <router-link
         v-for="post in posts"
-        :key="post.id?.toString()"
-        class="col n-card"
+        class="col"
+        :key="post.id"
+        :to="{
+          name: RouteNames.READ_POST,
+          params: {
+            postId: post.draft_id,
+          },
+        }"
       >
-        <q-card-section class="text-h6"> {{ post.title }} </q-card-section>
-        <q-card-section>
-          <!--
-            I want to remove all the headers from the markdown before i generate a preview
+        <q-card class="n-card full-height">
+          <q-card-section class="text-h6"> {{ post.title }} </q-card-section>
+          <q-card-section>
+            <!-- I want to remove all the headers from the markdown before i generate a preview
             because headings take up a lot of realestate and it messes with the truncate number.
-            the second issue will still exist, but headers exacerabte it i think.
-           -->
-          <div v-html="marked(truncate(post.markdown, { length: 200 }))"></div>
-        </q-card-section>
-      </q-card>
+            the second issue will still exist, but headers exacerabte it i think. -->
+
+            <render-markdown
+              :markdown="(marked(truncate(post.markdown, { length: 200 })) as string)"
+            ></render-markdown>
+          </q-card-section>
+        </q-card>
+      </router-link>
     </div>
   </q-page>
 </template>
@@ -101,12 +110,13 @@
 <script setup lang="ts">
 import { QIcon } from 'quasar';
 import NBanner from 'src/components/NBanner.vue';
-import { PostVersion, usePostStore } from 'src/models/post';
+import { PostVersion, usePostStore, RenderMarkdown } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
 import { truncate } from 'lodash-es';
 // TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over marked
 // the editor just seems better overall.
 import { marked } from 'marked';
+import { RouteNames } from 'src/router/routes';
 
 const { getPublished } = usePostStore();
 
@@ -114,9 +124,7 @@ const posts: Ref<PostVersion[] | undefined> = ref();
 
 onMounted(async () => {
   try {
-    console.log('mounted, fetching posts...');
     posts.value = await getPublished();
-    console.log('posts:', posts.value);
   } catch (e) {
     throw e;
   }
