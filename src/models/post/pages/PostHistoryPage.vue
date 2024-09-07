@@ -40,17 +40,16 @@
         </div>
       </q-card-section>
       <q-expansion-item
-        v-model="viewState.expansion[JSON.stringify(post.id)]"
+        v-model="viewState.expansion[post.id]"
         v-for="(post, i) in posts"
-        :key="JSON.stringify(post.id)"
+        :key="post.id"
         dense
         hide-expand-icon
         expand-separator
         class="row data-rows"
         :header-class="{
           'full-width': true,
-          'bg-color-primary color-text':
-            viewState.expansion[JSON.stringify(post.id)],
+          'bg-color-primary color-text': viewState.expansion[post.id],
         }"
         @click="loadDrafts(post.id)"
       >
@@ -80,15 +79,10 @@
             <div class="col">Created On</div>
             <div class="col">Author</div>
           </q-card-section>
-          <div
-            v-if="
-              drafts[JSON.stringify(post.id)] &&
-              drafts[JSON.stringify(post.id)].length > 0
-            "
-          >
+          <div v-if="drafts[post.id] && drafts[post.id].length > 0">
             <q-card-section
-              v-for="draft in drafts[JSON.stringify(post.id)]"
-              :key="JSON.stringify(draft.draftId)"
+              v-for="draft in drafts[post.id]"
+              :key="draft.draft_id"
               class="row align-center"
             >
               <div class="col">
@@ -126,6 +120,7 @@
             </q-card-section>
           </div>
           <div v-else>
+            <!-- TODO: create a row-skeleton component where i can configure how many rows to repeat -->
             <q-card-section v-for="n in 3" :key="n" class="row">
               <div class="col">
                 <q-skeleton width="75px" type="text" />
@@ -206,7 +201,7 @@ const viewState: Ref<{ desc: boolean; expansion: Record<string, boolean> }> =
 
 watch(posts, () => {
   posts.value.forEach((p) => {
-    viewState.value.expansion[JSON.stringify(p.id)] = false;
+    viewState.value.expansion[p.id] = false;
   });
 });
 
@@ -220,8 +215,8 @@ const toggleSort = () => {
 };
 
 const loadDrafts = async (postId: string) => {
-  if (drafts[JSON.stringify(postId)]) return;
-  drafts[JSON.stringify(postId)] = await getPostDrafts(postId);
+  if (drafts[postId]) return;
+  drafts[postId] = await getPostDrafts(postId);
 };
 
 const collapseAll = () => {
@@ -232,8 +227,8 @@ const collapseAll = () => {
 
 const togglePublished = async (draft: PostVersion) => {
   draft.published
-    ? await unpublishDraft(draft.draftId)
-    : await publishDraft(draft.draftId);
+    ? await unpublishDraft(draft.draft_id)
+    : await publishDraft(draft.draft_id);
 };
 </script>
 

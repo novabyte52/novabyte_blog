@@ -114,14 +114,8 @@ const onPublishPost = () => {
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
-    if (isDirty.value) {
-      draftedPost.value.published = true;
-      await draftPost(draftedPost.value);
-      return;
-    }
-
-    // TODO: publish the current draft
-    // await publish_draft(draft_id);
+    draftedPost.value.published = true;
+    await draftPost(draftedPost.value);
   });
 };
 </script>

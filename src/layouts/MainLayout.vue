@@ -38,7 +38,7 @@
         >
         <q-route-tab
           no-caps
-          to="/edit-post"
+          :to="{ name: RouteNames.PERSONS }"
           icon="fas fa-user-astronaut"
           :content-class="'admin-tab'"
           @click="leftDrawerOpen = false"

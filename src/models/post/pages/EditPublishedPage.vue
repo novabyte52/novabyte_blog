@@ -54,7 +54,7 @@ import { Ref, onMounted, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
 
 const q = useQuasar();
-const { getPublished } = usePostStore();
+const { getPublished, unpublishDraft } = usePostStore();
 
 const ratio = ref(250);
 const draftedPost: Ref<PostVersion | undefined> = ref();
@@ -101,7 +101,7 @@ const onUnpublishPost = () => {
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
-    // await publishPost(draftedPost.value);
+    await unpublishDraft(draftedPost.value.draft_id);
   });
 };
 </script>

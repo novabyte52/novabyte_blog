@@ -1,9 +1,22 @@
 import { AxiosResponse } from 'axios';
-import { api } from 'src/boot/axios';
+import { axios, ApiPath } from 'src/boot/axios';
 import { Post, PostVersion } from './post';
+import {
+  global_request_interceptor,
+  global_response_interceptor,
+} from 'src/clients';
+
+const c = axios.create({
+  baseURL: axios.defaults.baseURL + ApiPath.POSTS,
+});
 
 export const usePostClient = () => {
-  const c = api;
+  // to avoid complicated logic for now i will just clear and reapply the interceptors
+  c.interceptors.request.clear();
+  c.interceptors.response.clear();
+
+  c.interceptors.request.use(global_request_interceptor);
+  c.interceptors.response.use((res) => res, global_response_interceptor(c));
 
   /**
    * Get the minimum amount of info for all posts.
@@ -15,7 +28,7 @@ export const usePostClient = () => {
    */
   const getPosts = async () => {
     try {
-      const response = await c.get<Post[]>('/posts');
+      const response = await c.get<Post[]>('');
       return response.data;
     } catch (e) {
       throw e;
@@ -26,7 +39,7 @@ export const usePostClient = () => {
   // but for now this should be fine
   const draftPost = async (post: PostVersion) => {
     try {
-      const response = await c.post<PostVersion>('/posts/drafts', {
+      const response = await c.post<PostVersion>('drafts', {
         title: post.title,
         markdown: post.markdown,
         id: post.id,
@@ -41,7 +54,7 @@ export const usePostClient = () => {
 
   const publishDraft = async (draftId: string) => {
     try {
-      const response = await c.post(`/posts/drafts/${draftId}/publish`);
+      const response = await c.post(`drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
@@ -55,7 +68,7 @@ export const usePostClient = () => {
 
   const unpublishDraft = async (draftId: string) => {
     try {
-      const response = await c.delete(`/posts/drafts/${draftId}/publish`);
+      const response = await c.delete(`drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
@@ -69,7 +82,7 @@ export const usePostClient = () => {
 
   const fetchDraft = async (draftId: string) => {
     try {
-      const response = await c.get<PostVersion>(`/posts/drafts/${draftId}`);
+      const response = await c.get<PostVersion>(`drafts/${draftId}`);
       return response.data;
     } catch (e) {
       throw e;
@@ -78,7 +91,7 @@ export const usePostClient = () => {
 
   const fetchDrafts = async () => {
     try {
-      const response = await c.get<PostVersion[]>('/posts/drafts');
+      const response = await c.get<PostVersion[]>('drafts');
       return response.data;
     } catch (e) {
       throw e;
@@ -87,7 +100,7 @@ export const usePostClient = () => {
 
   const fetchPostDrafts = async (postId: string) => {
     try {
-      const response = await c.get<PostVersion[]>(`/posts/${postId}/drafts`);
+      const response = await c.get<PostVersion[]>(`${postId}/drafts`);
       return response.data;
     } catch (e) {
       throw e;
@@ -97,7 +110,7 @@ export const usePostClient = () => {
   const fetchPublished = async () => {
     console.log('fetching published posts');
     try {
-      const response = await c.get<PostVersion[]>('/posts/published');
+      const response = await c.get<PostVersion[]>('published');
       return response.data;
     } catch (e) {
       throw e;

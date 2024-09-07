@@ -17,16 +17,30 @@ good idea to move this instance creation inside of the
 for each client)
 */
 
-export const api = axios.create();
+export enum ApiPath {
+  PERSONS = '/persons',
+  POSTS = '/posts',
+}
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://127.0.0.1:52001';
+
+const api = axios.create({
+  baseURL: 'http://127.0.0.1:52001',
+  withCredentials: true,
+});
+
+export { axios, api };
 
 export default boot(({ app }) => {
+  console.log('running axios boot function...');
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
-  app.config.globalProperties.$api = api;
+  // app.config.globalProperties.$api = api;
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 });

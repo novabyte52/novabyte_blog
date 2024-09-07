@@ -1,6 +1,6 @@
 <template>
   <q-page class="n-page">
-    <n-banner title="NOVABYTE.BLOG">
+    <n-banner title="My future, My way">
       <div class="q-mb-md">
         <!-- Welcome, mortal, to my domain. I, the galactic entity Novabyte, will
           chronicle my various endeavors into the depths of various domains. In
@@ -9,15 +9,15 @@
           didn't. Everything here will be by me, for me, and not you. Though, if my
           ramblings just so happen to enrich you then all the merrier. -->
         The first thing I ever remember wanting to be as a child was a mad
-        scientist. Specifically the vision was of me pouring one flask into
-        another, and maybe a small *poof* due to a reaction. Probably some
-        singed eyebrows, too. I still may end up losing my eyebrows at some
-        point (hopefully not), and there probably will be <i>some</i> explosions
-        at some point (probably safe ones)...
+        scientist. Specifically pouring one flask into another, a small *poof*
+        due to a reaction. Some singed eyebrows, too. I still may end up losing
+        my eyebrows at some point (hopefully not), and there probably will be
+        <i>some</i> explosions at some point (probably safe ones)...
         <br />
         <br />
-        I'm a Computer Scientist. For the most part that means programming.
-        However, I do other things here including but not limited to:
+        I'm a Computer Scientist. For me that mostly means a variety of
+        programming. However, I do other things here including but not limited
+        to:
       </div>
       <q-list bordered separator class="full-width">
         <q-expansion-item
@@ -63,9 +63,7 @@
           </div>
         </q-expansion-item>
       </q-list>
-      <p class="text-center full-width q-my-md">
-        Simply click on the black hole to let yourself get sucked in...
-      </p>
+      <p class="text-center full-width q-my-md">Let's get sucked in...</p>
       <div class="row full-width justify-evenly">
         <q-icon
           class="n-random q-ma-none q-pa-none"
@@ -76,7 +74,6 @@
         />
       </div>
     </n-banner>
-    <!-- <q-separator class="n-separator" /> -->
     <div class="text-h3">RECENT POSTS</div>
     <div class="row q-px-lg q-gutter-lg">
       <router-link
@@ -98,8 +95,9 @@
             the second issue will still exist, but headers exacerabte it i think. -->
 
             <render-markdown
-              :markdown="(marked(truncate(post.markdown, { length: 200 })) as string)"
-            ></render-markdown>
+              :markdown="truncate(post.markdown, { length: 200 })"
+              flat
+            />
           </q-card-section>
         </q-card>
       </router-link>
@@ -113,9 +111,6 @@ import NBanner from 'src/components/NBanner.vue';
 import { PostVersion, usePostStore, RenderMarkdown } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
 import { truncate } from 'lodash-es';
-// TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over marked
-// the editor just seems better overall.
-import { marked } from 'marked';
 import { RouteNames } from 'src/router/routes';
 
 const { getPublished } = usePostStore();

@@ -23,26 +23,7 @@
     <q-separator class="n-separator" />
     <div class="text-h3">id testing</div>
     <div>
-      <q-card class="bg-color-primary">
-        <q-card-section>
-          In certain areas i am now having issues where the surrealdb IDs are
-          acting weird. This is an area to mess around with the IDs.
-        </q-card-section>
-        <div class="text">Display</div>
-        <q-card-section v-if="postIds">
-          <div v-for="id in postIds" :key="JSON.stringify(id)">
-            {{ id }}
-          </div>
-        </q-card-section>
-        <q-card-section v-if="draftIds">
-          <div v-for="id in draftIds" :key="JSON.stringify(id)">
-            {{ id }}
-          </div>
-        </q-card-section>
-        <q-card-actions>
-          <q-btn @click="fetchIds"> Fetch IDs </q-btn>
-        </q-card-actions>
-      </q-card>
+      <q-card class="bg-color-primary"> </q-card>
     </div>
     <div class="text-h3">CRUD tester</div>
     <div class="row q-pa-sm justify-evenly items-center">
@@ -66,41 +47,9 @@
 <script setup lang="ts">
 import DevPostCard from 'src/models/post/components/DevPostCard.vue';
 import DevPersonCard from 'src/models/person/components/DevPersonCard.vue';
-import { api } from 'src/boot/axios';
 import NBanner from 'src/components/NBanner.vue';
-import { Ref, ref } from 'vue';
-import { usePostStore } from 'src/models/post';
-import { Thing } from 'src/models/meta';
+import { ref } from 'vue';
 
-const { getPosts, getDrafts } = usePostStore();
-const postIds: Ref<Thing[]> = ref([]);
-const draftIds: Ref<Thing[]> = ref([]);
-
-const fetchIds = async () => {
-  const posts = await getPosts();
-  const drafts = await getDrafts();
-  postIds.value = posts.map((p) => p.id);
-  draftIds.value = drafts.map((d) => d.id);
-};
-
-// const foo = ref();
-// foo.value = await api.get('/posts/01HJ4T9031ZWV6N8XM17Z9XV9C');
 type CrudTabs = 'person' | 'post';
 const current_tab = ref<CrudTabs>('person');
-
-const getPersonReturn = ref();
-const getPersonsReturn = ref();
-const deletePersonsReturn = ref();
-
-const sendGetPostCall = async () => {
-  console.log('sending get post call');
-  // createPostReturn.value = await api.get('/posts/01HJ4T9031ZWV6N8XM17Z9XV9C');
-};
-const sendGetPostsCall = async () => {
-  console.log('sending get posts call');
-  getPersonsReturn.value = await api.get('/posts');
-};
-const sendDeletePostCall = () => {
-  console.log('sending delete post call');
-};
 </script>

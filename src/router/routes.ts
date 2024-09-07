@@ -8,8 +8,10 @@ export enum RouteNames {
   EDIT_DRAFTS = 'edit-drafts',
   EDIT_PUBLISHED = 'edit-published',
   POST_HISTORY = 'post-history',
+  PERSONS = 'persons',
 }
 
+// TODO: give every route a name
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -64,6 +66,12 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'theme',
         component: () => import('pages/ThemePage.vue'),
+      },
+      {
+        name: RouteNames.PERSONS,
+        path: 'persons',
+        component: () => import('pages/PersonsPage.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },

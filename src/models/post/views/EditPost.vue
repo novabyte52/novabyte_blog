@@ -20,6 +20,7 @@
     </q-card-section>
     <q-card-section class="editor row">
       <!-- TODO: make shadow text cycle through random prompts? -->
+      <!-- TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over a generic input. -->
       <q-input
         filled
         counter
@@ -63,19 +64,11 @@ import { Ref, ref, watch } from 'vue';
 const emit = defineEmits<{
   (e: 'update:model-value', post: PostVersion): string;
 }>();
-
 const props = defineProps<{ modelValue?: PostVersion }>();
 
-/**
- * TODO:
- * oddities with the store not loading until after i try to get the
- * information for the author. need to maybe fix it or make sure the
- * store is loaded before i try getting the currentPerson
- */
 const { currentPerson } = storeToRefs(useNovaStore());
 
 const titleInput = ref<QInput | undefined>();
-
 const proxyPost: Ref<PostVersion | undefined> = ref();
 
 watch(
@@ -89,7 +82,7 @@ watch(
 
 const update = debounce((value: string | number | null) => {
   if (!proxyPost.value) return;
-  console.log('updating post...', proxyPost.value.author);
+
   proxyPost.value.markdown = value as string;
   emit('update:model-value', proxyPost.value);
 }, 100);

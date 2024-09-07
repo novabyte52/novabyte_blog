@@ -2,13 +2,17 @@ import { defineStore } from 'pinia';
 import useLoginClient from 'src/clients/login.client';
 import { usePersonStore } from 'src/models/person';
 import { Person } from 'src/models/person/person';
+import { RouteNames } from 'src/router/routes';
 import { Ref, computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export const NB_TOKEN_KEY = 'nbToken';
 
 export const useNovaStore = defineStore('novabyte', () => {
   const lc = useLoginClient();
   const ps = usePersonStore();
+  const route = useRoute();
+  const router = useRouter();
 
   const currentPerson: Ref<Person | undefined> = ref();
   const currentToken: Ref<string | undefined> = ref();
@@ -38,7 +42,7 @@ export const useNovaStore = defineStore('novabyte', () => {
   };
 
   const isAuthenticated = computed(() => {
-    if (currentPerson.value) return true;
+    if (hasToken()) return true;
     return false;
   });
 
@@ -77,10 +81,17 @@ export const useNovaStore = defineStore('novabyte', () => {
     }
   };
 
-  const logOut = () => {
+  const logOut = async () => {
+    const loggedOut = await lc.logout();
+    if (!loggedOut) throw Error('Unable to log out successfully!');
+
     localStorage.removeItem(NB_TOKEN_KEY);
     currentPerson.value = undefined;
     currentToken.value = undefined;
+    checkForToken();
+    if (route.meta.requiresAuth) {
+      router.push({ name: RouteNames.HOME });
+    }
   };
 
   const refresh = async () => {
