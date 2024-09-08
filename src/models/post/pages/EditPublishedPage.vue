@@ -16,6 +16,7 @@
               v-for="draft in drafts"
               clickable
               :key="draft.id?.toString()"
+              :class="{ selected: draftedPost?.draft_id === draft.draft_id }"
               @click="editDraft(draft)"
               ><q-item-section> {{ draft.title }}</q-item-section></q-item
             >
@@ -29,14 +30,15 @@
             <q-btn
               label="publish"
               color="positive"
-              :disable="!draftedPost?.title || !draftedPost.markdown"
+              :disable="
+                !isDirty || !draftedPost?.title || !draftedPost.markdown
+              "
               @click="onPublishPost"
             ></q-btn>
             <q-space />
             <q-btn
               label="un-publish"
               color="negative"
-              :disable="!draftedPost?.title || !draftedPost.markdown"
               @click="onUnpublishPost"
             ></q-btn>
           </template>
@@ -52,21 +54,36 @@ import { PostVersion, usePostStore } from 'src/models/post';
 import { EditPost } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
+import { useIsDirty } from 'src/composables';
+import { useRoute } from 'vue-router';
 
 const q = useQuasar();
-const { getPublished, unpublishDraft } = usePostStore();
+const route = useRoute();
+const { getPublished, unpublishDraft, draftPost } = usePostStore();
 
 const ratio = ref(250);
-const draftedPost: Ref<PostVersion | undefined> = ref();
+let draftedPost: Ref<PostVersion | undefined> = ref();
 const drafts: Ref<PostVersion[] | undefined> = ref();
+
+const { changeObj, isDirty } = useIsDirty(draftedPost);
 
 onMounted(async () => {
   drafts.value = await getPublished();
-  if (drafts.value.length > 0) draftedPost.value = drafts.value[0];
+  if (drafts.value.length > 0) {
+    if (route.query.draft_id) {
+      draftedPost.value =
+        drafts.value[
+          drafts.value.findIndex((p) => p.draft_id === route.query.draft_id)
+        ];
+    } else {
+      draftedPost.value = drafts.value[0];
+    }
+  }
 });
 
 const editDraft = (draft: PostVersion) => {
   draftedPost.value = draft;
+  changeObj(draftedPost);
 };
 
 const updatePost = (newVal: PostVersion) => {
@@ -77,7 +94,6 @@ const updatePost = (newVal: PostVersion) => {
  * if changes have been made create a new draft and publish it
  */
 const onPublishPost = () => {
-  console.log('publishing post');
   q.dialog({
     component: ConfirmationDialog,
     componentProps: {
@@ -85,7 +101,11 @@ const onPublishPost = () => {
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
-    // await publishPost(draftedPost.value);
+
+    if (!isDirty.value) throw new Error('Draft is unchanged! Aborting.');
+
+    draftedPost.value.published = true;
+    draftPost(draftedPost.value);
   });
 };
 
@@ -112,6 +132,10 @@ const onUnpublishPost = () => {
     .q-splitter__separator-area:hover {
       cursor: default !important;
     }
+  }
+
+  .selected {
+    background-color: $accent;
   }
 
   .foo {

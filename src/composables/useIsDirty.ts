@@ -2,8 +2,6 @@ import { clone, isEqual } from 'lodash-es';
 import { Ref, computed, watch } from 'vue';
 
 export default function useIsDirty(obj: Ref<unknown>) {
-  console.log('Using isDirty');
-  // TODO: need to hold a reference to the objbeing watched in here so i can update it if needed
   let ref: Ref<unknown>;
   let base: unknown;
 

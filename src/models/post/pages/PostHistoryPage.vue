@@ -1,8 +1,19 @@
 <template>
   <q-page class="n-page post-history">
     <div class="text-h1 text-center n-h1">Post History</div>
-    <q-card v-if="posts.length">
-      <q-card-section class="row bg-color-primary">
+    <!--
+      MARK: sub-rows-key-prop-name is for some reason force setting the generic
+      to only think SR has the draft_id prop
+    -->
+    <n-expandable-table
+      v-if="posts.length"
+      :model-value="posts"
+      :sub-rows="drafts"
+      :rows-key-prop-name="'id'"
+      :sub-rows-key-prop-name="'draft_id'"
+      :row-click="(key) => loadDrafts(key)"
+    >
+      <template v-slot:header>
         <div class="col">
           Post #
           <q-btn
@@ -38,163 +49,91 @@
             </div>
           </div>
         </div>
-      </q-card-section>
-      <q-expansion-item
-        v-model="viewState.expansion[post.id]"
-        v-for="(post, i) in posts"
-        :key="post.id"
-        dense
-        hide-expand-icon
-        expand-separator
-        class="row data-rows"
-        :header-class="{
-          'full-width': true,
-          'bg-color-primary color-text': viewState.expansion[post.id],
-        }"
-        @click="loadDrafts(post.id)"
-      >
-        <template v-slot:header>
-          <div class="row full-width">
-            <div v-if="viewState.desc" class="col">
-              {{ (posts.length - i).toString().padStart(4, '0') }}
-            </div>
-            <div v-else class="col">
-              {{ (i + 1).toString().padStart(4, '0') }}
-            </div>
-            <div class="col">{{ post.working_title }}</div>
-            <div class="col">
-              {{
-                dayjs((post.meta as Meta).created_on).format(
-                  'MM/DD/YYYY hh:mm:ss a'
-                )
-              }}
-            </div>
-          </div>
-        </template>
+      </template>
 
-        <q-card>
-          <q-card-section class="row bg-color-accent color-dark-page">
-            <div class="col">Published</div>
-            <div class="col">Draft Title</div>
-            <div class="col">Created On</div>
-            <div class="col">Author</div>
-          </q-card-section>
-          <div v-if="drafts[post.id] && drafts[post.id].length > 0">
-            <q-card-section
-              v-for="draft in drafts[post.id]"
-              :key="draft.draft_id"
-              class="row align-center"
-            >
-              <div class="col">
-                <q-btn
-                  v-if="draft.published"
-                  round
-                  size="xs"
-                  icon="fas fa-eye-slash"
-                  color="negative"
-                  class="q-mr-xs"
-                  style="position: relative; top: -2px"
-                  @click="togglePublished(draft)"
-                />
-                <q-btn
-                  v-else
-                  round
-                  size="xs"
-                  icon="fas fa-eye"
-                  color="positive"
-                  class="q-mr-xs"
-                  style="position: relative; top: -2px"
-                  @click="togglePublished(draft)"
-                />
-                <span>
-                  {{ draft.published }}
-                </span>
-              </div>
-              <div class="col">{{ draft.title }}</div>
-              <div class="col">
-                {{ dayjs(draft.at).format('MM/DD/YYYY hh:mm:ss a') }}
-              </div>
-              <div class="col">
-                <person-profile-inline :person-id="draft.author" />
-              </div>
-            </q-card-section>
+      <template v-slot:row="rowProps">
+        <div class="row full-width">
+          <div v-if="viewState.desc" class="col">
+            {{ (posts.length - rowProps.index).toString().padStart(4, '0') }}
           </div>
-          <div v-else>
-            <!-- TODO: create a row-skeleton component where i can configure how many rows to repeat -->
-            <q-card-section v-for="n in 3" :key="n" class="row">
-              <div class="col">
-                <q-skeleton width="75px" type="text" />
-              </div>
-              <div class="col">
-                <q-skeleton width="175px" type="text" />
-              </div>
-              <div class="col">
-                <q-skeleton width="250px" type="text" />
-              </div>
-              <div class="col">
-                <q-skeleton width="125px" type="QBadge" />
-              </div>
-            </q-card-section>
+          <div v-else class="col">
+            {{ (rowProps.index + 1).toString().padStart(4, '0') }}
           </div>
-        </q-card>
-      </q-expansion-item>
-      <q-card-actions class="bg-color-primary row q-pa-xs">
-        <q-space />
-        <q-btn dense flat round icon="fas fa-chevron-left"></q-btn>
-        <q-select
-          dense
-          use-chips
-          popup-content-class="color-text bg-color-primary"
-          class="q-mx-sm"
-          v-model="recordSelectAmount"
-          :options="[5, 10, 15, 20]"
-        >
-          <template v-slot:selected-item="scope">
-            <q-chip class="q-ma-none">{{ scope.opt }}</q-chip>
-          </template>
-          <template v-slot:option="scope">
-            <q-item
-              v-bind="scope.itemProps"
-              v-if="!scope.selected"
-              clickable
-              class="row justify-center q-py-md"
-            >
-              {{ scope.opt }}
-            </q-item>
-            <q-item
-              v-else
-              class="row justify-center q-py-md color-accent bg-color-dark"
-            >
-              {{ scope.opt }}
-            </q-item>
-          </template>
-        </q-select>
-        <q-btn flat dense round icon="fas fa-chevron-right"></q-btn>
-      </q-card-actions>
-    </q-card>
-    <table-skeleton v-else />
+          <div class="col">{{ rowProps.row.working_title }}</div>
+          <div class="col">
+            {{
+              dayjs((rowProps.row.meta as Meta).created_on).format(
+                'MM/DD/YYYY hh:mm:ss a'
+              )
+            }}
+          </div>
+        </div>
+      </template>
+
+      <template v-slot:sub-header>
+        <div class="col">Published</div>
+        <div class="col">Draft Title</div>
+        <div class="col">Created On</div>
+        <div class="col">Author</div>
+      </template>
+
+      <!-- MARK: this works, but is due to component generics not covering this case i think -->
+      <template v-slot:sub-row="srp: { subRow: PostVersion }">
+        <div class="col">
+          <q-btn
+            v-if="srp.subRow.published"
+            round
+            size="xs"
+            icon="fas fa-eye-slash"
+            color="negative"
+            class="q-mr-xs"
+            style="position: relative; top: -2px"
+            @click="togglePublished(srp.subRow)"
+          />
+          <q-btn
+            v-else
+            round
+            size="xs"
+            icon="fas fa-eye"
+            color="positive"
+            class="q-mr-xs"
+            style="position: relative; top: -2px"
+            @click="togglePublished(srp.subRow)"
+          />
+          <span>
+            {{ srp.subRow.published }}
+          </span>
+        </div>
+        <div class="col">{{ srp.subRow.title }}</div>
+        <div class="col">
+          {{ dayjs(srp.subRow.at).format('MM/DD/YYYY hh:mm:ss a') }}
+        </div>
+        <div class="col">
+          <person-profile-inline :person-id="srp.subRow.author" />
+        </div>
+      </template>
+    </n-expandable-table>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { TableSkeleton } from 'src/components/skeletons';
+import NExpandableTable from 'src/components/NExpandableTable.vue';
 import { Meta } from 'src/models/meta';
+import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
 import {
   Post,
   PostVersion,
   usePostClient,
   usePostStore,
 } from 'src/models/post';
-import { Ref, onMounted, reactive, ref, watch } from 'vue';
-import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
-import { QSelect } from 'quasar';
+import { Ref, onMounted, ref, watch } from 'vue';
 
 const { getPosts } = usePostClient();
-const { getPostDrafts, publishDraft, unpublishDraft } = usePostStore();
-const recordSelectAmount = ref(5);
+const { updatePostDrafts, publishDraft, unpublishDraft, postDrafts, setDraft } =
+  usePostStore();
 const posts: Ref<Post[]> = ref([]);
-const drafts: Record<string, PostVersion[]> = reactive({});
+const drafts: Ref<Map<string, PostVersion[]>> = ref(new Map());
 
 const viewState: Ref<{ desc: boolean; expansion: Record<string, boolean> }> =
   ref({ desc: true, expansion: {} });
@@ -215,8 +154,13 @@ const toggleSort = () => {
 };
 
 const loadDrafts = async (postId: string) => {
-  if (drafts[postId]) return;
-  drafts[postId] = await getPostDrafts(postId);
+  if (drafts.value.get(postId)) return;
+
+  await updatePostDrafts(postId);
+
+  const draftsComputed = postDrafts(postId);
+
+  drafts.value.set(postId, draftsComputed.value);
 };
 
 const collapseAll = () => {
@@ -226,44 +170,12 @@ const collapseAll = () => {
 };
 
 const togglePublished = async (draft: PostVersion) => {
-  draft.published
+  const updatedDraft = draft.published
     ? await unpublishDraft(draft.draft_id)
     : await publishDraft(draft.draft_id);
+
+  console.log('updated draft after toggle: ', updatedDraft);
+
+  setDraft(updatedDraft);
 };
 </script>
-
-<style lang="scss">
-.post-history {
-  .data-rows {
-    background-color: $grey-3;
-    color: $dark-page;
-
-    .q-expansion-item__border--bottom {
-      border-bottom: 4px groove $secondary;
-    }
-  }
-
-  .q-expansion-item__container {
-    width: 100%;
-
-    .q-item {
-      padding: 8px;
-    }
-  }
-
-  .q-select {
-    .q-field__control::before {
-      border: none;
-    }
-
-    .q-field__native {
-      color: $text-color !important;
-    }
-
-    .q-field__append {
-      color: $text-color !important;
-      border: none;
-    }
-  }
-}
-</style>

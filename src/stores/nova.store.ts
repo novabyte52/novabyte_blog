@@ -19,10 +19,6 @@ export const useNovaStore = defineStore('novabyte', () => {
 
   const noPersonButToken = ref(false);
 
-  const setCurrentPerson = (person: Person) => {
-    currentPerson.value = person;
-  };
-
   const getToken = () => {
     return currentToken.value ?? localStorage.getItem(NB_TOKEN_KEY);
   };
@@ -73,7 +69,7 @@ export const useNovaStore = defineStore('novabyte', () => {
       const result = await lc.postLogin(email, password);
 
       setToken(result.token);
-      setCurrentPerson(result.person);
+      currentPerson.value = result.person;
       return true;
     } catch (e) {
       console.error(e);
@@ -108,7 +104,6 @@ export const useNovaStore = defineStore('novabyte', () => {
     noPersonButToken,
     isAuthenticated,
     checkForToken,
-    setCurrentPerson,
     getToken,
     setToken,
     hasToken,

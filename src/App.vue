@@ -14,7 +14,7 @@ import { RouteNames } from 'src/router/routes';
 const router = useRouter();
 const ps = usePersonStore();
 const nova = useNovaStore();
-const { noPersonButToken, currentPerson, isAuthenticated } = storeToRefs(
+const { noPersonButToken, isAuthenticated, currentPerson } = storeToRefs(
   useNovaStore()
 );
 
@@ -40,8 +40,9 @@ watch(
     const claims = jwtDecode(token);
     if (!claims.sub) throw new Error('Expected jwt subject.');
 
-    currentPerson.value = await ps.getPerson(claims.sub);
-    ps.addPerson(currentPerson.value);
+    let cp = await ps.getPerson(claims.sub);
+    currentPerson.value = cp;
+    ps.addPerson(cp);
     noPersonButToken.value = false;
   },
   { immediate: true }

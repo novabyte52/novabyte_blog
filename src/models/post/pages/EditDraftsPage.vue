@@ -15,6 +15,7 @@
               v-for="draft in drafts"
               clickable
               :key="draft.id?.toString()"
+              :class="{ selected: draftedPost?.draft_id === draft.draft_id }"
               @click="editDraft(draft)"
               ><q-item-section>{{ draft.title }}</q-item-section></q-item
             >
@@ -34,7 +35,7 @@
             <q-btn
               label="draft"
               color="warning"
-              :disable="!draftedPost?.title"
+              :disable="!isDirty || !draftedPost?.title"
               @click="onDraftPost"
             ></q-btn>
             <q-space />
@@ -42,6 +43,7 @@
         </edit-post>
       </template>
     </q-splitter>
+    <!-- TODO: create a no-data component for when there are no drafts (the edit published and post history page will need something like this too) -->
   </q-page>
 </template>
 
@@ -52,13 +54,15 @@ import { EditPost } from 'src/models/post';
 import { Ref, onMounted, ref } from 'vue';
 import ConfirmationDialog from 'src/dialogs/ConfirmationDialog.vue';
 import { useIsDirty } from 'src/composables';
+import { useRoute } from 'vue-router';
 
 const q = useQuasar();
+const route = useRoute();
 const ratio = ref(250);
 const draftedPost: Ref<PostVersion | undefined> = ref();
 const drafts: Ref<PostVersion[] | undefined> = ref();
 
-const { draftPost, getDrafts } = usePostStore();
+const { draftPost, getDrafts, publishDraft } = usePostStore();
 
 const { changeObj, isDirty } = useIsDirty(draftedPost);
 
@@ -67,7 +71,16 @@ const { changeObj, isDirty } = useIsDirty(draftedPost);
  */
 onMounted(async () => {
   drafts.value = await getDrafts();
-  if (drafts.value.length > 0) draftedPost.value = drafts.value[0];
+  if (drafts.value.length > 0) {
+    if (route.query.draft_id) {
+      draftedPost.value =
+        drafts.value[
+          drafts.value.findIndex((p) => p.draft_id === route.query.draft_id)
+        ];
+    } else {
+      draftedPost.value = drafts.value[0];
+    }
+  }
 });
 
 /**
@@ -98,6 +111,8 @@ const onDraftPost = async () => {
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create draft for!');
+
+    if (!isDirty.value) throw new Error('Draft is unchanged! Aborting.');
     await draftPost(draftedPost.value);
   });
 };
@@ -114,8 +129,13 @@ const onPublishPost = () => {
     },
   }).onOk(async () => {
     if (!draftedPost.value) throw new Error('No post to create!');
-    draftedPost.value.published = true;
-    await draftPost(draftedPost.value);
+
+    if (isDirty.value) {
+      draftedPost.value.published = true;
+      await draftPost(draftedPost.value);
+    } else {
+      await publishDraft(draftedPost.value.draft_id);
+    }
   });
 };
 </script>
@@ -130,6 +150,10 @@ const onPublishPost = () => {
 
   .foo {
     color: black;
+  }
+
+  .selected {
+    background-color: $accent;
   }
 }
 </style>

@@ -5,7 +5,7 @@ import { usePersonClient } from './person.client';
 
 export const NB_TOKEN_KEY = 'nbToken';
 
-export const usePersonStore = defineStore('person', () => {
+export const usePersonStore = defineStore('persons', () => {
   const pc = usePersonClient();
 
   const persons: Ref<Map<string, Person>> = ref(new Map());

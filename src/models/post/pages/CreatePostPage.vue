@@ -24,7 +24,6 @@
         <q-btn
           label="discard"
           color="negative"
-          :disable="!newPost?.title"
           @click="
             onDiscardPost('Would you liek to discard this draft?', discardOk)
           "
@@ -36,40 +35,57 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import { useIsDirty } from 'src/composables';
 import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { usePosts } from 'src/models/post/';
+import { RouteNames } from 'src/router/routes';
 import { useNovaStore } from 'src/stores/nova.store';
 import { Ref, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const { currentPerson } = storeToRefs(useNovaStore());
 const { draftPost } = usePostStore();
 const { onDraftPost, onPublishPost, onDiscardPost } = usePosts();
 
+// TODO: on page refresh author is undefined for some reason...
 const newPost: Ref<PostVersion> = ref({
   author: currentPerson.value?.id as string,
   published: false,
 } as PostVersion);
+
+const { isDirty } = useIsDirty(newPost);
 
 const updatePost = (newVal: PostVersion) => {
   newPost.value = newVal as PostVersion;
 };
 
 const draftOk = async () => {
-  if (!newPost.value) throw new Error('No post to create draft for!');
-  await draftPost(newPost.value);
+  if (!isDirty.value) throw new Error('Draft is empty! Aborting.');
+
+  const draft = await draftPost(newPost.value);
+
+  router.push({
+    name: RouteNames.EDIT_DRAFTS,
+    query: { draft_id: draft.draft_id },
+  });
 };
 
 const publishOk = async () => {
-  if (!newPost.value) throw new Error('No post to create!');
+  if (!isDirty.value) throw new Error('Draft is empty! Aborting.');
+
   newPost.value.published = true;
-  await draftPost(newPost.value);
+  const draft = await draftPost(newPost.value);
+
+  router.push({
+    name: RouteNames.EDIT_PUBLISHED,
+    query: { draft_id: draft.draft_id },
+  });
 };
 
 const discardOk = () => {
-  if (!newPost.value) throw new Error('No post to create!');
   newPost.value.title = '';
   newPost.value.markdown = '';
 };
 </script>
-
-<style scoped lang="scss"></style>
