@@ -26,7 +26,6 @@ watch(
   noPersonButToken,
   async (val) => {
     if (!val) {
-      console.log('noPersonButToken changed but is false:', val);
       return;
     }
     let token = nova.getToken();
@@ -49,7 +48,6 @@ watch(
 );
 
 router.beforeEach(async (to) => {
-  console.log('beforeEach route:', isAuthenticated.value, to);
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     router.push({ name: RouteNames.HOME });
   }

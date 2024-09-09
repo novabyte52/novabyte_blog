@@ -6,13 +6,12 @@
           <q-toolbar-title> novabyte.blog </q-toolbar-title>
         </q-route-tab>
       </q-tabs>
-      <n-marquee
-        :items="[
+      <n-marquee :margin="500" />
+      <!-- :items="[
           { id: '1', text: 'Article 01' },
           { id: '2', text: 'Article 02' },
           { id: '3', text: 'Article 03' },
-        ]"
-      />
+        ]" -->
       <q-tabs inline-label class="nav">
         <q-route-tab to="/programming" icon="fas fa-code" :content-class="'tab'"
           >Programming</q-route-tab

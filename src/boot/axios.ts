@@ -33,7 +33,6 @@ const api = axios.create({
 export { axios, api };
 
 export default boot(({ app }) => {
-  console.log('running axios boot function...');
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;

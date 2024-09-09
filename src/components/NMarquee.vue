@@ -1,12 +1,26 @@
 <template>
-  <div ref="marqueeContainer" id="marquee-container">
+  <div
+    ref="marqueeContainer"
+    id="marquee-container"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+  >
     <span
-      v-for="(item, i) in items"
+      v-for="(item, i) in props.items"
       :key="item.id"
       :id="`marquee-item-${i}`"
       class="marquee-item"
     >
-      <router-link :to="{ path: 'article', params: { articleId: item.id } }">
+      <router-link
+        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }"
+      >
+        {{ item.text }}
+      </router-link>
+    </span>
+    <span v-for="item in props.items" :key="item.id" class="marquee-item">
+      <router-link
+        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }"
+      >
         {{ item.text }}
       </router-link>
     </span>
@@ -15,17 +29,21 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { RouteNames } from 'src/router/routes';
+
 const props = defineProps({
   items: {
     type: Array<{
       id: string;
       text: string;
     }>,
-    // eslint-disable-next-line vue/valid-define-props
     default: () => [
       { id: '1', text: 'test 01' },
       { id: '2', text: 'test 02' },
       { id: '3', text: 'test 03' },
+      { id: '4', text: 'test 04' },
+      { id: '5', text: 'test 05' },
+      { id: '6', text: 'test 06' },
     ],
   },
   speed: {
@@ -39,22 +57,22 @@ const props = defineProps({
 });
 
 const marqueeContainer = ref<HTMLDivElement | undefined>();
+const stopAnim = ref();
 
 watch(marqueeContainer, (val) => {
   if (val) {
     const para1 = document.getElementById('marquee-item-0');
     if (!para1) throw new Error('cant get marquee items');
-    animate(para1);
+    stopAnim.value = animate(para1);
   }
 });
 
+let flag = 0;
 function animate(element: HTMLSpanElement) {
   let elementWidth = element.offsetWidth;
   if (!element.parentElement) throw new Error('No parent element!');
-  let parentWidth = element.parentElement.offsetWidth;
 
-  let flag = 0;
-  setInterval(() => {
+  const pause = setInterval(() => {
     element.style.marginLeft = --flag + 'px';
 
     const pos_string = element.style.marginLeft.substring(
@@ -64,10 +82,22 @@ function animate(element: HTMLSpanElement) {
 
     const end = props.items.length * (elementWidth + props.margin);
     if (parseInt(pos_string) < -end) {
-      flag = parentWidth;
+      flag = 0;
     }
   }, props.speed);
+
+  return pause;
 }
+
+const onMouseEnter = () => {
+  clearInterval(stopAnim.value);
+};
+
+const onMouseLeave = () => {
+  stopAnim.value = animate(
+    document.getElementById('marquee-item-0') as HTMLElement
+  );
+};
 </script>
 
 <style scoped lang="scss">

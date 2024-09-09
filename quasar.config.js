@@ -34,6 +34,7 @@ module.exports = configure(function (/* ctx */) {
     css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
+    // TODO: switch to lucide icons: https://lucide.dev/icons/
     extras: [
       // 'ionicons-v4',
       // 'mdi-v5',

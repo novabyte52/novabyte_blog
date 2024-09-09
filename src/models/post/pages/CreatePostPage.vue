@@ -40,7 +40,7 @@ import { EditPost, PostVersion, usePostStore } from 'src/models/post';
 import { usePosts } from 'src/models/post/';
 import { RouteNames } from 'src/router/routes';
 import { useNovaStore } from 'src/stores/nova.store';
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -49,11 +49,16 @@ const { currentPerson } = storeToRefs(useNovaStore());
 const { draftPost } = usePostStore();
 const { onDraftPost, onPublishPost, onDiscardPost } = usePosts();
 
-// TODO: on page refresh author is undefined for some reason...
 const newPost: Ref<PostVersion> = ref({
-  author: currentPerson.value?.id as string,
+  author: '',
   published: false,
 } as PostVersion);
+
+// MARK: on page refresh author is undefined so i wait for it below...
+watch(currentPerson, () => {
+  if (!currentPerson.value) return;
+  newPost.value.author = currentPerson.value.id;
+});
 
 const { isDirty } = useIsDirty(newPost);
 
@@ -63,6 +68,7 @@ const updatePost = (newVal: PostVersion) => {
 
 const draftOk = async () => {
   if (!isDirty.value) throw new Error('Draft is empty! Aborting.');
+  if (!newPost.value) throw new Error('Draft is empty! Aborting.');
 
   const draft = await draftPost(newPost.value);
 
@@ -74,6 +80,7 @@ const draftOk = async () => {
 
 const publishOk = async () => {
   if (!isDirty.value) throw new Error('Draft is empty! Aborting.');
+  if (!newPost.value) throw new Error('Draft is empty! Aborting.');
 
   newPost.value.published = true;
   const draft = await draftPost(newPost.value);
@@ -85,6 +92,7 @@ const publishOk = async () => {
 };
 
 const discardOk = () => {
+  if (!newPost.value) throw new Error('Draft is empty! Aborting.');
   newPost.value.title = '';
   newPost.value.markdown = '';
 };

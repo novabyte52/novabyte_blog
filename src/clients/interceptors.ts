@@ -9,7 +9,6 @@ export const global_request_interceptor = async (
 ) => {
   const nova = useNovaStore();
 
-  console.log('running global request interceptor...');
   if (anonymousUrls.some((a) => a === config.url)) {
     return config;
   }
@@ -30,13 +29,13 @@ export const global_request_interceptor = async (
   return config;
 };
 
+// TODO: update the error checking here for NovaWebErrors instead of string comparison
 let tries = 0;
 export const global_response_interceptor =
   (axios: AxiosInstance) => async (err: AxiosError) => {
     const router = useRouter();
     const nova = useNovaStore();
 
-    console.log('running global response interceptor...');
     const { response, config } = err;
 
     if (response && response.status === 401 && config) {
