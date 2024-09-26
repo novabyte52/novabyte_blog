@@ -15,7 +15,7 @@
 // src/css/quasar.variables.sass
 
 /// quasar vars ///
-$primary: #22405a;
+$primary: #1d313c;
 .color-primary {
   color: $primary !important;
 }
@@ -23,7 +23,7 @@ $primary: #22405a;
   background-color: $primary !important;
 }
 
-$secondary: #fa752f;
+$secondary: #f6723a;
 .color-secondary {
   color: $secondary !important;
 }
@@ -35,6 +35,20 @@ $accent: #bc7de0;
 .color-accent {
   color: $accent !important;
 }
+.bg-color-accent {
+  background-color: $accent !important;
+}
+
+$red: #c43b39;
+.color-accent {
+  color: $red !important;
+}
+
+$primary-light: #50a3ab;
+.color-accent {
+  color: $primary-light !important;
+}
+
 .bg-color-accent {
   background-color: $accent !important;
 }
@@ -59,11 +73,11 @@ $warning: #f5cc5c;
 
 /// custom vars ///
 // $text-color: white;
-$text-color: #e6ddbe;
+$text-color: #fadac1;
 .color-text {
   color: $text-color !important;
 }
 .bg-color-text {
   background-color: $text-color !important;
 }
-$background: #e6ddbe;
+$background: #fadac1;

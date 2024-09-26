@@ -7,22 +7,32 @@
         </q-route-tab>
       </q-tabs>
       <n-marquee :margin="500" />
-      <!-- :items="[
-          { id: '1', text: 'Article 01' },
-          { id: '2', text: 'Article 02' },
-          { id: '3', text: 'Article 03' },
-        ]" -->
       <q-tabs inline-label class="nav">
-        <q-route-tab to="/programming" icon="fas fa-code" :content-class="'tab'"
+        <q-route-tab
+          :to="{ name: RouteNames.ABOUT }"
+          icon="fas fa-info"
+          :content-class="'tab'"
+          >About</q-route-tab
+        >
+        <q-route-tab
+          v-if="currentPerson?.is_admin"
+          to="/programming"
+          icon="fas fa-code"
+          :content-class="'tab'"
           >Programming</q-route-tab
         >
         <q-route-tab
+          v-if="currentPerson?.is_admin"
           to="/theme"
           icon="fas fa-screwdriver-wrench"
           :content-class="'tab'"
           >Making</q-route-tab
         >
-        <q-route-tab to="/theme" icon="fas fa-palette" :content-class="'tab'"
+        <q-route-tab
+          v-if="currentPerson?.is_admin"
+          to="/theme"
+          icon="fas fa-palette"
+          :content-class="'tab'"
           >Theming</q-route-tab
         >
         <q-route-tab
@@ -49,6 +59,7 @@ import { storeToRefs } from 'pinia';
 import NMarquee from './NMarquee.vue';
 import NPersonMenu from './NPersonMenu.vue';
 import { useNovaStore } from 'src/stores/nova.store';
+import { RouteNames } from 'src/router/routes';
 
 const emit = defineEmits<{
   (event: 'toggleAdmin'): void;
@@ -59,11 +70,13 @@ const { currentPerson } = storeToRefs(useNovaStore());
 
 <style lang="scss">
 .header {
+  border-bottom: 4px outset $primary;
   .toolbar {
     padding: 0;
   }
 
   .title {
+    font-family: nova-font;
     text-decoration: none;
     color: $secondary !important;
   }
@@ -80,7 +93,7 @@ const { currentPerson } = storeToRefs(useNovaStore());
     background-color: $secondary;
     position: absolute;
     margin-left: 8px;
-    margin-top: 8px;
+    margin-top: 12px;
   }
 }
 </style>

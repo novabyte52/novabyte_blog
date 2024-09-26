@@ -8,6 +8,10 @@ export const usePostStore = defineStore('posts', () => {
 
   const drafts: Map<string, PostVersion> = reactive(new Map());
 
+  const publishedDrafts = computed(() =>
+    Array.from(drafts.values()).filter((d) => d.published)
+  );
+
   const addDraft = (post: PostVersion) => {
     if (drafts.get(post.draft_id)) return;
 
@@ -110,6 +114,7 @@ export const usePostStore = defineStore('posts', () => {
 
   return {
     drafts,
+    publishedDrafts,
     postDrafts,
     addDraft,
     setDraft,

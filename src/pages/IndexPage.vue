@@ -1,84 +1,23 @@
 <template>
-  <q-page class="n-page">
-    <n-banner title="My future, My way">
-      <div class="q-mb-md">
-        <!-- Welcome, mortal, to my domain. I, the galactic entity Novabyte, will
-          chronicle my various endeavors into the depths of various domains. In
-          general, you could say you've stumbled onto the void I created for myself
-          to yell into. I'd be delighted if you stayed, and unbothered if you
-          didn't. Everything here will be by me, for me, and not you. Though, if my
-          ramblings just so happen to enrich you then all the merrier. -->
-        The first thing I ever remember wanting to be as a child was a mad
-        scientist. Specifically pouring one flask into another, a small *poof*
-        due to a reaction. Some singed eyebrows, too. I still may end up losing
-        my eyebrows at some point (hopefully not), and there probably will be
-        <i>some</i> explosions at some point (probably safe ones)...
-        <br />
-        <br />
-        I'm a Computer Scientist. For me that mostly means a variety of
-        programming. However, I do other things here including but not limited
-        to:
-      </div>
-      <q-list bordered separator class="full-width">
-        <q-expansion-item
-          expand-separator
-          class="full-width"
-          :caption="'some sort of a caption'"
-        >
-          <template v-slot:header>
-            <div class="text-h6 text-center full-width">/technomancy</div>
-          </template>
-          <q-separator />
-          <div class="q-pl-xl q-py-sm" style="background-color: #2e2139">
-            <ul>
-              <li>programming</li>
-              <ul>
-                <li>web-dev</li>
-                <li>game-dev</li>
-                <ul>
-                  <li>game-engine-dev</li>
-                  <li>graphics-dev</li>
-                </ul>
-              </ul>
-              <ul>
-                <li>robotics</li>
-                <li>home-automation</li>
-              </ul>
-            </ul>
-          </div>
-        </q-expansion-item>
-        <q-expansion-item
-          class="full-width"
-          :caption="'some sort of a caption'"
-        >
-          <template v-slot:header>
-            <div class="text-h6 text-center full-width">/art</div>
-          </template>
-          <q-separator />
-          <div class="q-ml-xl q-py-sm">
-            <ul>
-              <li>3D modeling</li>
-              <li>graphic design</li>
-            </ul>
-          </div>
-        </q-expansion-item>
-      </q-list>
-      <p class="text-center full-width q-my-md">Let's get sucked in...</p>
-      <div class="row full-width justify-evenly">
-        <q-icon
-          class="n-random q-ma-none q-pa-none"
-          ref="black_hole"
-          color="black"
-          name="circle"
-          size="md"
-        />
-      </div>
-    </n-banner>
-    <div class="text-h3">RECENT POSTS</div>
-    <div class="row q-px-lg q-gutter-lg">
+  <q-page class="n-page index-page">
+    <div class="text-h1 text-center">Popular Mission Logs</div>
+    <div class="row q-pa-xl pop-logs">
+      <q-space />
+      <q-card class="popular-log q-pa-md n-card n-card--important">
+        <div class="text-h3">A Love Letter to Rust</div>
+        <div class="text">
+          placeholder text that would be a preview of the post here.
+        </div>
+      </q-card>
+      <q-space />
+      <img src="../assets/astro-helmet.svg" class="helmet-img q-pa-sm" />
+      <q-space />
+    </div>
+    <div class="text-h2">Recent Mission Logs</div>
+    <div class="cards q-pa-sm">
       <router-link
-        v-for="post in posts"
-        class="col"
+        v-for="post in publishedDrafts"
+        class="card"
         :key="post.id"
         :to="{
           name: RouteNames.READ_POST,
@@ -87,14 +26,11 @@
           },
         }"
       >
-        <q-card class="n-card full-height">
-          <q-card-section class="text-h6"> {{ post.title }} </q-card-section>
+        <q-card class="n-card post-card" style="overflow-y: auto">
+          <q-card-section class="text-h4"> {{ post.title }} </q-card-section>
           <q-card-section>
-            <!-- I want to remove all the headers from the markdown before i generate a preview
-            because headings take up a lot of realestate and it messes with the truncate number.
-            the second issue will still exist, but headers exacerabte it i think. -->
-
             <render-markdown
+              class="bg-color-dark"
               :markdown="truncate(post.markdown, { length: 200 })"
               flat
             />
@@ -106,22 +42,18 @@
 </template>
 
 <script setup lang="ts">
-import { QIcon } from 'quasar';
-import NBanner from 'src/components/NBanner.vue';
-import { PostVersion, usePostStore, RenderMarkdown } from 'src/models/post';
-import { Ref, onMounted, ref } from 'vue';
 import { truncate } from 'lodash-es';
+import { storeToRefs } from 'pinia';
+import { RenderMarkdown, usePostStore } from 'src/models/post';
 import { RouteNames } from 'src/router/routes';
+import { onMounted } from 'vue';
 
 const { getPublished } = usePostStore();
-
-const posts: Ref<PostVersion[] | undefined> = ref();
+const { publishedDrafts } = storeToRefs(usePostStore());
 
 onMounted(async () => {
-  try {
-    posts.value = await getPublished();
-  } catch (e) {
-    throw e;
+  if (publishedDrafts.value.length === 0) {
+    await getPublished();
   }
 });
 </script>
@@ -141,6 +73,48 @@ onMounted(async () => {
   &:hover {
     transition: 0.5s;
     border: 3px solid $accent;
+  }
+}
+
+.index-page {
+  .helmet-img {
+    max-width: 50%;
+    height: auto;
+    background-clip: content-box;
+    background-image: url('https://nextcloud.techrekt.com/s/CBmCyCEWyDLdr6P/preview');
+    background-position: center;
+    background-size: cover;
+  }
+
+  .post-card {
+    // height: 250px;
+    overflow: hidden;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-auto-rows: auto;
+    grid-gap: 16px;
+    background: rgb(29, 49, 60);
+    background-image: linear-gradient(
+      to right top,
+      #1d313c,
+      #39456e,
+      #874c87,
+      #d34d72,
+      #f6723a
+    );
+    // background: linear-gradient(
+    //   45deg,
+    //   rgba(29, 49, 60, 1) 0%,
+    //   rgba(80, 163, 171, 1) 25%,
+    //   rgba(193, 250, 237, 1) 45%,
+    //   rgba(224, 194, 241, 1) 50%,
+    //   rgba(250, 218, 193, 1) 55%,
+    //   rgba(196, 59, 57, 1) 75%,
+    //   rgba(246, 114, 58, 1) 100%
+    // );
   }
 }
 </style>

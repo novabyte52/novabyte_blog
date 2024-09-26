@@ -1,7 +1,8 @@
 <template>
   <q-page class="n-page edit-post-page">
-    <div class="text-h1 text-center n-h1">Edit Drafts</div>
+    <div class="text-h1 text-center">Edit Drafts</div>
     <q-splitter
+      class="q-ma-lg"
       separator-class="static-splitter"
       v-model="ratio"
       :unit="'px'"

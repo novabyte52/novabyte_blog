@@ -1,7 +1,11 @@
 <template>
   <q-page class="n-page">
-    <div class="text-h1 text-center n-h1">Create Posts</div>
-    <edit-post :model-value="newPost" @update:model-value="updatePost">
+    <div class="text-h1 text-center">Create Posts</div>
+    <edit-post
+      class="q-ma-lg"
+      :model-value="newPost"
+      @update:model-value="updatePost"
+    >
       <template v-slot:actions>
         <q-btn
           label="draft"

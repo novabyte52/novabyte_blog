@@ -1,11 +1,12 @@
 <template>
   <q-page class="n-page post-history">
-    <div class="text-h1 text-center n-h1">Post History</div>
+    <div class="text-h1 text-center">Post History</div>
     <!--
       MARK: sub-rows-key-prop-name is for some reason force setting the generic
       to only think SR has the draft_id prop
     -->
     <n-expandable-table
+      class="q-ma-lg"
       v-if="posts.length"
       :model-value="posts"
       :sub-rows="drafts"

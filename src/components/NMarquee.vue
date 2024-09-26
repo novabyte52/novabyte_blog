@@ -104,6 +104,9 @@ const onMouseLeave = () => {
 #marquee-container {
   width: 100%;
   overflow: hidden;
+  border-left: 2px dotted $secondary;
+  border-right: 2px dotted $secondary;
+  background-color: #bc7de008;
 }
 
 .marquee-item {

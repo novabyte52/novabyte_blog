@@ -1,13 +1,15 @@
 <template>
   <q-page class="n-page">
-    <div v-if="post?.title" class="text-h2 text-center">
+    <div v-if="post?.title" class="text-h1 text-center">
       {{ post.title }}
     </div>
-    <render-markdown
-      v-if="post"
-      class="col output"
-      :markdown="(marked(post.markdown) as string)"
-    />
+    <q-card class="q-ma-xl n-card n-card--important">
+      <render-markdown
+        v-if="post"
+        class="output q-pa-lg"
+        :markdown="(marked(post.markdown) as string)"
+      />
+    </q-card>
   </q-page>
 </template>
 

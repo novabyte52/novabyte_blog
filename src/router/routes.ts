@@ -9,6 +9,8 @@ export enum RouteNames {
   EDIT_PUBLISHED = 'edit-published',
   POST_HISTORY = 'post-history',
   PERSONS = 'persons',
+  LOGIN = 'login',
+  ABOUT = 'about',
 }
 
 // TODO: give every route a name
@@ -27,8 +29,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/SignUpPage.vue'),
       },
       {
+        name: RouteNames.LOGIN,
         path: 'login',
         component: () => import('pages/LogInPage.vue'),
+      },
+      {
+        name: RouteNames.ABOUT,
+        path: 'about',
+        component: () => import('pages/AboutPage.vue'),
       },
       {
         name: RouteNames.CREATE_POST,
@@ -58,14 +66,17 @@ const routes: RouteRecordRaw[] = [
         name: RouteNames.READ_POST,
         path: 'posts/:postId',
         component: () => import('src/models/post/pages/ReadPostPage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: 'programming',
         component: () => import('pages/ProgrammingPage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: 'theme',
         component: () => import('pages/ThemePage.vue'),
+        meta: { requiresAuth: true },
       },
       {
         name: RouteNames.PERSONS,

@@ -1,7 +1,7 @@
 <template>
-  <q-card :flat="flat ?? true" class="n-card">
-    <div class="n-markdown" v-html="renderedMarkdown"></div>
-  </q-card>
+  <!-- <q-card :flat="flat ?? true" class="n-card"> -->
+  <div class="n-markdown" v-html="renderedMarkdown"></div>
+  <!-- </q-card> -->
 </template>
 
 <script setup lang="ts">
@@ -19,4 +19,9 @@ const renderedMarkdown = computed(() =>
 );
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.n-markdown {
+  background-color: $primary;
+  border-radius: 0 !important;
+}
+</style>

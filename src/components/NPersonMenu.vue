@@ -7,8 +7,13 @@
     <div class="row no-wrap q-pa-md">
       <div v-if="!isAuthenticated" class="column">
         <log-in-form :dense="true" @logging-in="onLoggingIn" />
-        <p class="text-dark q-mb-none q-mt-md">Don't have an account?</p>
-        <router-link to="/signup"> Sign Up </router-link>
+        <p class="text-dark q-mb-sm q-mt-md">
+          or
+          <router-link :to="{ name: RouteNames.LOGIN }">login here</router-link
+          >.
+        </p>
+        <p class="text-dark q-mb-none">Don't have an account?</p>
+        <router-link to="/signup"> sign up </router-link>
       </div>
       <div v-else class="column items-center">
         <q-avatar size="72px">
@@ -17,7 +22,6 @@
             class="person-avatar"
             name="fas fa-user-astronaut"
           />
-          <!-- <img src="https://cdn.quasar.dev/img/avatar4.jpg" /> -->
         </q-avatar>
 
         <div class="text-subtitle1 text-dark q-mt-md q-mb-xs">
@@ -45,6 +49,7 @@ import LogInForm from 'src/models/person/components/forms/LogInForm.vue';
 import { ref } from 'vue';
 import NMenu from './NMenu.vue';
 import { useNovaStore } from 'src/stores/nova.store';
+import { RouteNames } from 'src/router/routes';
 
 const { logOut } = useNovaStore();
 const { currentPerson, isAuthenticated } = storeToRefs(useNovaStore());

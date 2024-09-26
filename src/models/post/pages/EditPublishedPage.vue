@@ -1,15 +1,16 @@
 <template>
   <q-page class="n-page edit-post-page">
-    <div class="text-h1 text-center n-h1">Edit Published Drafts</div>
+    <div class="text-h1 text-center">Edit Published Drafts</div>
 
     <q-splitter
+      class="q-ma-lg"
       separator-class="static-splitter"
       v-model="ratio"
       :unit="'px'"
       :limits="[ratio, ratio]"
     >
       <template v-slot:before>
-        <q-card class="n-card">
+        <q-card class="n-card q-mr-lg">
           <q-list bordered separator>
             <div class="text-h4 text-center q-pa-sm">Published</div>
             <q-item

@@ -1,5 +1,15 @@
+@font-face {
+  font-family: nova-font;
+  src: url('src/assets/Potra.ttf');
+}
+@font-face {
+  font-family: nova-normal-font;
+  src: url('src/assets/space-mono.regular.ttf');
+}
+
 // app global css in SCSS form
 body {
+  font-family: nova-normal-font;
   color: $text-color;
 
   ul {
@@ -14,18 +24,16 @@ body {
     background-color: $background;
     border-left: 3px solid $accent;
     border-right: 3px solid $accent;
-    padding: 10px;
   }
 
   .n-card {
-    // color: white;
-    background-color: $primary;
-    // border: 3px solid $primary;
-    // transition: 0.5s;
-    &:hover {
-      // transition: 0.5s;
-      // border: 3px solid $accent;
-    }
+    background-color: $dark;
+    border: 4px outset $red;
+    box-shadow: none;
+  }
+
+  .n-card--important {
+    border: 10px groove $red;
   }
 
   .n-btn {
@@ -63,36 +71,39 @@ body {
     color: $dark;
   }
 
-  .n-h1 {
-    margin: 24px 0 24px 0;
-    padding: 8px;
-
-    color: $primary;
-    // background: rgb(230, 221, 190);
-    // background: linear-gradient(
-    //   45deg,
-    //   rgba(230, 221, 190, 1) 0%,
-    //   $secondary 25%,
-    //   $secondary 75%,
-    //   rgba(230, 221, 190, 1) 100%
-    // );
-
-    // border: 8px double $primary;
-    // border-top: 3px dashed $primary;
+  .text-h1 {
+    font-family: nova-font;
+    padding: 16px 0 32px 0;
     border-bottom: 8px groove $accent;
+    color: $secondary;
+    background-color: $primary;
   }
 
   .text-h2 {
+    font-family: nova-font;
     color: $secondary;
+    background: $primary;
     text-align: center;
-    margin: 16px 0px 32px 0px;
+    margin: 0px 0px 32px 0px;
+    padding: 8px 0 8px 0;
+    border-bottom: 8px groove $accent;
+    border-top: 8px ridge $accent;
   }
 
   .text-h3 {
-    color: $primary;
+    font-family: nova-font;
+    color: $primary-light;
     text-align: center;
     margin: 16px 0px 32px 0px;
     text-decoration: underline;
+  }
+
+  .text-h4 {
+    font-family: nova-font;
+    color: $primary-light;
+    text-align: center;
+    padding: 4px 0 4px 0;
+    margin: 0;
   }
 
   .q-skeleton {
@@ -102,3 +113,4 @@ body {
 
 @import 'display.scss';
 @import 'markdown.scss';
+@import 'breakpoints.scss';

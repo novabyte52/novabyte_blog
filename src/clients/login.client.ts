@@ -6,19 +6,29 @@ export default function useLoginClient() {
     baseURL: axios.defaults.baseURL + ApiPath.PERSONS,
   });
 
+  const checkValidity = async (check: { email: string; username: string }) => {
+    try {
+      const response = await c.get<{ email: boolean; username: boolean }>(
+        'valid',
+        {
+          params: {
+            email: check.email,
+            username: check.username,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const postLogin = async (email: string, password: string) => {
-    const response = await c.post<{ person: Person; token: string }>(
-      'login',
-      {
-        email,
-        password,
-      },
-      {
-        headers: {
-          Authorization: '',
-        },
-      }
-    );
+    const response = await c.post<{ person: Person; token: string }>('login', {
+      email,
+      password,
+    });
 
     return response.data;
   };
@@ -42,6 +52,7 @@ export default function useLoginClient() {
   };
 
   return {
+    checkValidity,
     postLogin,
     logout,
     getRefresh,
