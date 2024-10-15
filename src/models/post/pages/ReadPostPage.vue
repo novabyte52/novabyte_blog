@@ -3,7 +3,7 @@
     <div v-if="post?.title" class="text-h1 text-center">
       {{ post.title }}
     </div>
-    <q-card class="q-ma-xl n-card n-card--important">
+    <q-card class="post-container q-mx-xl q-mt-xl n-card n-card--important">
       <render-markdown
         v-if="post"
         class="output q-pa-lg"
@@ -32,4 +32,11 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post-container {
+  padding: 16px;
+}
+.output {
+  border: 4px inset $primary-light !important;
+}
+</style>

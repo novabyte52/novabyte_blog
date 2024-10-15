@@ -1,7 +1,17 @@
 <template>
   <q-page class="n-page">
     <div class="text-h1 text-center">My Future, My Way</div>
-    <q-card class="n-card q-ma-xl">
+    <div class="text-h3 bg-color-dark">Me</div>
+    <div class="row">
+      <q-space />
+      <div class="headshot-container">
+        <div class="headshot"></div>
+      </div>
+
+      <q-space />
+    </div>
+
+    <q-card class="n-card q-mx-xl">
       <div class="q-mb-md q-pa-lg">
         <!-- Welcome, mortal, to my domain. I, the galactic entity Novabyte, will
           chronicle my various endeavors into the depths of various domains. In
@@ -90,5 +100,24 @@
   margin: auto;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.headshot-container {
+  margin: 0 0 32px 0;
+  border-radius: 100%;
+  border: 16px double $red;
+  padding: 16px;
+  background-color: $primary;
+}
+
+.headshot {
+  border-radius: 100%;
+  border: 4px inset $primary-light;
+  width: 400px;
+  height: 400px;
+  background-clip: content-box;
+  background-image: url('https://nextcloud.techrekt.com/s/a79mFz9K9jomwzE/preview');
+  background-position: center;
+  background-size: cover;
 }
 </style>

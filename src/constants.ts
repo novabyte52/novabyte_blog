@@ -6,4 +6,5 @@ export const anonymousUrls = [
   '/posts/published',
   '/persons/signup',
   '/persons/login',
+  '/posts/published',
 ] as const;

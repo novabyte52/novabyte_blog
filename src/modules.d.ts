@@ -1,2 +1,2 @@
-declare module 'vue3-marquee-slider';
 declare module 'd3-interpolate';
+declare module 'sanitize-html';

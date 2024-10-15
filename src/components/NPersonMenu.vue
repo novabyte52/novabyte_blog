@@ -6,7 +6,11 @@
   >
     <div class="row no-wrap q-pa-md">
       <div v-if="!isAuthenticated" class="column">
-        <log-in-form :dense="true" @logging-in="onLoggingIn" />
+        <log-in-form
+          class="login-popup"
+          :dense="true"
+          @logging-in="onLoggingIn"
+        />
         <p class="text-dark q-mb-sm q-mt-md">
           or
           <router-link :to="{ name: RouteNames.LOGIN }">login here</router-link
@@ -16,12 +20,8 @@
         <router-link to="/signup"> sign up </router-link>
       </div>
       <div v-else class="column items-center">
-        <q-avatar size="72px">
-          <q-icon
-            size="48px"
-            class="person-avatar"
-            name="fas fa-user-astronaut"
-          />
+        <q-avatar class="person-avatar" size="72px" round>
+          <astronaut-helmet :size="48" class="avatar-icon" />
         </q-avatar>
 
         <div class="text-subtitle1 text-dark q-mt-md q-mb-xs">
@@ -46,10 +46,11 @@
 import { storeToRefs } from 'pinia';
 import { QBtn } from 'quasar';
 import LogInForm from 'src/models/person/components/forms/LogInForm.vue';
+import { RouteNames } from 'src/router/routes';
+import { useNovaStore } from 'src/stores/nova.store';
 import { ref } from 'vue';
 import NMenu from './NMenu.vue';
-import { useNovaStore } from 'src/stores/nova.store';
-import { RouteNames } from 'src/router/routes';
+import { AstronautHelmet } from 'src/components';
 
 const { logOut } = useNovaStore();
 const { currentPerson, isAuthenticated } = storeToRefs(useNovaStore());
@@ -72,11 +73,11 @@ const onLogoutClick = () => {
 
 <style scoped lang="scss">
 .n-person-menu {
-  min-width: 3em;
+  .login-popup {
+    color: $red;
+  }
 
   .person-avatar {
-    height: 100%;
-    width: 100%;
     background-color: $dark;
     color: $secondary;
   }

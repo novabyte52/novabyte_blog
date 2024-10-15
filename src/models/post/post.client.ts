@@ -11,12 +11,14 @@ const c = axios.create({
 });
 
 export const usePostClient = () => {
-  // to avoid complicated logic for now i will just clear and reapply the interceptors
-  c.interceptors.request.clear();
-  c.interceptors.response.clear();
+  if (process.env.CLIENT) {
+    // to avoid complicated logic for now i will just clear and reapply the interceptors
+    c.interceptors.request.clear();
+    c.interceptors.response.clear();
 
-  c.interceptors.request.use(global_request_interceptor);
-  c.interceptors.response.use((res) => res, global_response_interceptor(c));
+    c.interceptors.request.use(global_request_interceptor);
+    c.interceptors.response.use((res) => res, global_response_interceptor(c));
+  }
 
   /**
    * Get the minimum amount of info for all posts.

@@ -50,11 +50,14 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <n-footer />
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import NHeader from 'src/components/NHeader.vue';
+import NFooter from 'src/components/NFooter.vue';
 import { RouteNames } from 'src/router/routes';
 import { ref } from 'vue';
 
@@ -68,13 +71,17 @@ const toggleLeftDrawer = () => {
 <style lang="scss">
 .n-background {
   background-color: $dark-page;
+
+  .q-drawer {
+    position: fixed;
+  }
 }
 
 .n-drawer {
-  background-color: $primary;
+  background-color: $secondary;
 
   .admin-tab {
-    color: $secondary;
+    color: $dark-page;
     .q-icon {
       padding: 0px 8px !important;
     }

@@ -9,7 +9,7 @@
       :limits="[ratio, ratio]"
     >
       <template v-slot:before>
-        <q-card class="n-card">
+        <q-card class="n-card q-mr-lg">
           <div class="text-h4 text-center q-pa-sm">Drafts</div>
           <q-list bordered separator>
             <q-item

@@ -5,18 +5,17 @@
 </template>
 
 <script setup lang="ts">
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
 import { computed } from 'vue';
 import { marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
 
 const props = defineProps<{
   markdown: string;
   flat?: boolean;
 }>();
 
-const renderedMarkdown = computed(() =>
-  marked(DOMPurify.sanitize(props.markdown))
-);
+const renderedMarkdown = computed(() => marked(sanitizeHtml(props.markdown)));
 </script>
 
 <style scoped lang="scss">

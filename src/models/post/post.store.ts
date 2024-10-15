@@ -72,9 +72,9 @@ export const usePostStore = defineStore('posts', () => {
 
   // TODO: rename to getPublishedDrafts
   const getPublished = async () => {
-    const publishedDrafts = await pc.fetchPublished();
+    const publishedDraftsd = await pc.fetchPublished();
 
-    publishedDrafts.forEach((d) => {
+    publishedDraftsd.forEach((d) => {
       drafts.set(d.draft_id, d);
     });
 

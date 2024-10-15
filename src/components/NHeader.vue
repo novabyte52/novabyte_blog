@@ -3,43 +3,35 @@
     <q-toolbar class="toolbar">
       <q-tabs inline-label indicator-color="transparent">
         <q-route-tab to="/" class="title">
-          <q-toolbar-title> novabyte.blog </q-toolbar-title>
+          <q-toolbar-title class="text-h5"> novabyte.blog </q-toolbar-title>
         </q-route-tab>
       </q-tabs>
       <n-marquee :margin="500" />
       <q-tabs inline-label class="nav">
-        <q-route-tab
-          :to="{ name: RouteNames.ABOUT }"
-          icon="fas fa-info"
-          :content-class="'tab'"
-          >About</q-route-tab
+        <q-route-tab :to="{ name: RouteNames.ABOUT }" :content-class="'tab'"
+          ><rocket class="q-ma-sm" size="24" /> About</q-route-tab
         >
         <q-route-tab
           v-if="currentPerson?.is_admin"
           to="/programming"
-          icon="fas fa-code"
           :content-class="'tab'"
-          >Programming</q-route-tab
+          ><bot class="q-ma-sm" size="24" /> Programming</q-route-tab
         >
         <q-route-tab
           v-if="currentPerson?.is_admin"
           to="/theme"
-          icon="fas fa-screwdriver-wrench"
           :content-class="'tab'"
-          >Making</q-route-tab
+          ><pencil-ruler class="q-ma-sm" size="24" stroke-width="1.75" />
+          Making</q-route-tab
         >
         <q-route-tab
           v-if="currentPerson?.is_admin"
           to="/theme"
-          icon="fas fa-palette"
           :content-class="'tab'"
-          >Theming</q-route-tab
+          ><palette class="q-ma-sm" size="24" /> Theming</q-route-tab
         >
-        <q-route-tab
-          icon="fas fa-user-astronaut"
-          class="user-tab"
-          :content-class="'tab'"
-        >
+        <q-route-tab class="user-tab" :content-class="'tab'">
+          <icon name="astro" :iconNode="astronautHelmet" :size="32" />
           <n-person-menu />
         </q-route-tab>
       </q-tabs>
@@ -48,9 +40,10 @@
       v-if="currentPerson?.is_admin"
       round
       class="admin-btn"
-      icon="fas fa-gear"
       @click="emit('toggleAdmin')"
-    />
+    >
+      <cog size="32" />
+    </q-btn>
   </q-header>
 </template>
 
@@ -60,6 +53,8 @@ import NMarquee from './NMarquee.vue';
 import NPersonMenu from './NPersonMenu.vue';
 import { useNovaStore } from 'src/stores/nova.store';
 import { RouteNames } from 'src/router/routes';
+import { astronautHelmet } from '@lucide/lab';
+import { Icon, Cog, Palette, PencilRuler, Bot, Rocket } from 'lucide-vue-next';
 
 const emit = defineEmits<{
   (event: 'toggleAdmin'): void;
