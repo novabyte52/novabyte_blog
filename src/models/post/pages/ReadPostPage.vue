@@ -20,6 +20,14 @@ import { usePostStore } from '../post.store';
 import { PostVersion, RenderMarkdown } from 'src/models/post';
 import { marked } from 'marked';
 
+defineOptions({
+  preFetch: ({ store, ssrContext }) => {
+    const param = ssrContext?.req.params[0].split('/');
+    const ps = usePostStore(store);
+    return ps.getPublishedDraft(param?.[2] as string);
+  },
+});
+
 const r = useRoute();
 const { getPublishedDraft } = usePostStore();
 
@@ -27,7 +35,6 @@ const { postId } = r.params;
 const post: Ref<PostVersion | undefined> = ref();
 
 onMounted(async () => {
-  console.log('ReadPostPage mounted...');
   post.value = await getPublishedDraft(postId as string);
 });
 </script>

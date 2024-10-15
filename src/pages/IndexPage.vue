@@ -53,18 +53,14 @@ import { storeToRefs } from 'pinia';
 import { RenderMarkdown, usePostStore } from 'src/models/post';
 import { RouteNames } from 'src/router/routes';
 
-const state = usePostStore();
-
 defineOptions({
   preFetch: ({ store }) => {
-    const myStore = usePostStore(store);
-    return myStore.getPublished();
+    const ps = usePostStore(store);
+    return ps.getPublished();
   },
 });
 
 const { publishedDrafts } = storeToRefs(usePostStore());
-
-console.log('state===', state.$state);
 </script>
 
 <style lang="scss">
