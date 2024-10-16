@@ -3,13 +3,26 @@ import { computed, ref } from 'vue';
 import { PostVersion } from './post';
 import { usePostClient } from './post.client';
 
+function randomIntFromInterval(min: number, max: number) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export const usePostStore = defineStore('posts', () => {
   const pc = usePostClient();
 
   const drafts = ref<PostVersion[]>([]);
 
+  const getRandomDraft = async () => {
+    await getPublished();
+
+    return publishedDrafts.value[
+      randomIntFromInterval(0, publishedDrafts.value.length - 1)
+    ];
+  };
+
   const publishedDrafts = computed(() =>
-    Array.from(drafts.value.values()).filter((d) => d.published)
+    drafts.value.filter((d) => d.published)
   );
 
   const addDraft = (post: PostVersion) => {
@@ -17,14 +30,8 @@ export const usePostStore = defineStore('posts', () => {
   };
 
   const setDraft = (draft: PostVersion) => {
-    console.log('setting draft:', draft.draft_id);
     const index = drafts.value.findIndex((r) => r.draft_id === draft.draft_id);
-    if (index < 0) {
-      console.log('couldnt find draft!');
-      return false;
-    } else {
-      console.log('found draft!', index);
-    }
+    if (index < 0) return false;
 
     drafts.value[index] = draft;
     return true;
@@ -82,10 +89,7 @@ export const usePostStore = defineStore('posts', () => {
   const getPublished = async () => {
     const publishedDraftsd = await pc.fetchPublished();
 
-    console.log('got published drafts:', publishedDraftsd.length);
     publishedDraftsd.forEach((d) => addDraft(d));
-
-    console.log('drafts:', drafts.value);
 
     return drafts.value.filter((d) => d.published);
   };
@@ -123,6 +127,7 @@ export const usePostStore = defineStore('posts', () => {
 
   return {
     drafts,
+    getRandomDraft,
     publishedDrafts,
     postDrafts,
     addDraft,

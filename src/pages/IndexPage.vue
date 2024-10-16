@@ -1,17 +1,26 @@
 <template>
   <q-page class="n-page index-page">
-    <div class="text-h1 text-center">Popular Mission Logs</div>
+    <div class="text-h1 text-center">Popular Mission Log</div>
     <div class="row q-pa-xl pop-logs">
       <q-space />
-      <q-card class="popular-log q-pa-lg n-card n-card--important">
-        <div class="text-h3">{{ publishedDrafts[0]?.title || '' }}</div>
-        <render-markdown
-          class="markdown-preview"
-          :markdown="
-            truncate(publishedDrafts[0]?.markdown || '', { length: 500 })
-          "
-          flat
-        />
+      <q-card
+        v-if="randomDraft"
+        class="popular-log q-pa-lg n-card n-card--important"
+      >
+        <router-link
+          :to="{
+            name: RouteNames.READ_POST,
+            params: { postId: randomDraft.draft_id },
+          }"
+          class="card-link"
+        >
+          <div class="text-h3">{{ randomDraft?.title || '' }}</div>
+          <render-markdown
+            class="markdown-preview"
+            :markdown="truncate(randomDraft?.markdown || '', { length: 500 })"
+            flat
+          />
+        </router-link>
       </q-card>
       <q-space />
       <img src="../assets/astro-helmet.svg" class="helmet-img q-pa-sm" />
@@ -52,6 +61,7 @@ import { truncate } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { RenderMarkdown, usePostStore } from 'src/models/post';
 import { RouteNames } from 'src/router/routes';
+import { onMounted, ref } from 'vue';
 
 defineOptions({
   preFetch: ({ store }) => {
@@ -60,7 +70,14 @@ defineOptions({
   },
 });
 
+const { getRandomDraft } = usePostStore();
 const { publishedDrafts } = storeToRefs(usePostStore());
+
+const randomDraft = ref();
+
+onMounted(async () => {
+  randomDraft.value = await getRandomDraft();
+});
 </script>
 
 <style lang="scss">
@@ -68,7 +85,7 @@ const { publishedDrafts } = storeToRefs(usePostStore());
   padding-bottom: 0 !important;
   .helmet-img {
     background-clip: content-box;
-    background-image: url('https://nextcloud.techrekt.com/s/CBmCyCEWyDLdr6P/preview');
+    background-image: v-bind("`url('${randomDraft?.image}')`");
     background-position: center;
     background-size: cover;
   }

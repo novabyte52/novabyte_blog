@@ -8,12 +8,10 @@ export const NB_TOKEN_KEY = 'nbToken';
 export const usePersonStore = defineStore('persons', () => {
   const pc = usePersonClient();
 
-  const persons: Ref<Map<string, Person>> = ref(new Map());
+  const persons: Ref<Person[]> = ref([]);
 
   const addPerson = (person: Person) => {
-    if (persons.value.get(person.id)) return;
-
-    persons.value.set(person.id, person);
+    if (!updatePerson(person)) persons.value.push(person);
   };
 
   /**
@@ -32,7 +30,7 @@ export const usePersonStore = defineStore('persons', () => {
       person.email,
       password
     );
-    persons.value.set(newPerson.id, newPerson);
+    addPerson(newPerson);
   };
 
   /**
@@ -42,7 +40,10 @@ export const usePersonStore = defineStore('persons', () => {
    * @param person the updated person
    */
   const updatePerson = (person: Person) => {
-    persons.value.set(person.id, person);
+    const index = persons.value.findIndex((p) => p.id === person.id);
+    if (index < 0) return false;
+
+    persons.value[index] = person;
     // TODO: call client function to update person
   };
 
@@ -54,11 +55,11 @@ export const usePersonStore = defineStore('persons', () => {
    * @returns the person associated with the passed id
    */
   const getPerson = async (personId: string) => {
-    const person = persons.value.get(personId);
+    const person = persons.value.find((p) => p.id === personId);
     if (person) return person;
 
     const fetchedPerson = await pc.getPerson(personId);
-    persons.value.set(personId, fetchedPerson);
+    addPerson(fetchedPerson);
     return fetchedPerson;
   };
 

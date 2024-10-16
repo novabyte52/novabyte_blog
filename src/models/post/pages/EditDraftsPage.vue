@@ -25,7 +25,7 @@
       </template>
       <template v-slot:after>
         <div v-if="!draftedPost">No published drafts currently exist</div>
-        <edit-post :model-value="draftedPost" @update:model-value="updatePost">
+        <edit-post v-model="draftedPost">
           <template v-slot:actions>
             <q-btn
               label="publish"
@@ -91,14 +91,6 @@ onMounted(async () => {
 const editDraft = (draft: PostVersion) => {
   draftedPost.value = draft;
   changeObj(draftedPost);
-};
-
-/**
- * update our model with the updated value
- * @param newVal the updated post version
- */
-const updatePost = (newVal: PostVersion) => {
-  draftedPost.value = newVal as PostVersion;
 };
 
 /**
