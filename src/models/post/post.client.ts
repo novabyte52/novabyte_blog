@@ -112,7 +112,7 @@ export const usePostClient = () => {
 
   const fetchPublished = async () => {
     try {
-      const response = await c.get<PostVersion[]>('published');
+      const response = await c.get<PostVersion[]>('/published');
       return response.data;
     } catch (e) {
       throw e;

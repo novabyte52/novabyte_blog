@@ -3,8 +3,9 @@ export enum NError {
 }
 
 export const anonymousUrls = [
-  '/posts/published',
-  '/persons/signup',
-  '/persons/login',
-  '/posts/published',
+  'published',
+  'signup',
+  'login',
+  'random',
+  'valid',
 ] as const;

@@ -28,13 +28,12 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios', 'i18n'],
+    boot: ['config', 'axios', 'i18n'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
-    // TODO: switch to lucide icons: https://lucide.dev/icons/
     extras: [
       // 'ionicons-v4',
       // 'mdi-v5',
@@ -63,6 +62,15 @@ module.exports = configure(function (/* ctx */) {
       },
 
       extendViteConf: (config) => {
+        config.envPrefix = 'NB_';
+
+        config.ssr = {
+          optimizeDeps: {
+            include: ['lodash-es'],
+          },
+          noExternal: ['lodash-es'],
+        };
+
         config.optimizeDeps = {
           esbuildOptions: {
             target: 'esnext',
@@ -116,7 +124,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true,
-      open: true, // opens browser window automatically
+      // open: true, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -171,8 +179,7 @@ module.exports = configure(function (/* ctx */) {
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      prodPort: 3000, // The default port that the production server should use
-      // (gets superseded if process.env.PORT is specified at runtime)
+      prodPort: 52002,
 
       middlewares: [
         'render', // keep this as last one

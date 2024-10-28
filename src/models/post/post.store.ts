@@ -13,6 +13,10 @@ export const usePostStore = defineStore('posts', () => {
 
   const drafts = ref<PostVersion[]>([]);
 
+  const publishedDrafts = computed(() =>
+    drafts.value.filter((d) => d.published)
+  );
+
   const getRandomDraft = async () => {
     await getPublished();
 
@@ -20,10 +24,6 @@ export const usePostStore = defineStore('posts', () => {
       randomIntFromInterval(0, publishedDrafts.value.length - 1)
     ];
   };
-
-  const publishedDrafts = computed(() =>
-    drafts.value.filter((d) => d.published)
-  );
 
   const addDraft = (post: PostVersion) => {
     if (!setDraft(post)) drafts.value.push(post);
@@ -87,9 +87,9 @@ export const usePostStore = defineStore('posts', () => {
 
   // TODO: rename to getPublishedDrafts
   const getPublished = async () => {
-    const publishedDraftsd = await pc.fetchPublished();
+    const publishedDrafts = await pc.fetchPublished();
 
-    publishedDraftsd.forEach((d) => addDraft(d));
+    publishedDrafts.forEach((d) => addDraft(d));
 
     return drafts.value.filter((d) => d.published);
   };
