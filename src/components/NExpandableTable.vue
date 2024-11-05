@@ -55,7 +55,6 @@
 
     <q-card-actions class="row q-pa-xs table-footer">
       <q-space />
-      <!-- TODO: get pagination working -->
       <q-btn dense flat round icon="fas fa-chevron-left"></q-btn>
       <q-select
         dense
@@ -108,7 +107,6 @@ const viewState: Ref<{ expansion: Record<string, boolean> }> = ref({
   expansion: {},
 });
 
-// TODO: need to implement this but i need to figure out how to get the button in here
 // const collapseAll = () => {
 //   Object.keys(viewState.value.expansion).forEach(
 //     (k) => (viewState.value.expansion[k] = false)

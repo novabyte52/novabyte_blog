@@ -10,7 +10,6 @@ const c = axios.create({
 });
 
 export const usePersonClient = () => {
-  // to avoid complicated logic for now i will just clear and reapply the interceptors
   c.interceptors.request.clear();
   c.interceptors.response.clear();
 
@@ -36,7 +35,6 @@ export const usePersonClient = () => {
     }
   };
 
-  // TODO: rename this to createPerson
   const postSignup = async (
     username: string,
     email: string,

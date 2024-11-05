@@ -23,9 +23,6 @@ export const usePostClient = () => {
   /**
    * Get the minimum amount of info for all posts.
    *
-   * TODO: Will maybe make a store for posts themselves and
-   * make the current post store into a drafts store.
-   *
    * @returns minimal information for all posts
    */
   const getPosts = async () => {
@@ -37,8 +34,6 @@ export const usePostClient = () => {
     }
   };
 
-  // TODO: may want to return the PostVersion eventually so i can add it to the store,
-  // but for now this should be fine
   const draftPost = async (post: PostVersion) => {
     try {
       const response = await c.post<PostVersion>('drafts', {

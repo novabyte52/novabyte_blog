@@ -67,7 +67,6 @@ export const usePostStore = defineStore('posts', () => {
     return drafts.value.filter((d) => d.id === postId);
   };
 
-  // TODO: rename to getAllDrafts
   const getDrafts = async () => {
     const fetchedDrafts = await pc.fetchDrafts();
 
@@ -76,7 +75,6 @@ export const usePostStore = defineStore('posts', () => {
     return fetchedDrafts;
   };
 
-  // TODO: rename to createDraft
   const draftPost = async (post: PostVersion) => {
     const newDraft = await pc.draftPost(post);
 
@@ -85,7 +83,6 @@ export const usePostStore = defineStore('posts', () => {
     return newDraft;
   };
 
-  // TODO: rename to getPublishedDrafts
   const getPublished = async () => {
     const publishedDrafts = await pc.fetchPublished();
 

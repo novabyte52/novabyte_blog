@@ -44,7 +44,6 @@
         </edit-post>
       </template>
     </q-splitter>
-    <!-- TODO: create a no-data component for when there are no drafts (the edit published and post history page will need something like this too) -->
   </q-page>
 </template>
 

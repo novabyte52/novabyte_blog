@@ -13,7 +13,6 @@ export enum RouteNames {
   ABOUT = 'about',
 }
 
-// TODO: give every route a name
 const routes: RouteRecordRaw[] = [
   {
     path: '/',

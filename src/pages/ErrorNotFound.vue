@@ -19,8 +19,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-// TODO: transition this page to be a universal error page
-// pass the error as a query param and it will use that to display the proper error
-</script>

@@ -19,8 +19,6 @@
       />
     </q-card-section>
     <q-card-section class="editor row">
-      <!-- TODO: make shadow text cycle through random prompts? -->
-      <!-- TODO: may switch to this https://www.npmjs.com/package/md-editor-v3 over a generic input. -->
       <q-input
         filled
         counter

@@ -2,7 +2,7 @@
   <q-page class="n-page post-history">
     <div class="text-h1 text-center">Post History</div>
     <!--
-      MARK: sub-rows-key-prop-name is for some reason force setting the generic
+      sub-rows-key-prop-name is for some reason force setting the generic
       to only think SR has the draft_id prop
     -->
     <n-expandable-table
@@ -42,7 +42,6 @@
             <div>Created On</div>
             <q-space />
             <div>
-              <!-- TODO: this button is not functional becuase of moving stuff into a component... -->
               <q-btn flat rounded size="xs" icon="fas fa-square-minus" />
               <!-- @click="collapseAll" -->
             </div>
@@ -76,7 +75,7 @@
         <div class="col">Author</div>
       </template>
 
-      <!-- MARK: this works, but is due to component generics not covering this case i think -->
+      <!-- this works, but is due to component generics not covering this case i think -->
       <template v-slot:sub-row="srp: { subRow: PostVersion }">
         <div class="col">
           <q-btn

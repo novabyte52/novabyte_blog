@@ -54,7 +54,7 @@ const newPost: Ref<PostVersion> = ref({
   published: false,
 } as PostVersion);
 
-// MARK: on page refresh author is undefined so i wait for it below...
+// on page refresh author is undefined so i wait for it below
 watch(currentPerson, () => {
   if (!currentPerson.value) return;
   newPost.value.author = currentPerson.value.id;

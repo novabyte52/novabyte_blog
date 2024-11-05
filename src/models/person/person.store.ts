@@ -44,7 +44,6 @@ export const usePersonStore = defineStore('persons', () => {
     if (index < 0) return false;
 
     persons.value[index] = person;
-    // TODO: call client function to update person
   };
 
   /**
