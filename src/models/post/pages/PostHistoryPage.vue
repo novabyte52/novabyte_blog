@@ -7,7 +7,7 @@
     -->
     <n-expandable-table
       class="q-ma-lg"
-      v-if="posts.length"
+      v-if="posts && posts.length"
       :model-value="posts"
       :sub-rows="drafts"
       :rows-key-prop-name="'id'"
@@ -15,12 +15,13 @@
       :row-click="(key) => loadDrafts(key)"
     >
       <template v-slot:header>
-        <div class="col">
+        <div class="col row post-num-sort">
           Post #
           <q-btn
             v-if="viewState.desc"
             flat
             round
+            class="q-ml-xs"
             size="xs"
             icon="fas fa-arrow-down-long"
             @click="toggleSort"
@@ -29,6 +30,7 @@
             v-else
             flat
             round
+            class="q-ml-xs"
             size="xs"
             icon="fas fa-arrow-up-long"
             @click="toggleSort"
@@ -40,13 +42,9 @@
             <div>Created On</div>
             <q-space />
             <div>
-              <q-btn
-                flat
-                rounded
-                size="xs"
-                icon="fas fa-square-minus"
-                @click="collapseAll"
-              />
+              <!-- TODO: this button is not functional becuase of moving stuff into a component... -->
+              <q-btn flat rounded size="xs" icon="fas fa-square-minus" />
+              <!-- @click="collapseAll" -->
             </div>
           </div>
         </div>
@@ -119,7 +117,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import NExpandableTable from 'src/components/NExpandableTable.vue';
+// import NExpandableTable from 'src/components/NExpandableTable.vue';
 import { Meta } from 'src/models/meta';
 import PersonProfileInline from 'src/models/person/components/PersonProfileInline.vue';
 import {
@@ -128,7 +126,10 @@ import {
   usePostClient,
   usePostStore,
 } from 'src/models/post';
-import { Ref, onMounted, ref, watch } from 'vue';
+import { Ref, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+const NExpandableTable = defineAsyncComponent(
+  () => import('src/components/NExpandableTable.vue')
+);
 
 const { getPosts } = usePostClient();
 const { updatePostDrafts, publishDraft, unpublishDraft, postDrafts, setDraft } =
@@ -164,11 +165,11 @@ const loadDrafts = async (postId: string) => {
   drafts.value.set(postId, draftsComputed.value);
 };
 
-const collapseAll = () => {
-  Object.keys(viewState.value.expansion).forEach(
-    (k) => (viewState.value.expansion[k] = false)
-  );
-};
+// const collapseAll = () => {
+//   Object.keys(viewState.value.expansion).forEach(
+//     (k) => (viewState.value.expansion[k] = false)
+//   );
+// };
 
 const togglePublished = async (draft: PostVersion) => {
   const updatedDraft = draft.published
@@ -180,3 +181,9 @@ const togglePublished = async (draft: PostVersion) => {
   setDraft(updatedDraft);
 };
 </script>
+
+<style scoped lang="scss">
+.post-num-sort {
+  align-items: center;
+}
+</style>

@@ -11,12 +11,14 @@ const c = axios.create({
 });
 
 export const usePostClient = () => {
-  // to avoid complicated logic for now i will just clear and reapply the interceptors
-  c.interceptors.request.clear();
-  c.interceptors.response.clear();
+  if (process.env.CLIENT) {
+    // to avoid complicated logic for now i will just clear and reapply the interceptors
+    c.interceptors.request.clear();
+    c.interceptors.response.clear();
 
-  c.interceptors.request.use(global_request_interceptor);
-  c.interceptors.response.use((res) => res, global_response_interceptor(c));
+    c.interceptors.request.use(global_request_interceptor);
+    c.interceptors.response.use((res) => res, global_response_interceptor(c));
+  }
 
   /**
    * Get the minimum amount of info for all posts.
@@ -44,6 +46,7 @@ export const usePostClient = () => {
         markdown: post.markdown,
         id: post.id,
         published: post.published,
+        image: post.image,
       });
 
       return response.data;
@@ -108,9 +111,17 @@ export const usePostClient = () => {
   };
 
   const fetchPublished = async () => {
-    console.log('fetching published posts');
     try {
-      const response = await c.get<PostVersion[]>('published');
+      const response = await c.get<PostVersion[]>('/published');
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const fetchRandom = async () => {
+    try {
+      const response = await c.get<PostVersion>('random');
       return response.data;
     } catch (e) {
       throw e;
@@ -126,5 +137,6 @@ export const usePostClient = () => {
     fetchDrafts,
     fetchPostDrafts,
     fetchPublished,
+    fetchRandom,
   };
 };

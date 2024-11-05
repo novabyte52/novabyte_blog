@@ -16,7 +16,7 @@ export const global_request_interceptor = async (
   let token = nova.getToken();
 
   if (!token) {
-    token = (await nova.refresh()) ?? null;
+    token = (await nova.refresh('global request interceptor')) ?? undefined;
   }
 
   if (!token) {
@@ -50,7 +50,7 @@ export const global_response_interceptor =
         // check for unverifiable token 401
         case 'Cannot verify token.': {
           // attempt to refresh just in case
-          const token = await nova.refresh();
+          const token = await nova.refresh('global response interceptor 01');
 
           if (token) {
             nova.setToken(token);
@@ -67,7 +67,9 @@ export const global_response_interceptor =
           if (tries < 3) {
             try {
               tries++;
-              const token = await nova.refresh();
+              const token = await nova.refresh(
+                'global response interceptor 02'
+              );
 
               if (token) {
                 nova.setToken(token);

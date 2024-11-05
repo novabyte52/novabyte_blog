@@ -4,18 +4,18 @@
       <q-input
         ref="titleInput"
         class="text-h4"
-        v-model="proxyPost.title"
+        :model-value="proxyPost.title"
         type="text"
         label="Title"
         :shadow-text="!proxyPost.title ? 'Title' : ''"
         lazy-rules="ondemand"
         :rules="[
           (v) => {
-            console.log('=== validating title', v);
             return !!v || 'Title is required to publish';
           },
         ]"
         @blur="titleInput?.validate()"
+        @update:model-value="updateTitle"
       />
     </q-card-section>
     <q-card-section class="editor row">
@@ -32,7 +32,7 @@
           !proxyPost.markdown ? 'Laying the road one brick at a time...' : ''
         "
         :model-value="proxyPost.markdown"
-        @update:model-value="update"
+        @update:model-value="updateMarkdown"
       />
       <render-markdown
         class="col output"
@@ -40,6 +40,12 @@
       />
     </q-card-section>
     <q-card-section>
+      <div class="text-h6">Image</div>
+      <q-input
+        :model-value="proxyPost.image"
+        type="text"
+        @update:model-value="updateImage"
+      ></q-input>
       <div class="text-h6">Author</div>
       <person-profile-inline
         :person="currentPerson"
@@ -80,10 +86,24 @@ watch(
   { immediate: true }
 );
 
-const update = debounce((value: string | number | null) => {
+const updateTitle = debounce((value: string | number | null) => {
+  if (!proxyPost.value) return;
+
+  proxyPost.value.title = value as string;
+  emit('update:model-value', proxyPost.value);
+}, 100);
+
+const updateMarkdown = debounce((value: string | number | null) => {
   if (!proxyPost.value) return;
 
   proxyPost.value.markdown = value as string;
+  emit('update:model-value', proxyPost.value);
+}, 100);
+
+const updateImage = debounce((value: string | number | null) => {
+  if (!proxyPost.value) return;
+
+  proxyPost.value.image = value as string;
   emit('update:model-value', proxyPost.value);
 }, 100);
 </script>

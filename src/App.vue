@@ -12,11 +12,11 @@ import { useRouter } from 'vue-router';
 import { RouteNames } from 'src/router/routes';
 
 const router = useRouter();
-const ps = usePersonStore();
 const nova = useNovaStore();
 const { noPersonButToken, isAuthenticated, currentPerson } = storeToRefs(
   useNovaStore()
 );
+const ps = usePersonStore();
 
 // check for token immediately to set noPersonButToken
 nova.checkForToken();
@@ -31,7 +31,7 @@ watch(
     let token = nova.getToken();
 
     if (!token) {
-      token = (await nova.refresh()) ?? null;
+      token = (await nova.refresh('noPersonButToken watcher')) ?? undefined;
       if (!token) throw Error('attempted refresh but unable to');
       nova.setToken(token);
     }
@@ -39,6 +39,7 @@ watch(
     const claims = jwtDecode(token);
     if (!claims.sub) throw new Error('Expected jwt subject.');
 
+    console.log('noPersonButToken watcher', val);
     let cp = await ps.getPerson(claims.sub);
     currentPerson.value = cp;
     ps.addPerson(cp);

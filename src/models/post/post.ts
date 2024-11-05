@@ -14,4 +14,5 @@ export type PostVersion = {
   author: string;
   published: boolean;
   at: Date;
+  image: string;
 };

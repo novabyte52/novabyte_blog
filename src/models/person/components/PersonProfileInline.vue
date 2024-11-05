@@ -1,15 +1,17 @@
 <template>
   <q-badge
     v-if="verifiedPerson"
-    class="n-card n-inline bg-color-secondary color-primary"
+    class="n-card n-inline bg-color-primary color-text q-pa-xs"
   >
-    <q-icon name="fas fa-user-astronaut" class="q-pr-xs" />
+    <astronaut-helmet class="q-mr-xs" :color="Colors.SECONDARY" :size="16" />
     {{ verifiedPerson.username }}
   </q-badge>
   <q-skeleton v-else type="QBadge" />
 </template>
 
 <script setup lang="ts">
+import { AstronautHelmet } from 'src/components';
+import { Colors } from 'src/css';
 import { Person, usePersonStore } from 'src/models/person';
 import { ref, watch } from 'vue';
 
@@ -38,4 +40,8 @@ watch(
 );
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.n-inline {
+  border-width: 3px;
+}
+</style>

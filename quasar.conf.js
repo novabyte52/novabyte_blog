@@ -7,11 +7,11 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-
+require('dotenv').config();
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (/*ctx*/) {
   return {
     eslint: {
       fix: true,
@@ -23,18 +23,17 @@ module.exports = configure(function (/* ctx */) {
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
-    // preFetch: true,
+    preFetch: true,
 
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['register', 'i18n', 'axios'],
+    boot: ['axios', 'i18n'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
-    // TODO: switch to lucide icons: https://lucide.dev/icons/
     extras: [
       // 'ionicons-v4',
       // 'mdi-v5',
@@ -63,6 +62,15 @@ module.exports = configure(function (/* ctx */) {
       },
 
       extendViteConf: (config) => {
+        config.envPrefix = 'NB_';
+
+        config.ssr = {
+          optimizeDeps: {
+            include: ['lodash-es'],
+          },
+          noExternal: ['lodash-es'],
+        };
+
         config.optimizeDeps = {
           esbuildOptions: {
             target: 'esnext',
@@ -116,7 +124,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true,
-      open: true, // opens browser window automatically
+      // open: true, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -147,16 +155,16 @@ module.exports = configure(function (/* ctx */) {
     animations: [],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
-    // sourceFiles: {
-    //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
-    //   store: 'src/store/index',
-    //   registerServiceWorker: 'src-pwa/register-service-worker',
-    //   serviceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
-    //   electronMain: 'src-electron/electron-main',
-    //   electronPreload: 'src-electron/electron-preload'
-    // },
+    sourceFiles: {
+      rootComponent: 'src/App.vue',
+      router: 'src/router/index',
+      stores: 'src/stores/index',
+      // registerServiceWorker: 'src-pwa/register-service-worker',
+      // serviceWorker: 'src-pwa/custom-service-worker',
+      // pwaManifestFile: 'src-pwa/manifest.json',
+      // electronMain: 'src-electron/electron-main',
+      // electronPreload: 'src-electron/electron-preload'
+    },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-ssr/configuring-ssr
     ssr: {
@@ -171,8 +179,7 @@ module.exports = configure(function (/* ctx */) {
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      prodPort: 3000, // The default port that the production server should use
-      // (gets superseded if process.env.PORT is specified at runtime)
+      prodPort: process.env.PORT,
 
       middlewares: [
         'render', // keep this as last one

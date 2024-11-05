@@ -20,7 +20,13 @@ export const useNovaStore = defineStore('novabyte', () => {
   const noPersonButToken = ref(false);
 
   const getToken = () => {
-    return currentToken.value ?? localStorage.getItem(NB_TOKEN_KEY);
+    if (process.env.CLIENT) {
+      return (
+        currentToken.value ?? localStorage.getItem(NB_TOKEN_KEY) ?? undefined
+      );
+    } else {
+      return currentToken.value ?? undefined;
+    }
   };
 
   const setToken = (token: string) => {
@@ -90,8 +96,9 @@ export const useNovaStore = defineStore('novabyte', () => {
     }
   };
 
-  const refresh = async () => {
+  const refresh = async (log?: string) => {
     try {
+      console.log('refresh ran from:', log);
       return await lc.getRefresh();
     } catch (e) {
       console.error(e);

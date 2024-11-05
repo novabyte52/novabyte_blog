@@ -22,11 +22,13 @@ export enum ApiPath {
   POSTS = '/posts',
 }
 
+const api_addr = import.meta.env.NB_API_ADDR as string;
+
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://127.0.0.1:52001';
+axios.defaults.baseURL = api_addr;
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:52001',
+  baseURL: api_addr,
   withCredentials: true,
 });
 

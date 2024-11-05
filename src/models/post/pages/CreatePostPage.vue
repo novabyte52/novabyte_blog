@@ -1,11 +1,7 @@
 <template>
   <q-page class="n-page">
     <div class="text-h1 text-center">Create Posts</div>
-    <edit-post
-      class="q-ma-lg"
-      :model-value="newPost"
-      @update:model-value="updatePost"
-    >
+    <edit-post class="q-ma-lg" v-model="newPost">
       <template v-slot:actions>
         <q-btn
           label="draft"
@@ -65,10 +61,6 @@ watch(currentPerson, () => {
 });
 
 const { isDirty } = useIsDirty(newPost);
-
-const updatePost = (newVal: PostVersion) => {
-  newPost.value = newVal as PostVersion;
-};
 
 const draftOk = async () => {
   if (!isDirty.value) throw new Error('Draft is empty! Aborting.');

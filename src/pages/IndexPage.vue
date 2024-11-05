@@ -1,23 +1,36 @@
 <template>
   <q-page class="n-page index-page">
-    <div class="text-h1 text-center">Popular Mission Logs</div>
+    <div class="text-h1 text-center">Popular Mission Log</div>
     <div class="row q-pa-xl pop-logs">
       <q-space />
-      <q-card class="popular-log q-pa-md n-card n-card--important">
-        <div class="text-h3">A Love Letter to Rust</div>
-        <div class="text">
-          placeholder text that would be a preview of the post here.
-        </div>
+      <q-card
+        v-if="randomDraft"
+        class="popular-log q-pa-lg n-card n-card--important"
+      >
+        <router-link
+          :to="{
+            name: RouteNames.READ_POST,
+            params: { postId: randomDraft.draft_id },
+          }"
+          class="card-link"
+        >
+          <div class="text-h3">{{ randomDraft?.title || '' }}</div>
+          <render-markdown
+            class="markdown-preview"
+            :markdown="truncate(randomDraft?.markdown || '', { length: 500 })"
+            flat
+          />
+        </router-link>
       </q-card>
       <q-space />
       <img src="../assets/astro-helmet.svg" class="helmet-img q-pa-sm" />
       <q-space />
     </div>
-    <div class="text-h2">Recent Mission Logs</div>
+    <div class="text-h2 recent-logs">Recent Mission Logs</div>
     <div class="cards q-pa-sm">
       <router-link
         v-for="post in publishedDrafts"
-        class="card"
+        class="card-link"
         :key="post.id"
         :to="{
           name: RouteNames.READ_POST,
@@ -27,10 +40,12 @@
         }"
       >
         <q-card class="n-card post-card" style="overflow-y: auto">
-          <q-card-section class="text-h4"> {{ post.title }} </q-card-section>
+          <q-card-section class="text-h4">
+            {{ post.title }}
+          </q-card-section>
           <q-card-section>
             <render-markdown
-              class="bg-color-dark"
+              class="markdown-preview"
               :markdown="truncate(post.markdown, { length: 200 })"
               flat
             />
@@ -46,75 +61,110 @@ import { truncate } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { RenderMarkdown, usePostStore } from 'src/models/post';
 import { RouteNames } from 'src/router/routes';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
-const { getPublished } = usePostStore();
+defineOptions({
+  preFetch: ({ store }) => {
+    const ps = usePostStore(store);
+    return ps.getPublished();
+  },
+});
+
+const { getRandomDraft } = usePostStore();
 const { publishedDrafts } = storeToRefs(usePostStore());
 
+const randomDraft = ref();
+
 onMounted(async () => {
-  if (publishedDrafts.value.length === 0) {
-    await getPublished();
-  }
+  randomDraft.value = await getRandomDraft();
 });
 </script>
 
 <style lang="scss">
-// MARK: leaving un-scoped for now since i'm doing a lot of testing here
-.n-separator {
-  height: 5px;
-  background-color: $accent;
-}
-
-.n-random {
-  cursor: pointer;
-  border-radius: 100%;
-  transition: 0.5s;
-  border: 3px solid $dark;
-  &:hover {
-    transition: 0.5s;
-    border: 3px solid $accent;
-  }
-}
-
 .index-page {
+  padding-bottom: 0 !important;
   .helmet-img {
-    max-width: 50%;
-    height: auto;
     background-clip: content-box;
-    background-image: url('https://nextcloud.techrekt.com/s/CBmCyCEWyDLdr6P/preview');
+    background-image: v-bind("`url('${randomDraft?.image}')`");
     background-position: center;
     background-size: cover;
   }
 
+  .pop-logs {
+    align-items: center;
+  }
+
+  .popular-log {
+    width: 50%;
+
+    transition: 0.3s;
+    &:hover {
+      border-color: $secondary;
+      transition: 0.3s;
+    }
+    &:active {
+      .text-h3 {
+        transition: 0.1s;
+        color: $secondary;
+      }
+    }
+
+    .markdown-preview {
+      border-bottom: 4px inset $primary-light;
+    }
+  }
+
+  .recent-logs {
+    margin-bottom: 0;
+  }
+
   .post-card {
-    // height: 250px;
+    // max-height: 350px;
     overflow: hidden;
+  }
+
+  .markdown-preview {
+    color: $text-color;
+    border: 4px inset $primary-light;
+    padding: 16px;
+    p {
+      margin: 0;
+    }
   }
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    grid-auto-rows: auto;
-    grid-gap: 16px;
+    grid-template-columns: 32% 32% 32%;
+    grid-template-rows: auto;
+    gap: 2%;
+
+    padding: 3rem;
+
     background: rgb(29, 49, 60);
     background-image: linear-gradient(
-      to right top,
-      #1d313c,
-      #39456e,
-      #874c87,
+      to right bottom,
+      #f6723a,
       #d34d72,
-      #f6723a
+      #874c87,
+      #39456e,
+      #1d313c
     );
-    // background: linear-gradient(
-    //   45deg,
-    //   rgba(29, 49, 60, 1) 0%,
-    //   rgba(80, 163, 171, 1) 25%,
-    //   rgba(193, 250, 237, 1) 45%,
-    //   rgba(224, 194, 241, 1) 50%,
-    //   rgba(250, 218, 193, 1) 55%,
-    //   rgba(196, 59, 57, 1) 75%,
-    //   rgba(246, 114, 58, 1) 100%
-    // );
+  }
+
+  .card-link {
+    text-decoration: none;
+  }
+
+  .post-card {
+    // height: 100%;
+    transition: 0.3s;
+    &:hover {
+      border-color: $secondary;
+      transition: 0.3s;
+    }
+    &:active {
+      border-style: inset;
+    }
   }
 }
 </style>

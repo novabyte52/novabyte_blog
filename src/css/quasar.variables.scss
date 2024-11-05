@@ -31,26 +31,33 @@ $secondary: #f6723a;
   background-color: $secondary !important;
 }
 
-$accent: #bc7de0;
+// $accent: #bc7de0; // OLD - light purple that's not apart of the new color palette
+$accent: #c43b39;
 .color-accent {
   color: $accent !important;
 }
 .bg-color-accent {
   background-color: $accent !important;
 }
+// $accent: #50a3ab;
+// .color-accent {
+//   color: $accent !important;
+// }
+// .bg-color-accent {
+//   background-color: $accent !important;
+// }
 
 $red: #c43b39;
-.color-accent {
+.color-red {
   color: $red !important;
+}
+.bg-color-red {
+  background-color: $red !important;
 }
 
 $primary-light: #50a3ab;
-.color-accent {
+.color-primary-light {
   color: $primary-light !important;
-}
-
-.bg-color-accent {
-  background-color: $accent !important;
 }
 
 $dark: #2e2139;

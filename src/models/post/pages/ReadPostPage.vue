@@ -3,7 +3,7 @@
     <div v-if="post?.title" class="text-h1 text-center">
       {{ post.title }}
     </div>
-    <q-card class="q-ma-xl n-card n-card--important">
+    <q-card class="post-container q-mx-xl q-mt-xl n-card n-card--important">
       <render-markdown
         v-if="post"
         class="output q-pa-lg"
@@ -20,6 +20,14 @@ import { usePostStore } from '../post.store';
 import { PostVersion, RenderMarkdown } from 'src/models/post';
 import { marked } from 'marked';
 
+defineOptions({
+  preFetch: ({ store, ssrContext }) => {
+    const param = ssrContext?.req.params[0].split('/');
+    const ps = usePostStore(store);
+    return ps.getPublishedDraft(param?.[2] as string);
+  },
+});
+
 const r = useRoute();
 const { getPublishedDraft } = usePostStore();
 
@@ -27,9 +35,15 @@ const { postId } = r.params;
 const post: Ref<PostVersion | undefined> = ref();
 
 onMounted(async () => {
-  console.log('ReadPostPage mounted...');
   post.value = await getPublishedDraft(postId as string);
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post-container {
+  padding: 16px;
+}
+.output {
+  border: 4px inset $primary-light !important;
+}
+</style>
