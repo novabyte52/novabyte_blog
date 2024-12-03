@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import useLoginClient from 'src/clients/login.client';
+import { useLogger } from 'src/composables/useLogger';
 import { usePersonStore } from 'src/models/person';
 import { Person } from 'src/models/person/person';
 import { RouteNames } from 'src/router/routes';
@@ -9,6 +10,7 @@ import { useRoute, useRouter } from 'vue-router';
 export const NB_TOKEN_KEY = 'nbToken';
 
 export const useNovaStore = defineStore('novabyte', () => {
+  const logger = useLogger('nb store');
   const lc = useLoginClient();
   const ps = usePersonStore();
   const route = useRoute();
@@ -48,8 +50,9 @@ export const useNovaStore = defineStore('novabyte', () => {
     return false;
   });
 
+  // TODO: should rename this to updateNoPersonButToken or something
   const checkForToken = () => {
-    if (hasToken()) {
+    if (hasToken() && !!currentPerson.value) {
       noPersonButToken.value = true;
     }
   };
@@ -70,7 +73,6 @@ export const useNovaStore = defineStore('novabyte', () => {
    * @returns true if login was successful and token is set, false otherwise.
    */
   const logIn = async (email: string, password: string) => {
-    console.log('logging in');
     try {
       const result = await lc.postLogin(email, password);
 
@@ -90,6 +92,8 @@ export const useNovaStore = defineStore('novabyte', () => {
     localStorage.removeItem(NB_TOKEN_KEY);
     currentPerson.value = undefined;
     currentToken.value = undefined;
+    // TODO: calling a computed to cause a side effect is bad
+    isAuthenticated.value;
     checkForToken();
     if (route.meta.requiresAuth) {
       router.push({ name: RouteNames.HOME });
@@ -98,7 +102,7 @@ export const useNovaStore = defineStore('novabyte', () => {
 
   const refresh = async (log?: string) => {
     try {
-      console.log('refresh ran from:', log);
+      logger.debug('refresh ran from: ' + log);
       return await lc.getRefresh();
     } catch (e) {
       console.error(e);

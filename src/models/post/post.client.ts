@@ -1,24 +1,31 @@
-import { AxiosResponse } from 'axios';
-import { axios, ApiPath } from 'src/boot/axios';
+import { AxiosInstance, AxiosResponse, AxiosStatic } from 'axios';
+import { ApiPath } from 'src/boot/axios';
 import { Post, PostVersion } from './post';
 import {
   global_request_interceptor,
   global_response_interceptor,
 } from 'src/clients';
-
-const c = axios.create({
-  baseURL: axios.defaults.baseURL + ApiPath.POSTS,
-});
+import { API } from 'src/symbols';
+import { inject } from 'vue';
+import { useOnce } from 'src/composables/once';
 
 export const usePostClient = () => {
-  if (process.env.CLIENT) {
-    // to avoid complicated logic for now i will just clear and reapply the interceptors
-    c.interceptors.request.clear();
-    c.interceptors.response.clear();
+  const api = useOnce<AxiosInstance>(() => {
+    const axios = inject(API) as AxiosStatic;
+    const instance = axios.create({
+      baseURL: axios.defaults.baseURL + ApiPath.POSTS,
+    });
 
-    c.interceptors.request.use(global_request_interceptor);
-    c.interceptors.response.use((res) => res, global_response_interceptor(c));
-  }
+    if (process.env.CLIENT) {
+      instance.interceptors.request.use(global_request_interceptor);
+      instance.interceptors.response.use(
+        (res) => res,
+        global_response_interceptor(instance)
+      );
+    }
+
+    return instance;
+  });
 
   /**
    * Get the minimum amount of info for all posts.
@@ -27,7 +34,7 @@ export const usePostClient = () => {
    */
   const getPosts = async () => {
     try {
-      const response = await c.get<Post[]>('');
+      const response = await api.get<Post[]>('');
       return response.data;
     } catch (e) {
       throw e;
@@ -36,7 +43,7 @@ export const usePostClient = () => {
 
   const draftPost = async (post: PostVersion) => {
     try {
-      const response = await c.post<PostVersion>('drafts', {
+      const response = await api.post<PostVersion>('drafts', {
         title: post.title,
         markdown: post.markdown,
         id: post.id,
@@ -52,7 +59,7 @@ export const usePostClient = () => {
 
   const publishDraft = async (draftId: string) => {
     try {
-      const response = await c.post(`drafts/${draftId}/publish`);
+      const response = await api.post(`drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
@@ -66,7 +73,7 @@ export const usePostClient = () => {
 
   const unpublishDraft = async (draftId: string) => {
     try {
-      const response = await c.delete(`drafts/${draftId}/publish`);
+      const response = await api.delete(`drafts/${draftId}/publish`);
 
       if ((response as AxiosResponse).status === 204) {
         return true;
@@ -80,7 +87,7 @@ export const usePostClient = () => {
 
   const fetchDraft = async (draftId: string) => {
     try {
-      const response = await c.get<PostVersion>(`drafts/${draftId}`);
+      const response = await api.get<PostVersion>(`drafts/${draftId}`);
       return response.data;
     } catch (e) {
       throw e;
@@ -89,7 +96,7 @@ export const usePostClient = () => {
 
   const fetchDrafts = async () => {
     try {
-      const response = await c.get<PostVersion[]>('drafts');
+      const response = await api.get<PostVersion[]>('drafts');
       return response.data;
     } catch (e) {
       throw e;
@@ -98,7 +105,7 @@ export const usePostClient = () => {
 
   const fetchPostDrafts = async (postId: string) => {
     try {
-      const response = await c.get<PostVersion[]>(`${postId}/drafts`);
+      const response = await api.get<PostVersion[]>(`${postId}/drafts`);
       return response.data;
     } catch (e) {
       throw e;
@@ -107,7 +114,7 @@ export const usePostClient = () => {
 
   const fetchPublished = async () => {
     try {
-      const response = await c.get<PostVersion[]>('/published');
+      const response = await api.get<PostVersion[]>('published');
       return response.data;
     } catch (e) {
       throw e;
@@ -116,7 +123,7 @@ export const usePostClient = () => {
 
   const fetchRandom = async () => {
     try {
-      const response = await c.get<PostVersion>('random');
+      const response = await api.get<PostVersion>('random');
       return response.data;
     } catch (e) {
       throw e;

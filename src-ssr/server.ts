@@ -18,6 +18,11 @@ import {
   ssrRenderPreloadTag,
   ssrServeStaticContent,
 } from 'quasar/wrappers';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { useLogger } from 'src/composables/useLogger';
+import { ref } from 'vue';
+
+const logger = useLogger('ssr server');
 
 /**
  * Create your webserver and return its instance.
@@ -27,6 +32,7 @@ import {
  * Should NOT be async!
  */
 export const create = ssrCreate((/* { ... } */) => {
+  logger.debug('SSR app initialized');
   const app = express();
 
   // attackers can use this header to detect apps running Express
@@ -38,6 +44,37 @@ export const create = ssrCreate((/* { ... } */) => {
   if (process.env.PROD) {
     app.use(compression());
   }
+
+  const apiProxy = createProxyMiddleware({
+    target: process.env.NB_SSR_API_ADDR,
+    changeOrigin: true,
+    timeout: 5000,
+    proxyTimeout: 5000,
+    pathFilter: '/api',
+    pathRewrite: {
+      '^/api': '',
+    },
+    on: {
+      proxyReq: (proxyReq, req, res) => {
+        logger.debug('Proxying request to:' + proxyReq.path);
+      },
+      proxyRes: (proxyRes, req, res) => {
+        logger.debug('Received response for:' + req.url);
+        const setCookie = proxyRes.headers['set-cookie'];
+        if (setCookie) {
+          res.setHeader('set-cookie', setCookie);
+        }
+      },
+      error: (err, req, res) => {
+        logger.err('Proxy Error:' + err);
+        res.end(
+          'Something went wrong. And we are reporting a custom error message.'
+        );
+      },
+    },
+    logger: logger,
+  });
+  app.use(apiProxy);
 
   return app;
 });
@@ -57,7 +94,7 @@ export const listen = ssrListen(async ({ app, port, isReady }) => {
   await isReady();
   return app.listen(port, () => {
     if (process.env.PROD) {
-      console.log('Server listening at port ' + port);
+      logger.info('Server listening at port ' + port);
     }
   });
 });

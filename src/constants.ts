@@ -19,3 +19,5 @@ export const anonymousUrls = [
   'random',
   'valid',
 ] as const;
+
+export const REFRESH_COOKIE_KEY = 'nbRefresh';

@@ -1,4 +1,9 @@
-import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import {
+  AxiosError,
+  AxiosInstance,
+  HttpStatusCode,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { NError, NErrorContext, anonymousUrls } from 'src/constants';
 import { NErrorResponse } from 'src/models/errors';
 import { RouteNames } from 'src/router/routes';
@@ -26,7 +31,10 @@ export const global_request_interceptor = async (
     );
   }
 
+  console.log('attempting to set auth header');
   config.headers['Authorization'] = token;
+  console.log('auth header:', config.headers['Authorization']);
+  config.withCredentials = true;
   return config;
 };
 
@@ -38,7 +46,10 @@ export const global_response_interceptor =
 
     const { response, config } = err;
 
-    if (response && response.status === 401 && config) {
+    if (config && response && response.status === HttpStatusCode.Forbidden)
+      return axios(config);
+
+    if (config && response && response.status === HttpStatusCode.Unauthorized) {
       const err = response.data as NErrorResponse;
       switch (err.id) {
         // check for normal unauthorization 401

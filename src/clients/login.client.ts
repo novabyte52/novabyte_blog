@@ -1,14 +1,19 @@
-import { axios, ApiPath } from 'src/boot/axios';
+import { AxiosInstance, AxiosStatic } from 'axios';
+import { ApiPath } from 'src/boot/axios';
+import { useOnce } from 'src/composables/once';
 import { Person } from 'src/models/person';
+import { API } from 'src/symbols';
+import { inject } from 'vue';
 
 export default function useLoginClient() {
-  const c = axios.create({
-    baseURL: axios.defaults.baseURL + ApiPath.PERSONS,
+  const api = useOnce<AxiosInstance>(() => {
+    const axios = inject(API) as AxiosStatic;
+    return axios.create({ baseURL: axios.defaults.baseURL + ApiPath.PERSONS });
   });
 
   const checkValidity = async (check: { email: string; username: string }) => {
     try {
-      const response = await c.get<{ email: boolean; username: boolean }>(
+      const response = await api.get<{ email: boolean; username: boolean }>(
         'valid',
         {
           params: {
@@ -25,17 +30,20 @@ export default function useLoginClient() {
   };
 
   const postLogin = async (email: string, password: string) => {
-    const response = await c.post<{ person: Person; token: string }>('login', {
-      email,
-      password,
-    });
+    const response = await api.post<{ person: Person; token: string }>(
+      'login',
+      {
+        email,
+        password,
+      }
+    );
 
     return response.data;
   };
 
   const logout = async () => {
     try {
-      const response = await c.delete<boolean>('logout');
+      const response = await api.delete<boolean>('logout');
       return response.data;
     } catch (e) {
       throw e;
@@ -44,7 +52,7 @@ export default function useLoginClient() {
 
   const getRefresh = async () => {
     try {
-      const response = await c.get<{ token: string }>('refresh');
+      const response = await api.get<{ token: string }>('refresh');
       return response.data.token;
     } catch (e) {
       throw e;

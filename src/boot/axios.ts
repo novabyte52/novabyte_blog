@@ -1,47 +1,45 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { boot } from 'quasar/wrappers';
-
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $axios: AxiosInstance;
-    $api: AxiosInstance;
-  }
-}
-
-/*
-Be careful when using SSR for cross-request state pollution
-due to creating a Singleton instance here;
-If any client changes this (global) instance, it might be a
-good idea to move this instance creation inside of the
-"export default () => {}" function below (which runs individually
-for each client)
-*/
+import { useLogger } from 'src/composables/useLogger';
+import { API } from 'src/symbols';
 
 export enum ApiPath {
   PERSONS = '/persons',
   POSTS = '/posts',
 }
 
-const api_addr = import.meta.env.NB_API_ADDR as string;
+const logger = useLogger('axios');
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = api_addr;
-
-const api = axios.create({
-  baseURL: api_addr,
-  withCredentials: true,
+export default boot(function ({ app }) {
+  logger.info(
+    `providing configured axios static based on env: [CLIENT: ${process.env.CLIENT} | SERVER: ${process.env.SERVER}]`
+  );
+  app.provide(API, getAxiosStatic());
 });
 
-export { axios, api };
+export const getAxiosStatic = () => {
+  const ssrApiAddr = import.meta.env.NB_SSR_API_ADDR as string;
+  const clientApiAddr = import.meta.env.NB_API_ADDR as string;
 
-export default boot(({ app }) => {
-  // for use inside Vue files (Options API) through this.$axios and this.$api
+  if (!ssrApiAddr || !clientApiAddr) {
+    logger.throw(
+      `Missing required environment variables:
+    NB_SSR_API_ADDR=${ssrApiAddr}, NB_API_ADDR=${clientApiAddr}`
+    );
+  }
 
-  app.config.globalProperties.$axios = axios;
-  // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
-  //       so you won't necessarily have to import axios in each vue file
+  if (process.env.SERVER) {
+    axios.defaults.baseURL = ssrApiAddr;
 
-  // app.config.globalProperties.$api = api;
-  // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
-  //       so you can easily perform requests against your app's API
-});
+    return axios;
+  }
+
+  if (process.env.CLIENT) {
+    axios.defaults.baseURL = import.meta.env.NB_API_ADDR as string;
+    axios.defaults.withCredentials = true;
+    return axios;
+  }
+
+  // shouldn't reach here
+  logger.throw('getAxiosStatic: Unable to determine execution context.');
+};
