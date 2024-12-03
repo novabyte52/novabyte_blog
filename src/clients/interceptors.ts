@@ -1,7 +1,8 @@
 import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { anonymousUrls } from 'src/constants';
+import { NError, NErrorContext, anonymousUrls } from 'src/constants';
+import { NErrorResponse } from 'src/models/errors';
 import { RouteNames } from 'src/router/routes';
-import { useNovaStore } from 'src/stores/nova.store';
+import { NB_TOKEN_KEY, useNovaStore } from 'src/stores/nova.store';
 import { useRouter } from 'vue-router';
 
 export const global_request_interceptor = async (
@@ -38,31 +39,42 @@ export const global_response_interceptor =
     const { response, config } = err;
 
     if (response && response.status === 401 && config) {
-      switch (response.data) {
+      const err = response.data as NErrorResponse;
+      switch (err.id) {
         // check for normal unauthorization 401
-        case 'You are not authorized to access this endpoint.':
+        case NError.NOT_ADMIN:
           throw Error('You are not authorized to access this endpoint.');
 
-        case 'Missing refresh token.':
+        case NError.MISSING_REFRESH_TOKEN:
           throw Error('Missing refresh token, unable to refresh.');
 
-        // check for unverifiable token 401
-        case 'Cannot verify token.': {
-          // attempt to refresh just in case
-          const token = await nova.refresh('global response interceptor 01');
+        case NError.MISSING_AUTH_HEADER:
+          throw Error('Missing authorization header.');
 
-          if (token) {
-            nova.setToken(token);
-            config.headers['Authorization'] = `${token}`;
-            return axios(config);
-          } else {
-            router.push({ name: RouteNames.HOME });
-            throw Error('Unable to verify token.');
+        // check for unverifiable token 401
+        case NError.UNVERIFIABLE_TOKEN: {
+          if (err.context === NErrorContext.AUTHENTICATION) {
+            // attempt to refresh just in case
+            const token = await nova.refresh('global response interceptor 01');
+
+            if (token) {
+              nova.setToken(token);
+              config.headers['Authorization'] = `${token}`;
+              return axios(config);
+            } else {
+              router.push({ name: RouteNames.HOME });
+              throw Error('Unable to verify token.');
+            }
+          } else if (err.context === NErrorContext.REFRESH) {
+            localStorage.removeItem(NB_TOKEN_KEY);
+            nova.currentToken = undefined;
+            nova.currentPerson = undefined;
           }
         }
 
         // attempt to refresh the token and resend the request
         default:
+          // TODO: convert this into a pattern (composable?)
           if (tries < 3) {
             try {
               tries++;
