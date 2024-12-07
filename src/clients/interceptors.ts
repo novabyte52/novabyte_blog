@@ -4,21 +4,26 @@ import {
   HttpStatusCode,
   InternalAxiosRequestConfig,
 } from 'axios';
+import { useLogger } from 'src/composables/useLogger';
 import { NError, NErrorContext, anonymousUrls } from 'src/constants';
 import { NErrorResponse } from 'src/models/errors';
 import { RouteNames } from 'src/router/routes';
 import { NB_TOKEN_KEY, useNovaStore } from 'src/stores/nova.store';
 import { useRouter } from 'vue-router';
 
+const setAuthHeader = (config: InternalAxiosRequestConfig, token: string) =>
+  (config.headers['Authorization'] = `Bearer ${token}`);
+
+const reqLog = useLogger('req intercept');
 export const global_request_interceptor = async (
   config: InternalAxiosRequestConfig
 ) => {
-  const nova = useNovaStore();
-
+  reqLog.debug(`req url: ${JSON.stringify(config, null, 2)}`);
   if (anonymousUrls.some((a) => a === config.url)) {
     return config;
   }
 
+  const nova = useNovaStore();
   let token = nova.getToken();
 
   if (!token) {
@@ -31,9 +36,8 @@ export const global_request_interceptor = async (
     );
   }
 
-  console.log('attempting to set auth header');
-  config.headers['Authorization'] = token;
-  console.log('auth header:', config.headers['Authorization']);
+  reqLog.trace('attempting to set auth header');
+  setAuthHeader(config, token);
   config.withCredentials = true;
   return config;
 };
@@ -41,21 +45,18 @@ export const global_request_interceptor = async (
 let tries = 0;
 export const global_response_interceptor =
   (axios: AxiosInstance) => async (err: AxiosError) => {
-    const router = useRouter();
-    const nova = useNovaStore();
+    // const log = useLogger('req intercpt');
 
     const { response, config } = err;
-
     if (config && response && response.status === HttpStatusCode.Forbidden)
       return axios(config);
+
+    const router = useRouter();
+    const nova = useNovaStore();
 
     if (config && response && response.status === HttpStatusCode.Unauthorized) {
       const err = response.data as NErrorResponse;
       switch (err.id) {
-        // check for normal unauthorization 401
-        case NError.NOT_ADMIN:
-          throw Error('You are not authorized to access this endpoint.');
-
         case NError.MISSING_REFRESH_TOKEN:
           throw Error('Missing refresh token, unable to refresh.');
 
@@ -70,10 +71,10 @@ export const global_response_interceptor =
 
             if (token) {
               nova.setToken(token);
-              config.headers['Authorization'] = `${token}`;
+              setAuthHeader(config, token);
               return axios(config);
             } else {
-              router.push({ name: RouteNames.HOME });
+              router.push({ name: RouteNames.LOGIN });
               throw Error('Unable to verify token.');
             }
           } else if (err.context === NErrorContext.REFRESH) {
@@ -94,16 +95,18 @@ export const global_response_interceptor =
               );
 
               if (token) {
+                tries = 0;
                 nova.setToken(token);
-                config.headers['Authorization'] = `${token}`;
+                setAuthHeader(config, token);
                 return axios(config);
               }
             } catch (e) {
               tries++;
               throw e;
             }
+          } else {
+            tries = 0;
           }
-          tries = 0;
       }
     }
 
