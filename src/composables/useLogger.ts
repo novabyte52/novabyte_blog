@@ -98,9 +98,10 @@ export const useLogger = (pre: string) => {
     info: (msg: string) => generateLog(msg, LogLevels.INFO),
     warn: (msg: string) => generateLog(msg, LogLevels.WARN),
     err: (msg: string) => generateLog(msg, LogLevels.ERROR),
+    error: (msg: string) => generateLog(msg, LogLevels.ERROR),
     crit: (msg: string) => generateLog(msg, LogLevels.CRITICAL),
-    throw: (msg: string) => {
-      throw Error(msg as string);
+    throw: (err: Error) => {
+      throw err;
     },
   };
 };
