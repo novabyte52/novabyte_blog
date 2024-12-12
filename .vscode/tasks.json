@@ -2,10 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "process",
       "label": "ui",
-      "command": "/bin/bash",
-      "args": ["-l"],
+      "type": "shell",
+      "command": "/bin/bash -i -l -c 'source $HOME/.nvm/nvm.sh && nvm use && exec $SHELL'",
       "problemMatcher": [],
       "presentation": {
         "echo": false,
