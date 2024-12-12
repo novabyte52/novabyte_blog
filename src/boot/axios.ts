@@ -23,8 +23,8 @@ export const getAxiosStatic = () => {
 
   if (!ssrApiAddr || !clientApiAddr) {
     logger.throw(
-      `Missing required environment variables:
-    NB_SSR_API_ADDR=${ssrApiAddr}, NB_API_ADDR=${clientApiAddr}`
+      Error(`Missing required environment variables:
+    NB_SSR_API_ADDR=${ssrApiAddr}, NB_API_ADDR=${clientApiAddr}`)
     );
   }
 
@@ -41,5 +41,5 @@ export const getAxiosStatic = () => {
   }
 
   // shouldn't reach here
-  logger.throw('getAxiosStatic: Unable to determine execution context.');
+  logger.throw(Error('getAxiosStatic: Unable to determine execution context.'));
 };

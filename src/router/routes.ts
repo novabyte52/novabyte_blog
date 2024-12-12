@@ -1,4 +1,4 @@
-import { useLogger } from 'src/composables/useLogger';
+// import { useLogger } from 'src/composables/useLogger';
 import { RouteRecordRaw } from 'vue-router';
 
 export enum RouteNames {
@@ -14,139 +14,99 @@ export enum RouteNames {
   ABOUT = 'about',
 }
 
-const logger = useLogger('routes');
+// const logger = useLogger('routes');
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => {
-      if (import.meta.env.SSR) {
-        logger.debug('SSR rendering MainLayout');
-      }
       return import('layouts/MainLayout.vue');
     },
     children: [
       {
         name: RouteNames.HOME,
-        path: '',
+        path: '//',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering IndexPage');
-          }
           return import('pages/IndexPage.vue');
         },
       },
       {
-        path: 'signup',
+        path: '/signup',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering SignupPage');
-          }
           return import('pages/SignUpPage.vue');
         },
       },
       {
         name: RouteNames.LOGIN,
-        path: 'login',
+        path: '/login',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering LogInPage');
-          }
           return import('pages/LogInPage.vue');
         },
       },
       {
         name: RouteNames.ABOUT,
-        path: 'about',
+        path: '/about',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering AboutPage');
-          }
           return import('pages/AboutPage.vue');
         },
       },
       {
         name: RouteNames.CREATE_POST,
-        path: 'posts',
+        path: '/posts',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering CreatePostPage');
-          }
           return import('src/models/post/pages/CreatePostPage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_DRAFTS,
-        path: 'posts/drafts',
+        path: '/posts/drafts',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering EditDraftsPage');
-          }
           return import('src/models/post/pages/EditDraftsPage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_PUBLISHED,
-        path: 'posts/published',
+        path: '/posts/published',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering EditPublishedposts');
-          }
           return import('src/models/post/pages/EditPublishedPage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.POST_HISTORY,
-        path: 'posts/history',
+        path: '/posts/history',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering PostHistoryPage');
-          }
           return import('src/models/post/pages/PostHistoryPage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.READ_POST,
-        path: 'posts/:postId',
+        path: '/posts/:postId',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering ReadPostPage');
-          }
           return import('src/models/post/pages/ReadPostPage.vue');
         },
-        meta: { requiresAuth: true },
       },
       {
-        path: 'programming',
+        path: '/programming',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering ProgrammingPage');
-          }
           return import('pages/ProgrammingPage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
-        path: 'theme',
+        path: '/theme',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering ThemePage');
-          }
           return import('pages/ThemePage.vue');
         },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.PERSONS,
-        path: 'persons',
+        path: '/persons',
         component: () => {
-          if (import.meta.env.SSR) {
-            logger.debug('SSR rendering PersonsPage');
-          }
           return import('pages/PersonsPage.vue');
         },
         meta: { requiresAuth: true },
@@ -158,9 +118,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/:catchAll(.*)*',
     component: () => {
-      if (import.meta.env.SSR) {
-        logger.debug('SSR rendering ErrorNotFound');
-      }
       return import('pages/ErrorNotFound.vue');
     },
   },
