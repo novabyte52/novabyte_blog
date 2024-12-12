@@ -18,9 +18,7 @@ import {
   ssrRenderPreloadTag,
   ssrServeStaticContent,
 } from 'quasar/wrappers';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import { useLogger } from 'src/composables/useLogger';
-import { ref } from 'vue';
 
 const logger = useLogger('ssr server');
 
@@ -42,39 +40,8 @@ export const create = ssrCreate((/* { ... } */) => {
   // place here any middlewares that
   // absolutely need to run before anything else
   if (process.env.PROD) {
-    app.use(compression());
+    app.use(compression);
   }
-
-  const apiProxy = createProxyMiddleware({
-    target: process.env.NB_SSR_API_ADDR,
-    changeOrigin: true,
-    timeout: 5000,
-    proxyTimeout: 5000,
-    pathFilter: '/api',
-    pathRewrite: {
-      '^/api': '',
-    },
-    on: {
-      proxyReq: (proxyReq, req, res) => {
-        logger.debug('Proxying request to:' + proxyReq.path);
-      },
-      proxyRes: (proxyRes, req, res) => {
-        logger.debug('Received response for:' + req.url);
-        const setCookie = proxyRes.headers['set-cookie'];
-        if (setCookie) {
-          res.setHeader('set-cookie', setCookie);
-        }
-      },
-      error: (err, req, res) => {
-        logger.err('Proxy Error:' + err);
-        res.end(
-          'Something went wrong. And we are reporting a custom error message.'
-        );
-      },
-    },
-    logger: logger,
-  });
-  app.use(apiProxy);
 
   return app;
 });

@@ -197,6 +197,7 @@ module.exports = configure(function (/*ctx*/) {
       prodPort: process.env.PORT,
 
       middlewares: [
+        'proxy',
         'render', // keep this as last one
       ],
     },
