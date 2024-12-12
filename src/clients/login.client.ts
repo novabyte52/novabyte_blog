@@ -4,11 +4,28 @@ import { useOnce } from 'src/composables/once';
 import { Person } from 'src/models/person';
 import { API } from 'src/symbols';
 import { inject } from 'vue';
+import {
+  global_request_interceptor,
+  global_response_interceptor,
+} from 'src/clients/interceptors';
 
 export default function useLoginClient() {
   const api = useOnce<AxiosInstance>(() => {
     const axios = inject(API) as AxiosStatic;
-    return axios.create({ baseURL: axios.defaults.baseURL + ApiPath.PERSONS });
+
+    const instance = axios.create({
+      baseURL: axios.defaults.baseURL + ApiPath.PERSONS,
+    });
+
+    if (process.env.CLIENT) {
+      instance.interceptors.request.use(global_request_interceptor);
+      instance.interceptors.response.use(
+        (res) => res,
+        global_response_interceptor(instance)
+      );
+    }
+
+    return instance;
   });
 
   const checkValidity = async (check: { email: string; username: string }) => {
@@ -41,9 +58,9 @@ export default function useLoginClient() {
     return response.data;
   };
 
-  const logout = async () => {
+  const logout = async (person_id: string) => {
     try {
-      const response = await api.delete<boolean>('logout');
+      const response = await api.delete<boolean>(`${person_id}/logout`);
       return response.data;
     } catch (e) {
       throw e;

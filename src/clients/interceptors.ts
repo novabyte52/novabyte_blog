@@ -18,16 +18,18 @@ const reqLog = useLogger('req intercept');
 export const global_request_interceptor = async (
   config: InternalAxiosRequestConfig
 ) => {
-  reqLog.debug(`req url: ${JSON.stringify(config, null, 2)}`);
+  reqLog.debug(
+    `req url: ${((config.baseURL as string) + '/' + config.url) as string}`
+  );
   if (anonymousUrls.some((a) => a === config.url)) {
     return config;
   }
 
   const nova = useNovaStore();
-  let token = nova.getToken();
+  const token = nova.getToken();
 
   if (!token) {
-    token = (await nova.refresh('global request interceptor')) ?? undefined;
+    await nova.refresh();
   }
 
   if (!token) {
@@ -38,6 +40,7 @@ export const global_request_interceptor = async (
 
   reqLog.trace('attempting to set auth header');
   setAuthHeader(config, token);
+  config.headers['Content-Type'] = 'application/json';
   config.withCredentials = true;
   return config;
 };
@@ -67,11 +70,10 @@ export const global_response_interceptor =
         case NError.UNVERIFIABLE_TOKEN: {
           if (err.context === NErrorContext.AUTHENTICATION) {
             // attempt to refresh just in case
-            const token = await nova.refresh('global response interceptor 01');
+            await nova.refresh();
 
-            if (token) {
-              nova.setToken(token);
-              setAuthHeader(config, token);
+            if (nova.hasToken()) {
+              setAuthHeader(config, nova.currentToken as string);
               return axios(config);
             } else {
               router.push({ name: RouteNames.LOGIN });
@@ -81,6 +83,7 @@ export const global_response_interceptor =
             localStorage.removeItem(NB_TOKEN_KEY);
             nova.currentToken = undefined;
             nova.currentPerson = undefined;
+            break;
           }
         }
 
@@ -90,14 +93,11 @@ export const global_response_interceptor =
           if (tries < 3) {
             try {
               tries++;
-              const token = await nova.refresh(
-                'global response interceptor 02'
-              );
+              await nova.refresh();
 
-              if (token) {
+              if (nova.hasToken()) {
                 tries = 0;
-                nova.setToken(token);
-                setAuthHeader(config, token);
+                setAuthHeader(config, nova.currentToken as string);
                 return axios(config);
               }
             } catch (e) {
