@@ -19,24 +19,18 @@ jobs:
   build-and-deploy:
     name: Build and Deploy to Server 01
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       # Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Dynamically set Node.js version
+      # Setup Node.js
       - name: Use Node.js version from .nvmrc
-        run: |
-          NODE_VERSION=$(cat .nvmrc)
-          echo "Using Node.js version $NODE_VERSION"
-          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
-
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       # Install dependencies
