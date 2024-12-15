@@ -48,12 +48,13 @@ export const global_request_interceptor = async (
 let tries = 0;
 export const global_response_interceptor =
   (axios: AxiosInstance) => async (err: AxiosError) => {
-    // const log = useLogger('req intercpt');
+    const log = useLogger('req intercpt');
 
     const { response, config } = err;
-    if (config && response && response.status === HttpStatusCode.Forbidden)
-      return axios(config);
-
+    if (config && response && response.status === HttpStatusCode.Forbidden) {
+      log.err('Request status 403: returning config with no changes');
+      return Promise.reject(err);
+    }
     const router = useRouter();
     const nova = useNovaStore();
 
