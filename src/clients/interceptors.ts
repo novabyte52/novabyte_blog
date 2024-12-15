@@ -90,7 +90,6 @@ export const global_response_interceptor =
 
         // attempt to refresh the token and resend the request
         default:
-          // TODO: convert this into a pattern (composable?)
           if (tries < 3) {
             try {
               tries++;
