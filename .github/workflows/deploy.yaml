@@ -3,12 +3,12 @@ name: Build and Deploy Quasar SSR App
 on:
   push:
     branches:
-      - main
+      - dev
   workflow_dispatch: # Enables manual triggering from the GitHub Actions UI
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy to DigitalOcean
+    name: Build and Deploy to Server 01
     runs-on: ubuntu-latest
 
     steps:
@@ -46,17 +46,17 @@ jobs:
       - name: Deploy to DigitalOcean Droplet
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          DO_HOST: ${{ secrets.DO_HOST }}
-          DO_USER: ${{ secrets.DO_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $DO_HOST >> ~/.ssh/known_hosts
-          ssh $DO_USER@$DO_HOST <<EOF
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          ssh $SSH_USER@$SSH_HOST <<EOF
             mkdir -p /srv/www/ui && cd $_
             rm -rf .
-            scp -r dist/ssr $DO_USER@$DO_HOST:/srv/www/ui
+            scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
             yarn
             yarn run start
             EOF
