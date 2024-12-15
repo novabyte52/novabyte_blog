@@ -1,5 +1,7 @@
+import { jwtDecode } from 'jwt-decode';
 import { defineStore } from 'pinia';
 import useLoginClient from 'src/clients/login.client';
+import { useLogger } from 'src/composables/useLogger';
 import { usePersonStore } from 'src/models/person';
 import { Person } from 'src/models/person/person';
 import { RouteNames } from 'src/router/routes';
@@ -9,6 +11,7 @@ import { useRoute, useRouter } from 'vue-router';
 export const NB_TOKEN_KEY = 'nbToken';
 
 export const useNovaStore = defineStore('novabyte', () => {
+  const logger = useLogger('nb store');
   const lc = useLoginClient();
   const ps = usePersonStore();
   const route = useRoute();
@@ -17,7 +20,7 @@ export const useNovaStore = defineStore('novabyte', () => {
   const currentPerson: Ref<Person | undefined> = ref();
   const currentToken: Ref<string | undefined> = ref();
 
-  const noPersonButToken = ref(false);
+  const ghostToken = ref(false);
 
   const getToken = () => {
     if (process.env.CLIENT) {
@@ -48,9 +51,14 @@ export const useNovaStore = defineStore('novabyte', () => {
     return false;
   });
 
-  const checkForToken = () => {
-    if (hasToken()) {
-      noPersonButToken.value = true;
+  /**
+   * check to see if there is an authentication token but no user data
+   * storing the result in `ghostToken`
+   */
+  const checkForAuthParadox = () => {
+    const hasAuthedPerson = !!currentPerson.value;
+    if (hasToken() && !hasAuthedPerson) {
+      ghostToken.value = true;
     }
   };
 
@@ -70,7 +78,6 @@ export const useNovaStore = defineStore('novabyte', () => {
    * @returns true if login was successful and token is set, false otherwise.
    */
   const logIn = async (email: string, password: string) => {
-    console.log('logging in');
     try {
       const result = await lc.postLogin(email, password);
 
@@ -84,33 +91,53 @@ export const useNovaStore = defineStore('novabyte', () => {
   };
 
   const logOut = async () => {
-    const loggedOut = await lc.logout();
+    if (!currentPerson.value?.id) {
+      logger.throw(new Error('No person found to logout'));
+      localStorage.removeItem(NB_TOKEN_KEY);
+      currentToken.value = undefined;
+      currentPerson.value = undefined;
+      return;
+    }
+
+    const loggedOut = await lc.logout(currentPerson.value?.id);
     if (!loggedOut) throw Error('Unable to log out successfully!');
 
     localStorage.removeItem(NB_TOKEN_KEY);
     currentPerson.value = undefined;
     currentToken.value = undefined;
-    checkForToken();
+    // DEBT: calling a computed to cause a side effect is bad
+    isAuthenticated.value;
+    checkForAuthParadox();
     if (route.meta.requiresAuth) {
       router.push({ name: RouteNames.HOME });
     }
   };
 
-  const refresh = async (log?: string) => {
+  const refresh = async () => {
     try {
-      console.log('refresh ran from:', log);
-      return await lc.getRefresh();
+      logger.debug('attempting to refreshing token');
+      const newToken = await lc.getRefresh();
+
+      localStorage.setItem(NB_TOKEN_KEY, newToken);
+      currentToken.value = newToken;
+
+      if (!currentPerson.value) {
+        const claims = jwtDecode(currentToken.value);
+        if (!claims.sub) throw new Error('Expected jwt subject.');
+        currentPerson.value = await ps.getPerson(claims.sub);
+      }
     } catch (e) {
-      console.error(e);
+      logger.error(`${e}`);
+      logger.throw(e as Error);
     }
   };
 
   return {
     currentPerson,
     currentToken,
-    noPersonButToken,
+    ghostToken: ghostToken,
     isAuthenticated,
-    checkForToken,
+    checkForAuthParadox,
     getToken,
     setToken,
     hasToken,

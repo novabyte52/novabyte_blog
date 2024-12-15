@@ -19,12 +19,27 @@ import { useRoute } from 'vue-router';
 import { usePostStore } from '../post.store';
 import { PostVersion, RenderMarkdown } from 'src/models/post';
 import { marked } from 'marked';
+import { useLogger } from 'src/composables/useLogger';
 
 defineOptions({
-  preFetch: ({ store, ssrContext }) => {
-    const param = ssrContext?.req.params[0].split('/');
-    const ps = usePostStore(store);
-    return ps.getPublishedDraft(param?.[2] as string);
+  preFetch: async ({ store, ssrContext }) => {
+    if (process.env.SERVER) {
+      const logger = useLogger('P read post');
+      logger.debug(
+        `ssrContext: ${JSON.stringify(ssrContext?.req.params, null, 2)}`
+      );
+
+      const postId = ssrContext?.req.params[0].split('/')[2]; // Extract params from SSR context
+      const postStore = usePostStore(store); // Access the store in SSR context
+
+      if (!postId) {
+        logger.throw('no post id to fetch');
+        return;
+      }
+
+      logger.debug(`attempting to fetch: ${postId}`);
+      await postStore.getPublishedDraft(postId); // Fetch data only if not cached
+    }
   },
 });
 

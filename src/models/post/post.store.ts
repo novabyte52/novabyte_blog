@@ -2,11 +2,14 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { PostVersion } from './post';
 import { usePostClient } from './post.client';
+import { useLogger } from 'src/composables/useLogger';
 
 function randomIntFromInterval(min: number, max: number) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+const logger = useLogger('post.store');
 
 export const usePostStore = defineStore('posts', () => {
   const pc = usePostClient();
@@ -17,9 +20,7 @@ export const usePostStore = defineStore('posts', () => {
     drafts.value.filter((d) => d.published)
   );
 
-  const getRandomDraft = async () => {
-    await getPublished();
-
+  const getRandomDraft = () => {
     return publishedDrafts.value[
       randomIntFromInterval(0, publishedDrafts.value.length - 1)
     ];
@@ -47,7 +48,14 @@ export const usePostStore = defineStore('posts', () => {
   };
 
   const getPublishedDraft = async (draft_id: string) => {
-    const draft = await getDraft(draft_id);
+    logger.debug(`getting draft: ${draft_id}`);
+    let draft = drafts.value.find((d) => d.draft_id === draft_id);
+
+    logger.debug(`draft found? ${!!draft}`);
+    if (!draft) {
+      draft = await getDraft(draft_id);
+      logger.debug(`draft not cached, fetching successful? ${!!draft}`);
+    }
 
     if (draft.published) {
       return draft;

@@ -9,70 +9,71 @@
         label="E-Mail"
         type="text"
         :rules="[
-          () => email.length > 0 || 'Email is required!',
-          () => isEmail(email) || 'Not a valid email!',
-        ]"
-      />
+      () => email.length > 0 || 'Email is required!',
+      () => isEmail(email) || 'Not a valid email!',
+    ]" />
       <q-input
         v-model="password"
         :dense="props.dense"
         label="Password"
         type="password"
-        :rules="[() => password.length > 0 || 'Password is required!']"
-      />
+        :rules="[() => password.length > 0 || 'Password is required!']" />
       <q-card-actions align="center">
         <q-btn
           :dense="props.dense"
           type="submit"
           label="Launch"
-          color="secondary"
-        />
+          color="secondary" />
       </q-card-actions>
     </q-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { isEmail } from 'validator';
-import { useQuasar } from 'quasar';
-import { useNovaStore } from 'src/stores/nova.store';
+  import { ref } from 'vue';
+  import { isEmail } from 'validator';
+  import { useQuasar } from 'quasar';
+  import { useNovaStore } from 'src/stores/nova.store';
+  import { useRouter } from 'vue-router';
+  import { RouteNames } from 'src/router/routes';
 
-const q = useQuasar();
+  const q = useQuasar();
+  const r = useRouter();
 
-const emit = defineEmits<{
-  loggingIn: [];
-}>();
+  const emit = defineEmits<{
+    loggingIn: [];
+  }>();
 
-const props = defineProps({
-  dense: {
-    type: Boolean,
-    default: false,
-  },
-});
+  const props = defineProps({
+    dense: {
+      type: Boolean,
+      default: false,
+    },
+  });
 
-const { logIn } = useNovaStore();
+  const { logIn } = useNovaStore();
 
-const email = ref('');
-const password = ref('');
+  const email = ref('');
+  const password = ref('');
 
-const onSubmit = async () => {
-  emit('loggingIn');
-  try {
-    const succeeded = await logIn(email.value, password.value);
-    if (succeeded) {
+  const onSubmit = async () => {
+    emit('loggingIn');
+    try {
+      const succeeded = await logIn(email.value, password.value);
+      if (succeeded) {
+        q.notify({
+          message: "You've been logged in!",
+          color: 'positive',
+        });
+        r.push({ name: RouteNames.HOME })
+        return;
+      }
+    } catch (e) {
       q.notify({
-        message: "You've been logged in!",
-        color: 'positive',
+        message: 'There was an error logging you in.',
+        color: 'negative',
       });
-      return;
+      throw e;
     }
-  } catch (e) {
-    q.notify({
-      message: 'There was an error logging you in.',
-      color: 'negative',
-    });
-    throw e;
-  }
-};
+  };
 </script>

@@ -3,24 +3,20 @@
     ref="marqueeContainer"
     id="marquee-container"
     @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
+    @mouseleave="onMouseLeave">
     <span
       v-for="(item, i) in props.items"
-      :key="item.id"
-      :id="`marquee-item-${i}`"
-      class="marquee-item"
-    >
+      :key="`marquee-item-${i}`"
+      class="marquee-item">
       <router-link
-        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }"
-      >
+        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }">
         {{ item.text }}
       </router-link>
     </span>
-    <span v-for="item in props.items" :key="item.id" class="marquee-item">
+    <!-- Duplicate items for continuous scrolling -->
+    <span v-for="(item, i) in props.items" :key="`duplicate-item-${i}`" class="marquee-item">
       <router-link
-        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }"
-      >
+        :to="{ name: RouteNames.READ_POST, params: { postId: item.id } }">
         {{ item.text }}
       </router-link>
     </span>
@@ -28,91 +24,109 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { RouteNames } from 'src/router/routes';
+  import { ref, onMounted, onBeforeUnmount } from 'vue';
+  import { RouteNames } from 'src/router/routes';
+  import { useLogger } from 'src/composables/useLogger';
 
-const props = defineProps({
-  items: {
-    type: Array<{
-      id: string;
-      text: string;
-    }>,
-    default: () => [
-      { id: '1', text: 'test 01' },
-      { id: '2', text: 'test 02' },
-      { id: '3', text: 'test 03' },
-      { id: '4', text: 'test 04' },
-      { id: '5', text: 'test 05' },
-      { id: '6', text: 'test 06' },
-    ],
-  },
-  speed: {
-    type: Number,
-    default: 25,
-  },
-  margin: {
-    type: Number,
-    default: 100,
-  },
-});
+  const log = useLogger('NMarquee');
 
-const marqueeContainer = ref<HTMLDivElement | undefined>();
-const stopAnim = ref();
+  const props = defineProps({
+    items: {
+      type: Array<{
+        id: string;
+        text: string;
+      }>,
+      default: () => [
+        { id: '1', text: 'test 01' },
+        { id: '2', text: 'test 02' },
+        { id: '3', text: 'test 03' },
+        { id: '4', text: 'test 04' },
+        { id: '5', text: 'test 05' },
+        { id: '6', text: 'test 06' },
+      ],
+    },
+    speed: {
+      type: Number,
+      default: 25,
+    },
+    margin: {
+      type: Number,
+      default: 100,
+    },
+  });
 
-watch(marqueeContainer, (val) => {
-  if (val) {
-    const para1 = document.getElementById('marquee-item-0');
-    if (!para1) throw new Error('cant get marquee items');
-    stopAnim.value = animate(para1);
-  }
-});
+  const marqueeContainer = ref<HTMLDivElement | null>(null);
+  let animationFrame: number | null = null;
+  let offset = 0;
 
-let flag = 0;
-function animate(element: HTMLSpanElement) {
-  let elementWidth = element.offsetWidth;
-  if (!element.parentElement) throw new Error('No parent element!');
+  const startAnimation = () => {
+    const container = marqueeContainer.value;
+    if (!container) return;
 
-  const pause = setInterval(() => {
-    element.style.marginLeft = --flag + 'px';
-
-    const pos_string = element.style.marginLeft.substring(
-      0,
-      element.style.marginLeft.indexOf('px')
-    );
-
-    const end = props.items.length * (elementWidth + props.margin);
-    if (parseInt(pos_string) < -end) {
-      flag = 0;
+    const marqueeItems = container.querySelectorAll('.marquee-item');
+    if (marqueeItems.length === 0) {
+      log.err('No marquee items found for animation.');
+      return;
     }
-  }, props.speed);
 
-  return pause;
-}
+    const itemWidth = marqueeItems[0].clientWidth + props.margin;
+    const totalWidth = itemWidth * marqueeItems.length;
 
-const onMouseEnter = () => {
-  clearInterval(stopAnim.value);
-};
+    const animate = () => {
+      offset = (offset - 1) % totalWidth;
+      marqueeItems.forEach((item
+      ) => {
+        (item as HTMLElement).style.transform = `translateX(${offset}px)`;
+      });
+      animationFrame = requestAnimationFrame(animate);
+    };
 
-const onMouseLeave = () => {
-  stopAnim.value = animate(
-    document.getElementById('marquee-item-0') as HTMLElement
-  );
-};
+    animationFrame = requestAnimationFrame(animate);
+  };
+
+  const stopAnimation = () => {
+    if (animationFrame !== null) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  };
+
+  const onMouseEnter = () => {
+    stopAnimation();
+    log.debug('Animation stopped on mouse enter.');
+  };
+
+  const onMouseLeave = () => {
+    startAnimation();
+    log.debug('Animation resumed on mouse leave.');
+  };
+
+  onMounted(() => {
+    log.debug('NMarquee mounted.');
+    startAnimation();
+  });
+
+  onBeforeUnmount(() => {
+    stopAnimation();
+    log.debug('NMarquee unmounted.');
+  });
 </script>
 
 <style scoped lang="scss">
-#marquee-container {
-  width: 100%;
-  overflow: hidden;
-  border-left: 2px dotted $secondary;
-  border-right: 2px dotted $secondary;
-  background-color: #bc7de008;
-}
+  #marquee-container {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    border-left: 2px dotted $secondary;
+    border-right: 2px dotted $secondary;
+    background-color: #bc7de008;
+  }
 
-.marquee-item {
-  margin-right: v-bind('`${$props.margin}px`');
-  color: black;
-  font-weight: bold;
-  white-space: nowrap;
-}
+  .marquee-item {
+    margin-right: v-bind('`${$props.margin}px`');
+    color: black;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: transform 0.1s linear;
+  }
 </style>

@@ -1,3 +1,4 @@
+// import { useLogger } from 'src/composables/useLogger';
 import { RouteRecordRaw } from 'vue-router';
 
 export enum RouteNames {
@@ -13,84 +14,112 @@ export enum RouteNames {
   ABOUT = 'about',
 }
 
+// const logger = useLogger('routes');
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => {
+      return import('layouts/MainLayout.vue');
+    },
     children: [
       {
         name: RouteNames.HOME,
-        path: '',
-        component: () => import('pages/IndexPage.vue'),
+        path: '//',
+        component: () => {
+          return import('pages/IndexPage.vue');
+        },
       },
       {
-        path: 'signup',
-        component: () => import('pages/SignUpPage.vue'),
+        path: '/signup',
+        component: () => {
+          return import('pages/SignUpPage.vue');
+        },
       },
       {
         name: RouteNames.LOGIN,
-        path: 'login',
-        component: () => import('pages/LogInPage.vue'),
+        path: '/login',
+        component: () => {
+          return import('pages/LogInPage.vue');
+        },
       },
       {
         name: RouteNames.ABOUT,
-        path: 'about',
-        component: () => import('pages/AboutPage.vue'),
+        path: '/about',
+        component: () => {
+          return import('pages/AboutPage.vue');
+        },
       },
       {
         name: RouteNames.CREATE_POST,
-        path: 'posts',
-        component: () => import('src/models/post/pages/CreatePostPage.vue'),
+        path: '/posts',
+        component: () => {
+          return import('src/models/post/pages/CreatePostPage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_DRAFTS,
-        path: 'posts/drafts',
-        component: () => import('src/models/post/pages/EditDraftsPage.vue'),
+        path: '/posts/drafts',
+        component: () => {
+          return import('src/models/post/pages/EditDraftsPage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.EDIT_PUBLISHED,
-        path: 'posts/published',
-        component: () => import('src/models/post/pages/EditPublishedPage.vue'),
+        path: '/posts/published',
+        component: () => {
+          return import('src/models/post/pages/EditPublishedPage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.POST_HISTORY,
-        path: 'posts/history',
-        component: () => import('src/models/post/pages/PostHistoryPage.vue'),
+        path: '/posts/history',
+        component: () => {
+          return import('src/models/post/pages/PostHistoryPage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.READ_POST,
-        path: 'posts/:postId',
-        component: () => import('src/models/post/pages/ReadPostPage.vue'),
+        path: '/posts/:postId',
+        component: () => {
+          return import('src/models/post/pages/ReadPostPage.vue');
+        },
+      },
+      {
+        path: '/programming',
+        component: () => {
+          return import('pages/ProgrammingPage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
-        path: 'programming',
-        component: () => import('pages/ProgrammingPage.vue'),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: 'theme',
-        component: () => import('pages/ThemePage.vue'),
+        path: '/theme',
+        component: () => {
+          return import('pages/ThemePage.vue');
+        },
         meta: { requiresAuth: true },
       },
       {
         name: RouteNames.PERSONS,
-        path: 'persons',
-        component: () => import('pages/PersonsPage.vue'),
+        path: '/persons',
+        component: () => {
+          return import('pages/PersonsPage.vue');
+        },
         meta: { requiresAuth: true },
       },
     ],
   },
 
   // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    component: () => {
+      return import('pages/ErrorNotFound.vue');
+    },
   },
 ];
 

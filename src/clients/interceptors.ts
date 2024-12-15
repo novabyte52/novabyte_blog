@@ -1,23 +1,35 @@
-import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import {
+  AxiosError,
+  AxiosInstance,
+  HttpStatusCode,
+  InternalAxiosRequestConfig,
+} from 'axios';
+import { useLogger } from 'src/composables/useLogger';
 import { NError, NErrorContext, anonymousUrls } from 'src/constants';
 import { NErrorResponse } from 'src/models/errors';
 import { RouteNames } from 'src/router/routes';
 import { NB_TOKEN_KEY, useNovaStore } from 'src/stores/nova.store';
 import { useRouter } from 'vue-router';
 
+const setAuthHeader = (config: InternalAxiosRequestConfig, token: string) =>
+  (config.headers['Authorization'] = `Bearer ${token}`);
+
+const reqLog = useLogger('req intercept');
 export const global_request_interceptor = async (
   config: InternalAxiosRequestConfig
 ) => {
-  const nova = useNovaStore();
-
+  reqLog.debug(
+    `req url: ${((config.baseURL as string) + '/' + config.url) as string}`
+  );
   if (anonymousUrls.some((a) => a === config.url)) {
     return config;
   }
 
-  let token = nova.getToken();
+  const nova = useNovaStore();
+  const token = nova.getToken();
 
   if (!token) {
-    token = (await nova.refresh('global request interceptor')) ?? undefined;
+    await nova.refresh();
   }
 
   if (!token) {
@@ -26,25 +38,28 @@ export const global_request_interceptor = async (
     );
   }
 
-  config.headers['Authorization'] = token;
+  reqLog.trace('attempting to set auth header');
+  setAuthHeader(config, token);
+  config.headers['Content-Type'] = 'application/json';
+  config.withCredentials = true;
   return config;
 };
 
 let tries = 0;
 export const global_response_interceptor =
   (axios: AxiosInstance) => async (err: AxiosError) => {
+    // const log = useLogger('req intercpt');
+
+    const { response, config } = err;
+    if (config && response && response.status === HttpStatusCode.Forbidden)
+      return axios(config);
+
     const router = useRouter();
     const nova = useNovaStore();
 
-    const { response, config } = err;
-
-    if (response && response.status === 401 && config) {
+    if (config && response && response.status === HttpStatusCode.Unauthorized) {
       const err = response.data as NErrorResponse;
       switch (err.id) {
-        // check for normal unauthorization 401
-        case NError.NOT_ADMIN:
-          throw Error('You are not authorized to access this endpoint.');
-
         case NError.MISSING_REFRESH_TOKEN:
           throw Error('Missing refresh token, unable to refresh.');
 
@@ -55,20 +70,20 @@ export const global_response_interceptor =
         case NError.UNVERIFIABLE_TOKEN: {
           if (err.context === NErrorContext.AUTHENTICATION) {
             // attempt to refresh just in case
-            const token = await nova.refresh('global response interceptor 01');
+            await nova.refresh();
 
-            if (token) {
-              nova.setToken(token);
-              config.headers['Authorization'] = `${token}`;
+            if (nova.hasToken()) {
+              setAuthHeader(config, nova.currentToken as string);
               return axios(config);
             } else {
-              router.push({ name: RouteNames.HOME });
+              router.push({ name: RouteNames.LOGIN });
               throw Error('Unable to verify token.');
             }
           } else if (err.context === NErrorContext.REFRESH) {
             localStorage.removeItem(NB_TOKEN_KEY);
             nova.currentToken = undefined;
             nova.currentPerson = undefined;
+            break;
           }
         }
 
@@ -78,21 +93,20 @@ export const global_response_interceptor =
           if (tries < 3) {
             try {
               tries++;
-              const token = await nova.refresh(
-                'global response interceptor 02'
-              );
+              await nova.refresh();
 
-              if (token) {
-                nova.setToken(token);
-                config.headers['Authorization'] = `${token}`;
+              if (nova.hasToken()) {
+                tries = 0;
+                setAuthHeader(config, nova.currentToken as string);
                 return axios(config);
               }
             } catch (e) {
               tries++;
               throw e;
             }
+          } else {
+            tries = 0;
           }
-          tries = 0;
       }
     }
 

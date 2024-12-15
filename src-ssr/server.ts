@@ -18,6 +18,9 @@ import {
   ssrRenderPreloadTag,
   ssrServeStaticContent,
 } from 'quasar/wrappers';
+import { useLogger } from 'src/composables/useLogger';
+
+const logger = useLogger('ssr server');
 
 /**
  * Create your webserver and return its instance.
@@ -27,6 +30,7 @@ import {
  * Should NOT be async!
  */
 export const create = ssrCreate((/* { ... } */) => {
+  logger.debug('SSR app initialized');
   const app = express();
 
   // attackers can use this header to detect apps running Express
@@ -36,7 +40,7 @@ export const create = ssrCreate((/* { ... } */) => {
   // place here any middlewares that
   // absolutely need to run before anything else
   if (process.env.PROD) {
-    app.use(compression());
+    app.use(compression);
   }
 
   return app;
@@ -57,7 +61,7 @@ export const listen = ssrListen(async ({ app, port, isReady }) => {
   await isReady();
   return app.listen(port, () => {
     if (process.env.PROD) {
-      console.log('Server listening at port ' + port);
+      logger.info('Server listening at port ' + port);
     }
   });
 });

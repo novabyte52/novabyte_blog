@@ -28,7 +28,7 @@ module.exports = configure(function (/*ctx*/) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios', 'i18n'],
+    boot: [{ path: 'axios', server: true, client: true }, 'i18n'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -62,14 +62,17 @@ module.exports = configure(function (/*ctx*/) {
       },
 
       extendViteConf: (config) => {
+        console.debug('[qconf]'.padEnd(15) + 'extendedViteConf');
         config.envPrefix = 'NB_';
 
         config.ssr = {
+          ...config.ssr,
+          noExternal: ['lodash-es'],
           optimizeDeps: {
             include: ['lodash-es'],
           },
-          noExternal: ['lodash-es'],
         };
+        console.debug('[qconf]'.padEnd(15) + 'config.ssr:', config.ssr);
 
         config.optimizeDeps = {
           esbuildOptions: {
@@ -104,6 +107,18 @@ module.exports = configure(function (/*ctx*/) {
       // viteVuePluginOptions: {},
 
       vitePlugins: [
+        {
+          name: 'my-vite-plugin',
+          configureServer(server) {
+            console.debug(
+              '[vite plugin]'.padEnd(15) + 'Vite Server is running'
+            );
+            server.middlewares.use((req, res, next) => {
+              console.debug('[vite plugin]'.padEnd(15) + req.url);
+              next();
+            });
+          },
+        },
         [
           '@intlify/vite-plugin-vue-i18n',
           {
@@ -124,7 +139,7 @@ module.exports = configure(function (/*ctx*/) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true,
-      // open: true, // opens browser window automatically
+      open: false, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -182,6 +197,7 @@ module.exports = configure(function (/*ctx*/) {
       prodPort: process.env.PORT,
 
       middlewares: [
+        'proxy',
         'render', // keep this as last one
       ],
     },

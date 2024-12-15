@@ -23,7 +23,15 @@
         </router-link>
       </q-card>
       <q-space />
-      <img src="../assets/astro-helmet.svg" class="helmet-img q-pa-sm" />
+      <img
+        src="../assets/astro-helmet.svg"
+        class="helmet-img q-pa-sm"
+        :style="{
+          backgroundImage: randomDraft?.image
+            ? `url('${randomDraft.image}')`
+            : `url('../assets/code_02.png')`,
+        }"
+      />
       <q-space />
     </div>
     <div class="text-h2 recent-logs">Recent Mission Logs</div>
@@ -59,33 +67,37 @@
 <script setup lang="ts">
 import { truncate } from 'lodash-es';
 import { storeToRefs } from 'pinia';
-import { RenderMarkdown, usePostStore } from 'src/models/post';
+import { useLogger } from 'src/composables/useLogger';
+import { PostVersion, RenderMarkdown, usePostStore } from 'src/models/post';
 import { RouteNames } from 'src/router/routes';
-import { onMounted, ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 defineOptions({
-  preFetch: ({ store }) => {
+  preFetch: async ({ store }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const plog = useLogger('P IndexPage.vue');
     const ps = usePostStore(store);
-    return ps.getPublished();
+
+    await ps.getPublished();
+
+    return { randomDraft: ps.getRandomDraft() };
   },
 });
 
+useLogger('IndexPage.vue');
+
 const { getRandomDraft } = usePostStore();
 const { publishedDrafts } = storeToRefs(usePostStore());
-
-const randomDraft = ref();
-
-onMounted(async () => {
-  randomDraft.value = await getRandomDraft();
-});
+const randomDraft: Ref<PostVersion | undefined> = ref();
+randomDraft.value = getRandomDraft();
 </script>
 
 <style lang="scss">
 .index-page {
   padding-bottom: 0 !important;
+
   .helmet-img {
     background-clip: content-box;
-    background-image: v-bind("`url('${randomDraft?.image}')`");
     background-position: center;
     background-size: cover;
   }
@@ -98,10 +110,12 @@ onMounted(async () => {
     width: 50%;
 
     transition: 0.3s;
+
     &:hover {
       border-color: $secondary;
       transition: 0.3s;
     }
+
     &:active {
       .text-h3 {
         transition: 0.1s;
@@ -127,6 +141,7 @@ onMounted(async () => {
     color: $text-color;
     border: 4px inset $primary-light;
     padding: 16px;
+
     p {
       margin: 0;
     }
@@ -158,10 +173,12 @@ onMounted(async () => {
   .post-card {
     // height: 100%;
     transition: 0.3s;
+
     &:hover {
       border-color: $secondary;
       transition: 0.3s;
     }
+
     &:active {
       border-style: inset;
     }

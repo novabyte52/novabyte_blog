@@ -35,8 +35,7 @@
         <q-expansion-item
           expand-separator
           class="full-width"
-          :caption="'some sort of a caption'"
-        >
+          :caption="'some sort of a caption'">
           <template v-slot:header>
             <div class="text-h6 text-center full-width">/technomancy</div>
           </template>
@@ -62,8 +61,7 @@
 
         <q-expansion-item
           class="full-width"
-          :caption="'some sort of a caption'"
-        >
+          :caption="'some sort of a caption'">
           <template v-slot:header>
             <div class="text-h6 text-center full-width">/art</div>
           </template>
@@ -85,39 +83,42 @@
           ref="black_hole"
           color="black"
           name="circle"
-          size="md"
-        />
+          size="md" />
       </div>
     </q-card>
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { useLogger } from 'src/composables/useLogger';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _logger = useLogger('About');
+</script>
 
 <style scoped lang="scss">
-.hobby-list {
-  max-width: 75%;
-  margin: auto;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  border-left: 1px solid rgba(0, 0, 0, 0.12);
-}
+  .hobby-list {
+    max-width: 75%;
+    margin: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
 
-.headshot-container {
-  margin: 0 0 32px 0;
-  border-radius: 100%;
-  border: 16px double $red;
-  padding: 16px;
-  background-color: $primary;
-}
+  .headshot-container {
+    margin: 0 0 32px 0;
+    border-radius: 100%;
+    border: 16px double $red;
+    padding: 16px;
+    background-color: $primary;
+  }
 
-.headshot {
-  border-radius: 100%;
-  border: 4px inset $primary-light;
-  width: 400px;
-  height: 400px;
-  background-clip: content-box;
-  background-image: url('https://nextcloud.techrekt.com/s/a79mFz9K9jomwzE/preview');
-  background-position: center;
-  background-size: cover;
-}
+  .headshot {
+    border-radius: 100%;
+    border: 4px inset $primary-light;
+    width: 400px;
+    height: 400px;
+    background-clip: content-box;
+    background-image: url('https://nextcloud.techrekt.com/s/a79mFz9K9jomwzE/preview');
+    background-position: center;
+    background-size: cover;
+  }
 </style>
