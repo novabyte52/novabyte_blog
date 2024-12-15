@@ -1,0 +1,62 @@
+name: Build and Deploy Quasar SSR App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Enables manual triggering from the GitHub Actions UI
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to DigitalOcean
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Dynamically set Node.js version
+      - name: Use Node.js version from .nvmrc
+        run: |
+          NODE_VERSION=$(cat .nvmrc)
+          echo "Using Node.js version $NODE_VERSION"
+          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: yarn install
+
+      # Install quasar cli
+      - name: Install Dependencies
+        run: yarn global add @quasar/cli
+
+      # Build the Quasar SSR app
+      - name: Build Quasar SSR
+        run: quasar build -m ssr
+
+      # Deploy and Start Application
+      - name: Deploy to DigitalOcean Droplet
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DO_HOST: ${{ secrets.DO_HOST }}
+          DO_USER: ${{ secrets.DO_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $DO_HOST >> ~/.ssh/known_hosts
+          ssh $DO_USER@$DO_HOST <<EOF
+            mkdir -p /srv/www/ui && cd $_
+            rm -rf .
+            scp -r dist/ssr $DO_USER@$DO_HOST:/srv/www/ui
+            yarn
+            yarn run start
+            EOF
