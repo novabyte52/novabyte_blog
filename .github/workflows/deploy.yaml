@@ -4,7 +4,16 @@ on:
   push:
     branches:
       - dev
-  workflow_dispatch: # Enables manual triggering from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to deploy to'
+        required: true
+        default: stage
+        type: choice
+        options:
+          - stage
+          - prod
 
 jobs:
   build-and-deploy:
@@ -52,6 +61,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh $SSH_USER@$SSH_HOST <<EOF
             mkdir -p /srv/www/ui && cd $_
             rm -rf .
