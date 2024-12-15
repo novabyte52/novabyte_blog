@@ -105,7 +105,6 @@ export const useNovaStore = defineStore('novabyte', () => {
     localStorage.removeItem(NB_TOKEN_KEY);
     currentPerson.value = undefined;
     currentToken.value = undefined;
-    // DEBT: calling a computed to cause a side effect is bad
     isAuthenticated.value;
     checkForAuthParadox();
     if (route.meta.requiresAuth) {
