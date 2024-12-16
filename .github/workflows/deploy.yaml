@@ -24,7 +24,7 @@ jobs:
     steps:
       # Checkout repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
@@ -58,6 +58,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
+          echo $GITHUB_WORKSPACE
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -65,7 +66,9 @@ jobs:
           ssh $SSH_USER@$SSH_HOST << EOF
             mkdir -p /srv/www/ui && cd $_
             rm -rf .
-            scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
+          EOF
+          scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
+          ssh $SSH_USER@$SSH_HOST << EOF
             yarn
             yarn run start
-            EOF
+          EOF
