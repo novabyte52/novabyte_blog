@@ -22,34 +22,34 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
 
     steps:
-      # Checkout repository
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # # Checkout repository
+      # - name: Checkout Code
+      #   uses: actions/checkout@v3
 
-      - name: Create .env file
-        run: |
-          echo "NB_SSR_API_ADDR=${{ vars.NB_SSR_API_ADDR }}" >> .env
-          echo "NB_API_ADDR=${{ vars.NB_API_ADDR }}" >> .env
-          echo "PORT=${{ vars.PORT }}" >> .env
+      # - name: Create .env file
+      #   run: |
+      #     echo "NB_SSR_API_ADDR=${{ vars.NB_SSR_API_ADDR }}" >> .env
+      #     echo "NB_API_ADDR=${{ vars.NB_API_ADDR }}" >> .env
+      #     echo "PORT=${{ vars.PORT }}" >> .env
 
-      # Setup Node.js
-      - name: Use Node.js version from .nvmrc
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
+      # # Setup Node.js
+      # - name: Use Node.js version from .nvmrc
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version-file: '.nvmrc'
+      #     cache: 'yarn'
 
-      # Install dependencies
-      - name: Install Dependencies
-        run: yarn install
+      # # Install dependencies
+      # - name: Install Dependencies
+      #   run: yarn install
 
-      # Install quasar cli
-      - name: Install Dependencies
-        run: yarn global add @quasar/cli
+      # # Install quasar cli
+      # - name: Install Dependencies
+      #   run: yarn global add @quasar/cli
 
-      # Build the Quasar SSR app
-      - name: Build Quasar SSR
-        run: quasar build -m ssr
+      # # Build the Quasar SSR app
+      # - name: Build Quasar SSR
+      #   run: quasar build -m ssr
 
       # # Deploy and Start Application
       # - name: Deploy to DigitalOcean Droplet
@@ -70,14 +70,19 @@ jobs:
       #       yarn run start
       #       EOF
       # Deploy and Start Application
-      - name: Deploy to DigitalOcean Droplet
+      - name: Make ssh directory
+        run: |
+          mkdir -p ~/.ssh
+          ls -a
+
+      - name: Deploy to Server 01
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          ls ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh -T $SSH_USER@$SSH_HOST
