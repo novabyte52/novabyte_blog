@@ -84,5 +84,8 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           ls ~/.ssh
           chmod 600 ~/.ssh/id_rsa
+          echo "updated key permissions"
+          echo $(ssh-keyscan -H $SSH_HOST)
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          echo "updated known_hosts"
           ssh -T $SSH_USER@$SSH_HOST
