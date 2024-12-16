@@ -51,6 +51,24 @@ jobs:
       - name: Build Quasar SSR
         run: quasar build -m ssr
 
+      # # Deploy and Start Application
+      # - name: Deploy to DigitalOcean Droplet
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SSH_HOST }}
+      #     SSH_USER: ${{ secrets.SSH_USER }}
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+      #     ssh $SSH_USER@$SSH_HOST << EOF
+      #       mkdir -p /srv/www/ui && cd $_
+      #       rm -rf .
+      #       scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
+      #       yarn
+      #       yarn run start
+      #       EOF
       # Deploy and Start Application
       - name: Deploy to DigitalOcean Droplet
         env:
@@ -62,10 +80,4 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          ssh $SSH_USER@$SSH_HOST << EOF
-            mkdir -p /srv/www/ui && cd $_
-            rm -rf .
-            scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
-            yarn
-            yarn run start
-            EOF
+          ssh -T $SSH_USER@$SSH_HOST
