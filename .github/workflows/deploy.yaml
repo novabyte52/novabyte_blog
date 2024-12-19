@@ -52,7 +52,7 @@ jobs:
         run: quasar build -m ssr
 
       # Deploy and Start Application
-      - name: Deploy to DigitalOcean Droplet
+      - name: Deploy to ${{ github.event.inputs.environment }} via ssh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
