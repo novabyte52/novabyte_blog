@@ -57,6 +57,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
+          SERVER_PASS: ${{ secrets.SERVER_PASS }}
         run: |
           echo $GITHUB_WORKSPACE
           mkdir -p ~/.ssh
@@ -66,8 +67,9 @@ jobs:
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "executing on remote"
             sudo -S mkdir -p /srv/www/ui
+            echo "$SERVER_PASS"
             cd /srv/www/ui
-            sudo -S rm -rf ./*
+            sudo rm -rf ./*
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
