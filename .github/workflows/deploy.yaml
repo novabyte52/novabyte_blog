@@ -66,7 +66,7 @@ jobs:
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "executing on remote"
             sudo mkdir -p /srv/www/ui && cd $_
-            rm -rf ./*
+            sudo rm -rf ./*
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
