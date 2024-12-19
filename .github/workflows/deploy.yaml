@@ -4,30 +4,39 @@ on:
   push:
     branches:
       - dev
-  workflow_dispatch: # Enables manual triggering from the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to deploy to'
+        required: true
+        default: stage
+        type: choice
+        options:
+          - stage
+          - prod
 
 jobs:
   build-and-deploy:
     name: Build and Deploy to Server 01
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       # Checkout repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Dynamically set Node.js version
-      - name: Use Node.js version from .nvmrc
+      - name: Create .env file
         run: |
-          NODE_VERSION=$(cat .nvmrc)
-          echo "Using Node.js version $NODE_VERSION"
-          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+          echo "NB_SSR_API_ADDR=${{ vars.NB_SSR_API_ADDR }}" >> .env
+          echo "NB_API_ADDR=${{ vars.NB_API_ADDR }}" >> .env
+          echo "PORT=${{ vars.PORT }}" >> .env
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Setup Node.js
+      - name: Use Node.js version from .nvmrc
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       # Install dependencies
@@ -49,14 +58,19 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
+          echo $GITHUB_WORKSPACE
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          ssh $SSH_USER@$SSH_HOST <<EOF
-            mkdir -p /srv/www/ui && cd $_
-            rm -rf .
-            scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
+          ssh $SSH_USER@$SSH_HOST << EOF
+            echo "executing on remote"
+            sudo mkdir -p /srv/www/ui && cd $_
+            sudo rm -rf ./*
+          EOF
+          scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
+          ssh $SSH_USER@$SSH_HOST << EOF
+            echo "executing on remote"
             yarn
             yarn run start
-            EOF
+          EOF
