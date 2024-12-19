@@ -65,18 +65,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh $SSH_USER@$SSH_HOST << EOF
-            echo "executing on remote"
-            sudo -S mkdir -p /srv/www/ui
-            echo "$SERVER_PASS"
+            echo "executing on remote 1"
+            echo "$SERVER_PASS" | sudo -S mkdir -p /srv/www/ui
             echo "after mkdir"
             cd /srv/www/ui
-            sudo -S rm -rf ./*
-            echo "$SERVER_PASS"
+            echo "$SERVER_PASS" | sudo -S rm -rf ./*
             echo "after rm"
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
-            echo "executing on remote"
+            echo "executing on remote 2"
             yarn
             yarn run start
           EOF
