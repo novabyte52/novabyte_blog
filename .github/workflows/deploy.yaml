@@ -39,13 +39,13 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
-      # Install dependencies
+      # Install quasar cli
+      - name: Install Quasar
+        run: yarn global add @quasar/cli
+
+      # Install node dependencies
       - name: Install Dependencies
         run: yarn install
-
-      # Install quasar cli
-      - name: Install Dependencies
-        run: yarn global add @quasar/cli
 
       # Build the Quasar SSR app
       - name: Build Quasar SSR
@@ -65,8 +65,8 @@ jobs:
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "executing on remote"
-            sudo mkdir -p /srv/www/ui && cd $_
-            sudo rm -rf ./*
+            mkdir -p /srv/www/ui && cd $_
+            rm -rf ./*
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
