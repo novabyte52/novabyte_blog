@@ -68,8 +68,11 @@ jobs:
             echo "executing on remote"
             sudo -S mkdir -p /srv/www/ui
             echo "$SERVER_PASS"
+            echo "after mkdir"
             cd /srv/www/ui
-            sudo rm -rf ./*
+            sudo -S rm -rf ./*
+            echo "$SERVER_PASS"
+            echo "after rm"
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
