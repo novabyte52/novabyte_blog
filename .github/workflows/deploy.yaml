@@ -65,7 +65,7 @@ jobs:
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "executing on remote"
-            mkdir -p /srv/www/ui && cd $_
+            sudo mkdir -p /srv/www/ui && cd $_
             rm -rf ./*
           EOF
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
