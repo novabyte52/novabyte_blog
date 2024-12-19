@@ -64,6 +64,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "Creating amd navigating to directory"
             echo "$SERVER_PASS" | sudo -S mkdir -p /srv/www/ui
@@ -71,7 +72,9 @@ jobs:
             echo "Removing old files"
             echo "$SERVER_PASS" | sudo -S rm -rf ./*
           EOF
+
           scp -r dist/ssr/* $SSH_USER@$SSH_HOST:/srv/www/ui
+
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "Installing dependencies and running"
             cd /srv/www/ui
