@@ -65,17 +65,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           ssh $SSH_USER@$SSH_HOST << EOF
-            echo "executing on remote 1"
+            echo "Creating amd navigating to directory"
             echo "$SERVER_PASS" | sudo -S mkdir -p /srv/www/ui
-            echo "after mkdir"
             cd /srv/www/ui
+            echo "Removing old files"
             echo "$SERVER_PASS" | sudo -S rm -rf ./*
-            echo "after rm"
           EOF
           scp -r dist/ssr/* $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
-            echo "executing on remote 2"
+            echo "Installing dependencies and running"
             cd /srv/www/ui
             yarn
-            yarn run start
+            nohup yarn run start > ui.log 2>&1 &
           EOF
