@@ -75,6 +75,7 @@ jobs:
           scp -r dist/ssr $SSH_USER@$SSH_HOST:/srv/www/ui
           ssh $SSH_USER@$SSH_HOST << EOF
             echo "executing on remote 2"
+            cd /srv/www/ui
             yarn
             yarn run start
           EOF
