@@ -56,8 +56,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SERVER_PASS: ${{ secrets.SERVER_PASS }}
+          SSH_USER: deploy
         run: |
           echo $GITHUB_WORKSPACE
           mkdir -p ~/.ssh
@@ -65,19 +64,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
-          ssh $SSH_USER@$SSH_HOST << EOF
-            echo "Creating amd navigating to directory"
-            echo "$SERVER_PASS" | sudo -S mkdir -p /srv/www/ui
-            cd /srv/www/ui
-            echo "Removing old files"
-            echo "$SERVER_PASS" | sudo -S rm -rf ./*
-          EOF
+          # Use restricted commands
+          ssh deploy@$SSH_HOST "mkdir -p /srv/www/ui"
+          ssh deploy@$SSH_HOST "rm -rf /srv/www/ui/*"
 
-          scp -r dist/ssr/* $SSH_USER@$SSH_HOST:/srv/www/ui
+          scp -r dist/ssr/* deploy@$SSH_HOST:/srv/www/ui
 
-          ssh $SSH_USER@$SSH_HOST << EOF
-            echo "Installing dependencies and running"
-            cd /srv/www/ui
-            yarn
-            nohup yarn run start > ui.log 2>&1 &
-          EOF
+          ssh deploy@$SSH_HOST "sudo systemctl restart ui.service"
