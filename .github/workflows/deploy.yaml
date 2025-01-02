@@ -70,4 +70,5 @@ jobs:
 
           scp -r dist/ssr/* deploy@$SSH_HOST:/srv/www/ui
 
+          ssh deploy@$SSH_HOST "yarn --cwd /srv/www/ui install"
           ssh deploy@$SSH_HOST "sudo systemctl restart ui.service"
