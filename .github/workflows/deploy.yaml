@@ -65,7 +65,7 @@ jobs:
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
           # Use restricted commands
-          ssh deploy@$SSH_HOST "mkdir /srv/www/ui"
+          ssh deploy@$SSH_HOST "mkdir -p /srv/www/ui"
           ssh deploy@$SSH_HOST "rm -rf /srv/www/ui/*"
 
           scp -r dist/ssr/* deploy@$SSH_HOST:/srv/www/ui
