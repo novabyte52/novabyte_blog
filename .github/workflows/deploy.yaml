@@ -1,4 +1,4 @@
-name: Build and Deploy Quasar SSR App
+name: Deploy Novabyte Blog uI
 
 on:
   push:
