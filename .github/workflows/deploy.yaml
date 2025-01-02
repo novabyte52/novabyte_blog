@@ -65,11 +65,11 @@ jobs:
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
           # Use restricted commands
-          ssh deploy@$SSH_HOST "mkdir -p /srv/www/ui"
-          ssh deploy@$SSH_HOST "rm -rf /srv/www/ui/*"
+          ssh $SSH_USER@$SSH_HOST "mkdir -p /srv/www/ui"
+          ssh $SSH_USER@$SSH_HOST "rm -rf /srv/www/ui/*"
 
-          scp -r dist/ssr/* deploy@$SSH_HOST:/srv/www/ui
-          scp -r .env deploy@$SSH_HOST:/srv/www/ui
+          scp -r dist/ssr/* $SSH_USER@$SSH_HOST:/srv/www/ui
+          scp -r .env $SSH_USER@$SSH_HOST:/srv/www/ui
 
-          ssh deploy@$SSH_HOST "yarn --cwd /srv/www/ui install"
-          ssh deploy@$SSH_HOST "sudo systemctl restart ui.service"
+          ssh $SSH_USER@$SSH_HOST "yarn --cwd /srv/www/ui install"
+          ssh $SSH_USER@$SSH_HOST "sudo systemctl restart ui.service"
