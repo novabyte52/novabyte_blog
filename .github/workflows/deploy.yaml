@@ -20,12 +20,22 @@ jobs:
   build-and-deploy:
     name: Build and Deploy to Server
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' ? 'prod' : 'stage' }}
 
     steps:
       # Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      # Set environment manually for prod or stage
+      - name: Set Environment
+        id: env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "env=prod" >> $GITHUB_ENV
+          else
+            echo "env=stage" >> $GITHUB_ENV
+      - name: Output Environment
+        run: echo "Environment is ${{ env.env }}"
 
       - name: Create .env file
         run: |
@@ -54,7 +64,7 @@ jobs:
         run: quasar build -m ssr
 
       # Deploy and Start Application
-      - name: Deploy to ${{ github.ref == 'refs/heads/main' ? 'prod' : 'stage' }} via ssh
+      - name: Deploy to ${{ env.env }} via ssh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
