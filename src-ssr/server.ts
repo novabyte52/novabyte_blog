@@ -60,7 +60,7 @@ export const create = ssrCreate((/* { ... } */) => {
  */
 export const listen = ssrListen(async ({ app, port, isReady }) => {
   await isReady();
-  return app.listen(port, '127.0.0.1', () => {
+  return app.listen(port, process.env.NB_ADDRESS || '127.0.0.1', () => {
     if (process.env.PROD) {
       logger.info('Server listening at port ' + port);
     }

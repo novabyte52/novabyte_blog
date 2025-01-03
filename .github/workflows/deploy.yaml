@@ -30,6 +30,7 @@ jobs:
         run: |
           echo "NB_SSR_API_ADDR=${{ vars.NB_SSR_API_ADDR }}" >> .env
           echo "NB_API_ADDR=${{ vars.NB_API_ADDR }}" >> .env
+          echo "NB_ADDRESS=${{ vars.NB_ADDRESS }}" >> .env
           echo "PORT=${{ vars.PORT }}" >> .env
 
       # Setup Node.js
