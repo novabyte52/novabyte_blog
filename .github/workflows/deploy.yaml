@@ -1,9 +1,10 @@
-name: Deploy Novabyte Blog uI
+name: Deploy Novabyte Blog UI
 
 on:
   push:
     branches:
       - dev
+      - main
   workflow_dispatch:
     inputs:
       environment:
@@ -17,9 +18,9 @@ on:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy to Server 01
+    name: Build and Deploy to Server
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.ref == 'refs/heads/main' ? 'prod' : 'stage' }}
 
     steps:
       # Checkout repository
@@ -53,13 +54,12 @@ jobs:
         run: quasar build -m ssr
 
       # Deploy and Start Application
-      - name: Deploy to ${{ github.event.inputs.environment }} via ssh
+      - name: Deploy to ${{ github.ref == 'refs/heads/main' ? 'prod' : 'stage' }} via ssh
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: deploy
         run: |
-          echo $GITHUB_WORKSPACE
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
