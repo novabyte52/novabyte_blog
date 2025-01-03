@@ -1,0 +1,20 @@
+name: Deploy to Stage
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy-generic.yaml
+    with:
+      environment: stage
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+    vars:
+      NB_SSR_API_ADDR: ${{ vars.NB_SSR_API_ADDR }}
+      NB_API_ADDR: ${{ vars.NB_API_ADDR }}
+      NB_ADDRESS: ${{ vars.NB_ADDRESS }}
+      PORT: ${{ vars.PORT }}
