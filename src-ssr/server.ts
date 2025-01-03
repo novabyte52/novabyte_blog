@@ -19,6 +19,7 @@ import {
   ssrServeStaticContent,
 } from 'quasar/wrappers';
 import { useLogger } from 'src/composables/useLogger';
+require('dotenv').config();
 
 const logger = useLogger('ssr server');
 
