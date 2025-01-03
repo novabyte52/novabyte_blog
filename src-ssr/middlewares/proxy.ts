@@ -5,9 +5,10 @@ import { useLogger } from 'src/composables/useLogger';
 const logger = useLogger('proxy');
 
 export default ssrMiddleware(({ app }) => {
-  logger.debug(`proxy target: ${process.env.NB_SSR_API_ADDR}`);
+  const target = process.env.NB_SSR_API_ADDR || 'http://127.0.0.1:52001';
+  logger.debug(`proxy target: ${target}`);
   const apiProxy = createProxyMiddleware({
-    target: process.env.NB_SSR_API_ADDR,
+    target: target,
     changeOrigin: true,
     timeout: 5000,
     proxyTimeout: 5000,
