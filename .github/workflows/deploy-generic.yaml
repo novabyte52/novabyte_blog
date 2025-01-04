@@ -36,6 +36,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Log .env values
+        run: |
+          echo "NB_SSR_API_ADDR=${{ inputs.NB_SSR_API_ADDR }}"
+          echo "NB_API_ADDR=${{ inputs.NB_API_ADDR }}"
+          echo "NB_ADDRESS=${{ inputs.NB_ADDRESS }}"
+          echo "PORT=${{ inputs.PORT }}"
+
       - name: Create .env file
         run: |
           echo "NB_SSR_API_ADDR=${{ inputs.NB_SSR_API_ADDR }}" >> .env
