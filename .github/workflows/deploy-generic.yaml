@@ -4,22 +4,27 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'Deployment environment (e.g., stage or prod)'
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+      NB_SSR_API_ADDR:
+        required: true
+        type: string
+      NB_API_ADDR:
+        required: true
+        type: string
+      NB_ADDRESS:
+        required: true
+        type: string
+      PORT:
         required: true
         type: string
     secrets:
       SSH_PRIVATE_KEY:
         required: true
       SSH_HOST:
-        required: true
-    vars:
-      NB_SSR_API_ADDR:
-        required: true
-      NB_API_ADDR:
-        required: true
-      NB_ADDRESS:
-        required: true
-      PORT:
         required: true
 
 jobs:
@@ -33,10 +38,10 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "NB_SSR_API_ADDR=${{ vars.NB_SSR_API_ADDR }}" >> .env
-          echo "NB_API_ADDR=${{ vars.NB_API_ADDR }}" >> .env
-          echo "NB_ADDRESS=${{ vars.NB_ADDRESS }}" >> .env
-          echo "PORT=${{ vars.PORT }}" >> .env
+          echo "NB_SSR_API_ADDR=${{ inputs.NB_SSR_API_ADDR }}" >> .env
+          echo "NB_API_ADDR=${{ inputs.NB_API_ADDR }}" >> .env
+          echo "NB_ADDRESS=${{ inputs.NB_ADDRESS }}" >> .env
+          echo "PORT=${{ inputs.PORT }}" >> .env
 
       - name: Use Node.js version from .nvmrc
         uses: actions/setup-node@v4
