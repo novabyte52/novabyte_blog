@@ -35,7 +35,7 @@ export const getAxiosStatic = () => {
   }
 
   if (process.env.CLIENT) {
-    axios.defaults.baseURL = import.meta.env.NB_API_ADDR as string;
+    axios.defaults.baseURL = clientApiAddr as string;
     axios.defaults.withCredentials = true;
     return axios;
   }

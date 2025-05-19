@@ -8,7 +8,7 @@ export default ssrMiddleware(({ app }) => {
   const target = process.env.NB_SSR_API_ADDR || 'http://127.0.0.1:52001';
   logger.debug(`proxy target: ${target}`);
   const apiProxy = createProxyMiddleware({
-    target: target,
+    target,
     changeOrigin: true,
     timeout: 5000,
     proxyTimeout: 5000,
@@ -43,5 +43,6 @@ export default ssrMiddleware(({ app }) => {
     logger: logger,
   });
 
+  logger.debug('Using apiProxy middleware');
   app.use(apiProxy);
 });
