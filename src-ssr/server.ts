@@ -15,11 +15,10 @@ import {
   ssrClose,
   ssrCreate,
   ssrListen,
-  ssrRenderPreloadTag,
   ssrServeStaticContent,
+  ssrRenderPreloadTag,
 } from 'quasar/wrappers';
 import { useLogger } from 'src/composables/useLogger';
-require('dotenv').config();
 
 const logger = useLogger('ssr server');
 
@@ -28,10 +27,9 @@ const logger = useLogger('ssr server');
  * If needed, prepare your webserver to receive
  * connect-like middlewares.
  *
- * Should NOT be async!
+ * Can be async: ssrCreate(async ({ ... }) => { ... })
  */
 export const create = ssrCreate((/* { ... } */) => {
-  logger.debug('SSR app initialized');
   const app = express();
 
   // attackers can use this header to detect apps running Express
@@ -41,7 +39,7 @@ export const create = ssrCreate((/* { ... } */) => {
   // place here any middlewares that
   // absolutely need to run before anything else
   if (process.env.PROD) {
-    app.use(compression);
+    app.use(compression());
   }
 
   return app;
@@ -57,12 +55,14 @@ export const create = ssrCreate((/* { ... } */) => {
  *
  * For production, you can instead export your
  * handler for serverless use or whatever else fits your needs.
+ *
+ * Can be async: ssrListen(async ({ app, devHttpsApp, port }) => { ... })
  */
-export const listen = ssrListen(async ({ app, port, isReady }) => {
-  await isReady();
-  return app.listen(port, process.env.NB_ADDRESS || '127.0.0.1', () => {
+export const listen = ssrListen(({ app, devHttpsApp, port }) => {
+  const server = devHttpsApp || app;
+  return server.listen(port, () => {
     if (process.env.PROD) {
-      logger.info('Server listening at port ' + port);
+      console.log('Server listening at port ' + port);
     }
   });
 });
@@ -75,7 +75,7 @@ export const listen = ssrListen(async ({ app, port, isReady }) => {
  * Should you need the result of the "listen()" call above,
  * you can use the "listenResult" param.
  *
- * Can be async.
+ * Can be async: ssrClose(async ({ listenResult }) => { ... }))
  */
 export const close = ssrClose(({ listenResult }) => {
   return listenResult.close();
@@ -84,14 +84,22 @@ export const close = ssrClose(({ listenResult }) => {
 const maxAge = process.env.DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
 
 /**
- * Should return middleware that serves the indicated path
- * with static content.
+ * Should return a function that will be used to configure the webserver
+ * to serve static content at "urlPath" from "pathToServe" folder/file.
+ *
+ * Notice resolve.urlPath(urlPath) and resolve.public(pathToServe) usages.
+ *
+ * Can be async: ssrServeStaticContent(async ({ app, resolve }) => {
+ * Can return an async function: return async ({ urlPath = '/', pathToServe = '.', opts = {} }) => {
  */
-export const serveStaticContent = ssrServeStaticContent((path, opts) => {
-  return express.static(path, {
-    maxAge,
-    ...opts,
-  });
+export const serveStaticContent = ssrServeStaticContent(({ app, resolve }) => {
+  return ({ urlPath = '/', pathToServe = '.', opts = {} }) => {
+    const serveFn = express.static(resolve.public(pathToServe), {
+      maxAge,
+      ...opts,
+    });
+    app.use(resolve.urlPath(urlPath), serveFn);
+  };
 });
 
 const jsRE = /\.js$/;
@@ -106,34 +114,36 @@ const pngRE = /\.png$/;
  * Should return a String with HTML output
  * (if any) for preloading indicated file
  */
-export const renderPreloadTag = ssrRenderPreloadTag((file) => {
-  if (jsRE.test(file) === true) {
-    return `<link rel="modulepreload" href="${file}" crossorigin>`;
-  }
+export const renderPreloadTag = ssrRenderPreloadTag(
+  (file /* , { ssrContext } */) => {
+    if (jsRE.test(file) === true) {
+      return `<link rel="modulepreload" href="${file}" crossorigin>`;
+    }
 
-  if (cssRE.test(file) === true) {
-    return `<link rel="stylesheet" href="${file}">`;
-  }
+    if (cssRE.test(file) === true) {
+      return `<link rel="stylesheet" href="${file}" crossorigin>`;
+    }
 
-  if (woffRE.test(file) === true) {
-    return `<link rel="preload" href="${file}" as="font" type="font/woff" crossorigin>`;
-  }
+    if (woffRE.test(file) === true) {
+      return `<link rel="preload" href="${file}" as="font" type="font/woff" crossorigin>`;
+    }
 
-  if (woff2RE.test(file) === true) {
-    return `<link rel="preload" href="${file}" as="font" type="font/woff2" crossorigin>`;
-  }
+    if (woff2RE.test(file) === true) {
+      return `<link rel="preload" href="${file}" as="font" type="font/woff2" crossorigin>`;
+    }
 
-  if (gifRE.test(file) === true) {
-    return `<link rel="preload" href="${file}" as="image" type="image/gif">`;
-  }
+    if (gifRE.test(file) === true) {
+      return `<link rel="preload" href="${file}" as="image" type="image/gif" crossorigin>`;
+    }
 
-  if (jpgRE.test(file) === true) {
-    return `<link rel="preload" href="${file}" as="image" type="image/jpeg">`;
-  }
+    if (jpgRE.test(file) === true) {
+      return `<link rel="preload" href="${file}" as="image" type="image/jpeg" crossorigin>`;
+    }
 
-  if (pngRE.test(file) === true) {
-    return `<link rel="preload" href="${file}" as="image" type="image/png">`;
-  }
+    if (pngRE.test(file) === true) {
+      return `<link rel="preload" href="${file}" as="image" type="image/png" crossorigin>`;
+    }
 
-  return '';
-});
+    return '';
+  }
+);

@@ -12,7 +12,9 @@ function randomIntFromInterval(min: number, max: number) {
 const logger = useLogger('post.store');
 
 export const usePostStore = defineStore('posts', () => {
+  logger.debug('called usePostStore');
   const pc = usePostClient();
+  logger.debug('initialized post client');
 
   const drafts = ref<PostVersion[]>([]);
 

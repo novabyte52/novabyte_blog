@@ -75,9 +75,11 @@ import { useQuasar } from 'quasar';
 import useLoginClient from 'src/clients/login.client';
 import { RouteNames } from 'src/router/routes';
 import { useNovaStore } from 'src/stores/nova.store';
-import { isEmail } from 'validator';
 import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import validator from 'validator';
+const { isEmail } = validator;
 
 const r = useRouter();
 const q = useQuasar();
