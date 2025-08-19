@@ -8,9 +8,14 @@ import {
 import { API } from 'src/symbols';
 import { inject } from 'vue';
 import { useOnce } from 'src/composables/once';
+import { useLogger } from 'src/composables/useLogger';
+
+const logger = useLogger('post.client');
 
 export const usePostClient = () => {
+  logger.debug('called usePostClient');
   const api = useOnce<AxiosInstance>(() => {
+    logger.debug('initializing axios instance for client');
     const axios = inject(API) as AxiosStatic;
     const instance = axios.create({
       baseURL: axios.defaults.baseURL + ApiPath.POSTS,
@@ -113,10 +118,13 @@ export const usePostClient = () => {
   };
 
   const fetchPublished = async () => {
+    logger.err(`fetching published from ${api.defaults.baseURL}`);
     try {
       const response = await api.get<PostVersion[]>('published');
+      logger.err('response received from server');
       return response.data;
     } catch (e) {
+      logger.err(`${e}`);
       throw e;
     }
   };

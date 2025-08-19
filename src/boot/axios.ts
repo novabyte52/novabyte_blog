@@ -18,8 +18,8 @@ export default boot(function ({ app }) {
 });
 
 export const getAxiosStatic = () => {
-  const ssrApiAddr = import.meta.env.NB_SSR_API_ADDR as string;
-  const clientApiAddr = import.meta.env.NB_API_ADDR as string;
+  const ssrApiAddr = process.env.NB_SSR_API_ADDR as string;
+  const clientApiAddr = process.env.NB_API_ADDR as string;
 
   if (!ssrApiAddr || !clientApiAddr) {
     logger.throw(
@@ -35,7 +35,7 @@ export const getAxiosStatic = () => {
   }
 
   if (process.env.CLIENT) {
-    axios.defaults.baseURL = import.meta.env.NB_API_ADDR as string;
+    axios.defaults.baseURL = clientApiAddr as string;
     axios.defaults.withCredentials = true;
     return axios;
   }
