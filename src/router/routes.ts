@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         name: RouteNames.HOME,
-        path: '//',
+        path: '',
         component: () => {
           return import('pages/IndexPage.vue');
         },

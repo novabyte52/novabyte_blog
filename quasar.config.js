@@ -7,11 +7,12 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-require('dotenv').config();
-const { configure } = require('quasar/wrappers');
-const path = require('path');
+// require('dotenv').config();
 
-module.exports = configure(function (/*ctx*/) {
+import { configure } from 'quasar/wrappers';
+import { resolve } from 'path';
+
+export default configure(function (/*ctx*/) {
   return {
     eslint: {
       fix: true,
@@ -94,7 +95,7 @@ module.exports = configure(function (/*ctx*/) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: '/',
       // analyze: true,
       // env: {},
       // rawDefine: {}
@@ -130,7 +131,7 @@ module.exports = configure(function (/*ctx*/) {
             // runtimeOnly: false,
 
             // you need to set i18n resource including paths !
-            include: path.resolve(__dirname, './src/i18n/**'),
+            include: resolve(__dirname, './src/i18n/**'),
           },
         ],
       ],

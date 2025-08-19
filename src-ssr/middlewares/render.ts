@@ -1,30 +1,23 @@
+import { Request, Response } from 'express';
 import { RenderError } from '@quasar/app-vite';
 import { ssrMiddleware } from 'quasar/wrappers';
-import { useLogger } from 'src/composables/useLogger';
-import { ref } from 'vue';
 
 // This middleware should execute as last one
 // since it captures everything and tries to
 // render the page with Vue
 
-const logger = useLogger('render');
-
-export default ssrMiddleware(({ app, resolve, render, serve, publicPath }) => {
+export default ssrMiddleware(({ app, resolve, render, serve }) => {
   // we capture any other Express route and hand it
   // over to Vue and Vue Router to render our page
-  app.get(resolve.urlPath('*'), (req, res) => {
-    logger.debug('url:' + app.request.url);
+  app.get(resolve.urlPath('*'), (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html');
 
     render(/* the ssrContext: */ { req, res })
       .then((html) => {
-        logger.debug('sending html');
         // now let's send the rendered html to the client
         res.send(html);
       })
       .catch((err: RenderError) => {
-        logger.err(err.message);
-        logger.err(err.url);
         // oops, we had an error while rendering the page
 
         // we were told to redirect to another URL
@@ -56,8 +49,11 @@ export default ssrMiddleware(({ app, resolve, render, serve, publicPath }) => {
 
           // Render Error Page on production or
           // create a route (/src/routes) for an error page and redirect to it
-          logger.err(err.message);
           res.status(500).send('500 | Internal Server Error');
+
+          if (process.env.DEBUGGING) {
+            console.error(err.stack);
+          }
         }
       });
   });
