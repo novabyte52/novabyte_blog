@@ -16,7 +16,8 @@
     "build-ssr": "quasar build -m ssr",
     "start": "node dist/ssr/index.js",
     "docker-build": "docker build -t novabyte-ui:latest .",
-    "docker-run": "docker run -p 52002:52002 novabyte-ui:latest"
+    "docker-run": "docker run -p 52002:52002 novabyte-ui:latest",
+    "docker-save": "docker save novabyte-ui:latest | xz -T0 -9 > /home/novabyte/temp/nb-blog_ui"
   },
   "dependencies": {
     "@lucide/lab": "^0.1.2",
