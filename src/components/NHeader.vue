@@ -7,7 +7,7 @@
         </q-route-tab>
       </q-tabs>
 
-      <n-marquee :margin="500" />
+      <!-- <n-marquee :margin="500" /> -->
 
       <q-tabs inline-label class="nav">
         <q-route-tab :to="{ name: RouteNames.ABOUT }" :content-class="'tab'">
