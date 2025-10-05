@@ -8,6 +8,7 @@
       </q-tabs>
 
       <!-- <n-marquee :margin="500" /> -->
+      <q-space />
 
       <q-tabs inline-label class="nav">
         <q-route-tab :to="{ name: RouteNames.ABOUT }" :content-class="'tab'">
@@ -54,14 +55,13 @@
 </template>
 
 <script setup lang="ts">
-  import { storeToRefs } from 'pinia';
-  import NMarquee from './NMarquee.vue';
-  import NPersonMenu from './NPersonMenu.vue';
-  import { useNovaStore } from 'src/stores/nova.store';
-  import { RouteNames } from 'src/router/routes';
   import { astronautHelmet } from '@lucide/lab';
-  import { Icon, Cog, Palette, PencilRuler, Bot, Rocket } from 'lucide-vue-next';
+  import { Bot, Cog, Icon, Palette, PencilRuler, Rocket } from 'lucide-vue-next';
+  import { storeToRefs } from 'pinia';
   import { useLogger } from 'src/composables/useLogger';
+  import { RouteNames } from 'src/router/routes';
+  import { useNovaStore } from 'src/stores/nova.store';
+  import { NPersonMenu } from './';
 
   const log = useLogger('NHeader');
 
