@@ -3,8 +3,7 @@
   <q-list bordered separator class="hobby-list">
     <q-expansion-item
       expand-separator
-      class="full-width"
-      :caption="'some sort of a caption'">
+      class="full-width">
       <template v-slot:header>
         <div class="text-h6 text-center full-width">/technomancy</div>
       </template>
@@ -13,10 +12,9 @@
         <ul>
           <li>programming</li>
           <ul>
-            <li></li>
             <li>web-dev</li>
-            <ul>front-end</ul>
-            <ul>back-end</ul>
+            <li>front-end</li>
+            <li>back-end</li>
 
             <li>game-dev</li>
             <ul>
@@ -26,7 +24,7 @@
             </ul>
           </ul>
 
-          <li>tinkering</li>
+          <li>innovation</li>
           <ul>
             <li>robotics</li>
             <li>automation</li>
@@ -37,12 +35,12 @@
       </div>
     </q-expansion-item>
 
-    <q-expansion-item class="full-width" :caption="'some sort of a caption'">
+    <q-expansion-item expand-separator class="full-width">
       <template v-slot:header>
         <div class="text-h6 text-center full-width">/art</div>
       </template>
       <q-separator />
-      <div class="q-ml-xl q-py-sm">
+      <div class="q-pl-xl q-py-sm" style="background-color: #2e2139">
         <ul>
           <li>3D modeling</li>
           <li>graphic design</li>

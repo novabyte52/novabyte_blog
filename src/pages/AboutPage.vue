@@ -7,6 +7,8 @@
 
         <n-hobby-list />
 
+        <render-markdown :markdown="content2" />
+
         <p class="text-center full-width q-my-md">Let's get sucked in...</p>
         <div class="row full-width justify-evenly">
           <q-icon class="n-random q-ma-none q-pa-none" ref="black_hole" color="black" name="circle" size="md">
@@ -48,6 +50,8 @@
   ## What do I do?
 
   As mentioned I plan to have a lot of tech related content. I want to teach as well as share my projects and experiments. There's also a lot of other stuff I like to do that I would also like to cover here, however. Below is a list of the things I enjoy and plan to talk about or hopefully pursue at some point in time. As I write and tag articles this list will become clickable to find articles with the chosen tag.`;
+
+  const content2 = 'If all of that sounds interesting to you and you\'re not sure where to jump in simply click on the block hole below and';
 
 </script>
 
