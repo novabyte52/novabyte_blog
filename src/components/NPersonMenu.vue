@@ -4,7 +4,7 @@
     class="n-person-menu"
     @update:model-value="onMenuToggle">
     <div class="row no-wrap q-pa-md">
-      <div v-if="!isAuthenticated" class="column">
+      <div v-if="!isAuthenticated" class="column form-wrapper">
         <log-in-form
           class="login-popup"
           :dense="true"
@@ -66,8 +66,14 @@
   };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .n-person-menu {
+    width: 300px;
+
+    .form-wrapper {
+      width: 100%;
+    }
+
     .login-popup {
       color: $red;
     }
