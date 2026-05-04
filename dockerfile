@@ -11,6 +11,7 @@ COPY .yarn .yarn
 RUN yarn install --immutable
 
 # Copy source and build
+COPY .env .env
 COPY . .
 RUN yarn build-ssr
 
