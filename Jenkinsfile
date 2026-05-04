@@ -36,11 +36,11 @@ pipeline {
                 )]) {
                     sh '''
                         ssh-keyscan -H ${DROPLET_HOST} >> ~/.ssh/known_hosts
-                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "rm -f ${DEPLOY_PATH}/.env ${DEPLOY_PATH}/nb-api_docker-image.tar.xz ${DEPLOY_PATH}/nb-api_docker-image.tar"
-                        scp -i "$PK" nb-api_docker-image.tar.xz ${DROPLET_USER}@${DROPLET_HOST}:${DEPLOY_PATH}/
+                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "rm -f ${DEPLOY_PATH}/.env ${DEPLOY_PATH}/nb-ui_docker-image.tar.xz ${DEPLOY_PATH}/nb-ui_docker-image.tar"
+                        scp -i "$PK" nb-ui_docker-image.tar.xz ${DROPLET_USER}@${DROPLET_HOST}:${DEPLOY_PATH}/
                         scp -i "$PK" .env ${DROPLET_USER}@${DROPLET_HOST}:${DEPLOY_PATH}/
-                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "cd ${DEPLOY_PATH} && xz -d nb-api_docker-image.tar.xz && docker load -i nb-api_docker-image.tar"
-                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "cd /srv/www/deploy && docker compose up api -d --force-recreate"
+                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "cd ${DEPLOY_PATH} && xz -d nb-ui_docker-image.tar.xz && docker load -i nb-ui_docker-image.tar"
+                        ssh -i "$PK" ${DROPLET_USER}@${DROPLET_HOST} "cd /srv/www/deploy && docker compose up ui -d --force-recreate"
                     '''
                 }
             }
