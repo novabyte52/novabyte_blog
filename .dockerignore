@@ -3,7 +3,7 @@ node_modules
 tests
 *.md
 *.log
-# *.env
+.env.*
 .vscode
 dist
 dockerfile

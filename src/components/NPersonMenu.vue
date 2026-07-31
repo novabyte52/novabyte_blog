@@ -2,19 +2,16 @@
   <n-menu
     :model-value="isShown"
     class="n-person-menu"
-    @update:model-value="onMenuToggle"
-  >
+    @update:model-value="onMenuToggle">
     <div class="row no-wrap q-pa-md">
-      <div v-if="!isAuthenticated" class="column">
+      <div v-if="!isAuthenticated" class="column form-wrapper">
         <log-in-form
           class="login-popup"
           :dense="true"
-          @logging-in="onLoggingIn"
-        />
+          @logging-in="onLoggingIn" />
         <p class="text-dark q-mb-sm q-mt-md">
           or
-          <router-link :to="{ name: RouteNames.LOGIN }">login here</router-link
-          >.
+          <router-link :to="{ name: RouteNames.LOGIN }">login here</router-link>.
         </p>
         <p class="text-dark q-mb-none">Don't have an account?</p>
         <router-link to="/signup"> sign up </router-link>
@@ -35,51 +32,55 @@
           color="primary"
           label="Logout"
           size="sm"
-          @click="onLogoutClick"
-        />
+          @click="onLogoutClick" />
       </div>
     </div>
   </n-menu>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { QBtn } from 'quasar';
-import LogInForm from 'src/models/person/components/forms/LogInForm.vue';
-import { RouteNames } from 'src/router/routes';
-import { useNovaStore } from 'src/stores/nova.store';
-import { ref } from 'vue';
-import NMenu from './NMenu.vue';
-import { AstronautHelmet } from 'src/components';
+  import { storeToRefs } from 'pinia';
+  import { QBtn } from 'quasar';
+  import LogInForm from 'src/models/person/components/forms/LogInForm.vue';
+  import { RouteNames } from 'src/router/routes';
+  import { useNovaStore } from 'src/stores/nova.store';
+  import { ref } from 'vue';
+  import { NMenu, AstronautHelmet } from './';
 
-const { logOut } = useNovaStore();
-const { currentPerson, isAuthenticated } = storeToRefs(useNovaStore());
+  const { logOut } = useNovaStore();
+  const { currentPerson, isAuthenticated } = storeToRefs(useNovaStore());
 
-const isShown = ref(false);
+  const isShown = ref(false);
 
-const onMenuToggle = (val: boolean) => {
-  isShown.value = val;
-};
+  const onMenuToggle = (val: boolean) => {
+    isShown.value = val;
+  };
 
-const onLoggingIn = () => {
-  isShown.value = false;
-};
+  const onLoggingIn = () => {
+    isShown.value = false;
+  };
 
-const onLogoutClick = () => {
-  isShown.value = false;
-  logOut();
-};
+  const onLogoutClick = () => {
+    isShown.value = false;
+    logOut();
+  };
 </script>
 
-<style scoped lang="scss">
-.n-person-menu {
-  .login-popup {
-    color: $red;
-  }
+<style lang="scss">
+  .n-person-menu {
+    width: 300px;
 
-  .person-avatar {
-    background-color: $dark;
-    color: $secondary;
+    .form-wrapper {
+      width: 100%;
+    }
+
+    .login-popup {
+      color: $red;
+    }
+
+    .person-avatar {
+      background-color: $dark;
+      color: $secondary;
+    }
   }
-}
 </style>

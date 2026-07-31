@@ -26,11 +26,10 @@
 </template>
 
 <script setup lang="ts">
-  import NHeader from 'src/components/NHeader.vue';
-  import NFooter from 'src/components/NFooter.vue';
+  import { NFooter, NHeader } from 'src/components';
+  import { useLogger } from 'src/composables/useLogger';
   import { RouteNames } from 'src/router/routes';
   import { ref } from 'vue';
-  import { useLogger } from 'src/composables/useLogger';
 
   const log = useLogger('MainLayout');
 

@@ -5,10 +5,8 @@
         This is one domain in which I would be so bold as to claim to excel at.
         As such, it also is the one I probably spend the most time within. A
         mixture of fascinations with
-        <b
-          >futuristic possibilities, robots, space, video games, ai, etc. and a
-          particular fascination with how visuals get put on the screen</b
-        >
+        <b>futuristic possibilities, robots, space, video games, ai, etc. and a
+          particular fascination with how visuals get put on the screen</b>
         led me down a path in computer science. I graduated with an Associates
         of Business?: Information Technology degree and a Bachelor's of Science:
         Computer Science from Northern Kentucky University. Professionally, so
@@ -45,11 +43,11 @@
   </q-page>
 </template>
 <script setup lang="ts">
-import DevPostCard from 'src/models/post/components/DevPostCard.vue';
-import DevPersonCard from 'src/models/person/components/DevPersonCard.vue';
-import NBanner from 'src/components/NBanner.vue';
-import { ref } from 'vue';
+  import { NBanner } from 'src/components';
+  import DevPostCard from 'src/models/post/components/DevPostCard.vue';
+  import DevPersonCard from 'src/models/person/components/DevPersonCard.vue';
+  import { ref } from 'vue';
 
-type CrudTabs = 'person' | 'post';
-const current_tab = ref<CrudTabs>('person');
+  type CrudTabs = 'person' | 'post';
+  const current_tab = ref<CrudTabs>('person');
 </script>

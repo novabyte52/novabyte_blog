@@ -92,7 +92,7 @@ export const useNovaStore = defineStore('novabyte', () => {
 
   const logOut = async () => {
     if (!currentPerson.value?.id) {
-      logger.throw(new Error('No person found to logout'));
+      logger.warn('No person found to logout');
       localStorage.removeItem(NB_TOKEN_KEY);
       currentToken.value = undefined;
       currentPerson.value = undefined;

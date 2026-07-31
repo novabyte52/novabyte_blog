@@ -34,7 +34,10 @@ yarn-error.log*
 *.sln
 
 # .env files
-.env*
+*.env
+.env
+.env.*
+!.env.sample
 
 /cert
 
