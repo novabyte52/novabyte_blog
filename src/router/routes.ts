@@ -10,6 +10,11 @@ export enum RouteNames {
   EDIT_PUBLISHED = 'edit-published',
   POST_HISTORY = 'post-history',
   PERSONS = 'persons',
+  FINANCE = 'finance',
+  FINANCE_INCOME = 'finance-income',
+  FINANCE_EXPENSES = 'finance-expenses',
+  FINANCE_PAYMENTS = 'finance-payments',
+  FINANCE_SETTINGS = 'finance-settings',
   LOGIN = 'login',
   ABOUT = 'about',
 }
@@ -108,6 +113,46 @@ const routes: RouteRecordRaw[] = [
         path: '/persons',
         component: () => {
           return import('pages/PersonsPage.vue');
+        },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.FINANCE,
+        path: '/finance',
+        component: () => {
+          return import('src/models/finance/pages/FinanceDashboardPage.vue');
+        },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.FINANCE_INCOME,
+        path: '/finance/income',
+        component: () => {
+          return import('src/models/finance/pages/IncomePage.vue');
+        },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.FINANCE_EXPENSES,
+        path: '/finance/expenses',
+        component: () => {
+          return import('src/models/finance/pages/ExpensesPage.vue');
+        },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.FINANCE_PAYMENTS,
+        path: '/finance/payments',
+        component: () => {
+          return import('src/models/finance/pages/PaymentsPage.vue');
+        },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: RouteNames.FINANCE_SETTINGS,
+        path: '/finance/settings',
+        component: () => {
+          return import('src/models/finance/pages/TaxSettingsPage.vue');
         },
         meta: { requiresAuth: true },
       },
