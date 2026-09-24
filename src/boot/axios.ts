@@ -6,6 +6,8 @@ import { API } from 'src/symbols';
 export enum ApiPath {
   PERSONS = '/persons',
   POSTS = '/posts',
+  FINANCE = '/finance',
+  TAX = '/tax',
 }
 
 const logger = useLogger('axios');

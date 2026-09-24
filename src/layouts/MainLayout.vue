@@ -14,6 +14,16 @@
           @click="handleTabClick('Post History')">Post History</q-route-tab>
         <q-route-tab no-caps :to="{ name: RouteNames.PERSONS }" icon="fas fa-user-astronaut"
           :content-class="'admin-tab'" @click="handleTabClick('Persons')">Persons</q-route-tab>
+        <q-route-tab no-caps :to="{ name: RouteNames.FINANCE }" icon="fas fa-calculator"
+          :content-class="'admin-tab'" @click="handleTabClick('Finances')">Finances</q-route-tab>
+        <q-route-tab no-caps :to="{ name: RouteNames.FINANCE_INCOME }" icon="fas fa-money-bill-trend-up"
+          :content-class="'admin-tab'" @click="handleTabClick('Income')">Income</q-route-tab>
+        <q-route-tab no-caps :to="{ name: RouteNames.FINANCE_EXPENSES }" icon="fas fa-receipt"
+          :content-class="'admin-tab'" @click="handleTabClick('Expenses')">Expenses</q-route-tab>
+        <q-route-tab no-caps :to="{ name: RouteNames.FINANCE_PAYMENTS }" icon="fas fa-hand-holding-dollar"
+          :content-class="'admin-tab'" @click="handleTabClick('Payments')">Payments</q-route-tab>
+        <q-route-tab no-caps :to="{ name: RouteNames.FINANCE_SETTINGS }" icon="fas fa-sliders"
+          :content-class="'admin-tab'" @click="handleTabClick('Tax Settings')">Tax Settings</q-route-tab>
       </q-tabs>
     </q-drawer>
 

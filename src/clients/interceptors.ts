@@ -110,5 +110,11 @@ export const global_response_interceptor =
       }
     }
 
-    return err;
+    // Any status not handled above (400, 404, 409, 422, 500, ...) must still
+    // reject the promise. Returning `err` here instead of rejecting makes
+    // axios treat the call as successful, resolving with the AxiosError
+    // itself in place of a response — callers never see their catch block
+    // run, and errors like the finance API's 409 "setup needed" responses
+    // vanish silently instead of reaching the UI.
+    return Promise.reject(err);
   };
