@@ -1,15 +1,20 @@
 .n-markdown {
-  white-space: break-spaces;
+  // below rule adds large whitespace to lists
+  // white-space: break-spaces;
+
   word-wrap: break-word;
   padding: 32px 72px 0 72px;
 
   h1 {
+    font-family: nova-font;
     width: 50%;
     margin: auto;
+    font-size: 4rem;
   }
 
   h2 {
     font-family: nova-font;
+    font-size: 3rem;
     color: $secondary;
     background: $primary;
     text-align: center;
@@ -28,11 +33,16 @@
     text-decoration: underline;
   }
 
+  p {
+    line-height: 1.5rem;
+  }
+
   code {
     background-color: $red;
   }
 
   ul {
     list-style-type: unset;
+    line-height: 2rem;
   }
 }
